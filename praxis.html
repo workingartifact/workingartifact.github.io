@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>praxis. — workingartifact</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f3ef;
+      color: #171717;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 80px auto;
+      padding: 0 28px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .back,
+    .download {
+      display: inline-block;
+      font-size: 0.85rem;
+    }
+
+    header {
+      margin: 58px 0 72px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 500;
+      margin: 0 0 12px;
+    }
+
+    .place,
+    .contact {
+      margin: 0;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .contact a {
+      white-space: nowrap;
+    }
+
+    .download {
+      margin-top: 24px;
+    }
+
+    section {
+      margin-bottom: 54px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin: 0 0 24px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    p,
+    li,
+    dd {
+      color: #555;
+      line-height: 1.55;
+    }
+
+    .entry {
+      margin-bottom: 28px;
+    }
+
+    .entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .entry-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 24px;
+    }
+
+    .date {
+      flex: 0 0 auto;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .context {
+      margin: 2px 0 0;
+      font-style: italic;
+    }
+
+    ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .courses,
+    .credentials,
+    .competencies {
+      margin: 0;
+    }
+
+    .courses div,
+    .credentials div {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px 24px;
+      padding: 5px 0;
+    }
+
+    dt,
+    dd {
+      margin: 0;
+    }
+
+    .competencies div + div {
+      margin-top: 12px;
+    }
+
+    .competencies dt {
+      font-weight: 600;
+    }
+
+    .competencies dd {
+      margin-top: 2px;
+    }
+
+    footer {
+      margin-top: 90px;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        margin: 44px auto;
+        padding: 0 20px;
+      }
+
+      header {
+        margin: 44px 0 58px;
+      }
+
+      h1 {
+        font-size: 2.1rem;
+      }
+
+      section {
+        margin-bottom: 46px;
+      }
+
+      .entry-heading {
+        display: block;
+      }
+
+      .date {
+        display: block;
+        margin-top: 3px;
+      }
+
+      .courses div,
+      .credentials div {
+        display: block;
+        padding: 7px 0;
+      }
+
+      .courses dd,
+      .credentials dd {
+        margin-top: 3px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <a class="back" href="/">← workingartifact</a>
+
+    <header>
+      <h1>Josh Ayala</h1>
+      <p class="place">Lexington, Kentucky</p>
+      <p class="contact">
+        <a href="tel:+18593126588">(859) 312-6588</a> ·
+        <a href="mailto:ayalajosh@gmail.com">ayalajosh@gmail.com</a> ·
+        <a href="https://www.linkedin.com/in/ayalajosh">linkedin.com/in/ayalajosh</a>
+      </p>
+      <a class="download" href="/Josh_Ayala_CV_2026.pdf" download>download cv ↓</a>
+    </header>
+
+    <section aria-labelledby="education">
+      <h2 id="education">Education</h2>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>University of Kentucky - Gatton College of Business and Economics</h3>
+          <span class="date">2021</span>
+        </div>
+        <p class="context">M.S., Finance | GPA: 3.8</p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>University of Kentucky - College of Fine Arts</h3>
+          <span class="date">2018</span>
+        </div>
+        <p class="context">B.A., Arts Administration | Minor: Theatre | Dean's List</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="appointments">
+      <h2 id="appointments">Academic Appointments</h2>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>Adjunct Instructor - University of Kentucky</h3>
+          <span class="date">Aug. 2023 - Present</span>
+        </div>
+        <p class="context">Gatton College of Business and Economics | Lexington, Kentucky</p>
+        <ul>
+          <li>Teach undergraduate courses in business data management, finance, and spreadsheet applications, translating technical material into applied business decisions and clear communication.</li>
+          <li>Design and deliver data-driven coursework using real-world business and policy-relevant examples, analytical writing, case work, software demonstrations, and results-oriented presentations.</li>
+          <li>Integrate professional experience and current business context into classroom instruction; student feedback has specifically recognized real-world connections, accessibility, organization, and profession-based perspective.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section aria-labelledby="courses">
+      <h2 id="courses">Courses Taught</h2>
+      <dl class="courses">
+        <div>
+          <dt>AN/MKT 324 - Business Data Management</dt>
+          <dd>Fall 2025 (sections 001/002); Spring 2024</dd>
+        </div>
+        <div>
+          <dt>FIN 405 - Capital Investment &amp; Financing Decisions</dt>
+          <dd>Spring 2024</dd>
+        </div>
+        <div>
+          <dt>AN 105 - Business Applications of Spreadsheets</dt>
+          <dd>Fall 2023</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="effectiveness">
+      <h2 id="effectiveness">Teaching Effectiveness</h2>
+      <p><em>Selected University of Kentucky Teacher Course Evaluation (TCE) results, 5-point scale.</em></p>
+      <ul>
+        <li>AN/MKT 324 - Business Data Management, Fall 2025 (n=9): 4.8/5 overall instructor quality and 4.8/5 overall course quality; 4.9/5 for instructor preparation and 4.9/5 for treating students with respect.</li>
+        <li>FIN 405, Spring 2024 (n=10): 4.8/5 overall instructor quality compared with 3.9 for the department and 4.3 for the college; 4.9/5 overall course quality compared with 3.8 and 4.2, respectively; 5.0/5 for responding to student questions and treating students with respect.</li>
+        <li>Fall 2025 qualitative feedback: Students emphasized accessibility, clear explanation of technical concepts, strong organization, real-world relevance, and commitment to student success.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="additional-teaching">
+      <h2 id="additional-teaching">Additional Teaching Experience</h2>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>Substitute Teacher - Fayette County Public Schools</h3>
+          <span class="date">Nov. 2025 - Present</span>
+        </div>
+        <p class="context">Lexington, Kentucky</p>
+        <ul>
+          <li>Follow and adapt lesson plans, maintain a safe and productive learning environment, supervise students, uphold district policies and FERPA confidentiality, respond to classroom and safety incidents, and provide professional reporting.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>Substitute Teacher - Jessamine County Public Schools</h3>
+          <span class="date">Apr. 2024 - May 2026</span>
+        </div>
+        <p class="context">Nicholasville, Kentucky</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="professional-experience">
+      <h2 id="professional-experience">Professional Experience</h2>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>Collateral Risk Analyst - JPMorgan Chase &amp; Co.</h3>
+          <span class="date">Jul. 2022 - Jun. 2023</span>
+        </div>
+        <p class="context">Columbus, Ohio</p>
+        <ul>
+          <li>Validated and issued margin calls to Financial Advisors and established collateral arrangements in credit systems for ongoing monitoring.</li>
+          <li>Identified noncompliant collateral scenarios and coordinated with Credit, Bankers, and other stakeholders to develop resolution plans.</li>
+          <li>Produced daily metrics and recurring line-of-business reporting; researched inquiries and provided collateral analysis to Bankers, Brokers, Lenders, and Client Service teams.</li>
+          <li>Managed competing operational priorities and time-sensitive requests across remote and in-office environments.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <div class="entry-heading">
+          <h3>Teller / Associate Banker - JPMorgan Chase &amp; Co.</h3>
+          <span class="date">Jan. 2019 - Jun. 2022</span>
+        </div>
+        <p class="context">Nicholasville and Lexington, Kentucky</p>
+        <ul>
+          <li>Supported consumer banking operations, digital platform adoption, deposit-account servicing, cash handling, and client issue resolution.</li>
+          <li>Served as Culture Champion and ATM Custodian for the Jessamine County branch; later worked as a Lexington-market float Associate Banker, opening accounts and connecting clients with broader One Chase resources.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section aria-labelledby="credentials">
+      <h2 id="credentials">Professional Development and Credentials</h2>
+      <dl class="credentials">
+        <div>
+          <dt>Power BI Essential Training - LinkedIn Learning</dt>
+          <dd>Aug. 2026</dd>
+        </div>
+        <div>
+          <dt>AI for Business Specialization - University of Pennsylvania / Coursera</dt>
+          <dd>Aug. 2026</dd>
+        </div>
+        <div>
+          <dt>Introduction to OpenAI Codex - Scrimba / Coursera</dt>
+          <dd>Jun. 2026</dd>
+        </div>
+        <div>
+          <dt>Machine Learning Specialization - DeepLearning.AI / Stanford Online / Coursera</dt>
+          <dd>Apr. 2025</dd>
+        </div>
+        <div>
+          <dt>Generative AI with Large Language Models - DeepLearning.AI / AWS / Coursera</dt>
+          <dd>Nov. 2024</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="competencies">
+      <h2 id="competencies">Technical and Professional Competencies</h2>
+      <dl class="competencies">
+        <div>
+          <dt>Data / BI</dt>
+          <dd>Power BI, SQL, relational databases, data modeling, Tableau, Python, pandas, NumPy, Alteryx, data visualization, dashboards, data preparation.</dd>
+        </div>
+        <div>
+          <dt>AI / Applied AI</dt>
+          <dd>Generative AI, large language model workflows, OpenAI Codex, prompt engineering, AI-assisted coding, machine learning, predictive modeling, model evaluation.</dd>
+        </div>
+        <div>
+          <dt>Finance / Operations</dt>
+          <dd>Financial analysis, collateral analysis, margin analysis, risk management, financial modeling, fixed income, equities, portfolio analysis, cash management.</dd>
+        </div>
+        <div>
+          <dt>Business / Instructional Tools</dt>
+          <dd>Microsoft Excel, PowerPoint, Bloomberg Terminal, Google Workspace, learning management systems, presentation and instructional design.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="languages">
+      <h2 id="languages">Languages</h2>
+      <p>English; Spanish; French</p>
+    </section>
+
+    <footer>workingartifact / praxis.</footer>
+  </main>
+</body>
+</html>
