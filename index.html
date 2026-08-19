@@ -3,90 +3,240 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Working Artifact — projects, notes, experiments, and source within Lab.">
 
-  <title>workingartifact</title>
+  <title>lab. / workingartifact</title>
 
   <style>
+    :root {
+      color-scheme: dark;
+      --background: #111315;
+      --surface: #171a1d;
+      --text: #e8e7e2;
+      --muted: #92989b;
+      --rule: #303438;
+      --accent: #a8c7b3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      background: #f4f3ef;
-      color: #171717;
+      background: var(--background);
+      color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
 
     main {
-      max-width: 760px;
-      margin: 80px auto;
-      padding: 0 28px;
+      width: min(100% - 48px, 860px);
+      margin: 0 auto;
+      padding: 52px 0 64px;
+    }
+
+    .archive-meta,
+    .path,
+    .section-meta,
+    footer {
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .archive-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 0;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    header {
+      min-height: 48vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 72px 0;
+    }
+
+    .path {
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-size: 0.9rem;
     }
 
     h1 {
-      font-size: 2.5rem;
-      font-weight: 500;
-      margin-bottom: 70px;
+      margin: 0;
+      font-size: clamp(2.6rem, 8vw, 5.5rem);
+      font-weight: 400;
+      letter-spacing: -0.045em;
+      line-height: 0.95;
+    }
+
+    .descriptor {
+      max-width: 540px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .archive {
+      border-top: 1px solid var(--rule);
     }
 
     section {
-      margin-bottom: 48px;
+      display: grid;
+      grid-template-columns: minmax(150px, 0.36fr) minmax(0, 1fr);
+      gap: 36px;
+      padding: 34px 0 52px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
     }
 
     h2 {
-      font-size: 1.5rem;
-      font-weight: 500;
-      margin: 0 0 8px 0;
-    }
-
-    h2 a {
-      color: inherit;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 4px;
-    }
-
-    p {
       margin: 0;
-      color: #555;
-      line-height: 1.5;
+      font-size: 1.3rem;
+      font-weight: 400;
+    }
+
+    .section-meta {
+      color: var(--muted);
+      font-size: 0.7rem;
+    }
+
+    .section-body p {
+      max-width: 570px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .empty {
+      color: #707679;
+    }
+
+    a {
+      color: var(--text);
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+    }
+
+    a:hover,
+    a:focus-visible {
+      color: var(--accent);
+    }
+
+    a:focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 5px;
+    }
+
+    .source-link {
+      display: inline-block;
+      margin-bottom: 12px;
+      font-family: "Courier New", Courier, monospace;
     }
 
     footer {
-      margin-top: 90px;
-      font-size: 0.8rem;
-      color: #888;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 22px;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    @media (max-width: 620px) {
+      main {
+        width: min(100% - 36px, 860px);
+        padding-top: 32px;
+      }
+
+      .archive-meta span:last-child,
+      footer span:last-child {
+        display: none;
+      }
+
+      header {
+        min-height: 42vh;
+        padding: 58px 0;
+      }
+
+      section {
+        display: block;
+        padding: 28px 0 40px;
+      }
+
+      .section-heading {
+        margin-bottom: 22px;
+      }
     }
   </style>
 </head>
 
 <body>
-
   <main>
+    <p class="archive-meta">
+      <span>technical archive</span>
+      <span>github / experiments / source</span>
+    </p>
 
-    <h1>workingartifact</h1>
+    <header>
+      <!-- A parent-company backlink can replace or precede this path when its URL is established. -->
+      <p class="path">lab. /</p>
+      <h1>workingartifact</h1>
+      <p class="descriptor">github projects, technical archive, experiments and source</p>
+    </header>
 
-    <section>
-      <h2><a href="/praxis.html">praxis.</a></h2>
-      <p>professional work, finance, teaching, applied knowledge</p>
-    </section>
+    <div class="archive">
+      <section aria-labelledby="projects">
+        <div class="section-heading">
+          <h2 id="projects">projects.</h2>
+          <span class="section-meta">01</span>
+        </div>
+        <div class="section-body">
+          <p class="empty">selected work will collect here.</p>
+        </div>
+      </section>
 
-    <section>
-      <h2>lab.</h2>
-      <p>data, AI, code, experiments and unfinished machinery</p>
-    </section>
+      <section aria-labelledby="notes">
+        <div class="section-heading">
+          <h2 id="notes">notes.</h2>
+          <span class="section-meta">02</span>
+        </div>
+        <div class="section-body">
+          <p class="empty">implementation notes, research, and technical observations.</p>
+        </div>
+      </section>
 
-    <section>
-      <h2>studio.</h2>
-      <p>music, video, sound and creative projects</p>
-    </section>
-
-    <section>
-      <h2>craft.</h2>
-      <p>things made.</p>
-    </section>
+      <section aria-labelledby="source">
+        <div class="section-heading">
+          <h2 id="source">source.</h2>
+          <span class="section-meta">03</span>
+        </div>
+        <div class="section-body">
+          <a class="source-link" href="https://github.com/workingartifact">github.com/workingartifact ↗</a>
+          <p>repositories and source history underneath this archive.</p>
+        </div>
+      </section>
+    </div>
 
     <footer>
-      workingartifact
+      <span>lab. / workingartifact</span>
+      <span>maintained in source</span>
     </footer>
-
   </main>
-
 </body>
 </html>
