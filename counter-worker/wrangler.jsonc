@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "working-artifact-download-counter",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-02",
+  "d1_databases": [
+    {
+      "binding": "COUNTER_DB",
+      "database_name": "working-artifact-counter",
+      "database_id": "REPLACE_AFTER_D1_CREATION",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

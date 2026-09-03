@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-counter-origin="">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Build the Entity | Working Artifact</title>
-  <meta name="description" content="A free, self-contained interactive activity for learning entities, attributes, primary keys, and connecting entities in business data management.">
+  <meta name="description" content="A free, self-contained interactive activity for exploring entities, attributes, primary keys, and connecting entities.">
   <style>
     :root {
       --ink: #17212b;
@@ -186,18 +186,190 @@
       .connection-slot { width: 100%; min-height: 58px; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+    .inline-download-counter {
+      margin: 12px 0 0;
+      color: rgba(255,255,255,.76);
+      font-family: Consolas, Monaco, monospace;
+      font-size: .78rem;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .025em;
+    }
+    .inline-download-counter[hidden] { display: none; }
+    .inline-download-counter output { color: #c7dcae; }
+
+    .institutional-footer {
+      --footer-ink: #eeece6;
+      --footer-muted: #a8a69f;
+      --footer-signal: #a4bd83;
+      --footer-rule: rgba(238, 236, 230, .34);
+      padding: 0;
+      color: var(--footer-muted);
+      border-top: 1px solid var(--footer-rule);
+      background: #0c0d0d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .institutional-footer .footer-shell {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+    .institutional-footer a {
+      color: inherit;
+      text-decoration-color: var(--footer-signal);
+      text-underline-offset: 4px;
+    }
+    .institutional-footer a:hover,
+    .institutional-footer a:focus-visible { color: var(--footer-signal); }
+    .institutional-footer a:focus-visible {
+      outline: 1px solid var(--footer-signal);
+      outline-offset: 5px;
+    }
+    .footer-top {
+      min-height: 138px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+    .institutional-footer .footer-path {
+      margin: 0;
+      color: var(--footer-muted);
+      font-size: 1rem;
+    }
+    .institutional-footer .back-to-top,
+    .institutional-footer .footer-motto {
+      font-size: .76rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .institutional-footer .back-to-top { color: var(--footer-signal); }
+    .footer-tree {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr 1.55fr .58fr;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+    .footer-tree-column {
+      min-width: 0;
+      min-height: 170px;
+      padding: 30px 28px 34px 0;
+    }
+    .footer-tree-column + .footer-tree-column {
+      padding-left: 28px;
+      border-left: 1px solid var(--footer-rule);
+    }
+    .institutional-footer .footer-tree-title {
+      display: inline-block;
+      color: var(--footer-ink);
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      line-height: 1.18;
+      text-decoration: none;
+    }
+    .institutional-footer .footer-tree-title.signal { color: var(--footer-signal); }
+    .footer-tree ul {
+      position: relative;
+      margin: 23px 0 0;
+      padding: 0 0 0 19px;
+      list-style: none;
+    }
+    .footer-tree ul::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      border-left: 1px solid var(--footer-rule);
+      content: "";
+    }
+    .footer-tree li {
+      position: relative;
+      margin: 10px 0;
+      padding-left: 2px;
+    }
+    .footer-tree li::before {
+      position: absolute;
+      top: .75em;
+      left: -19px;
+      width: 12px;
+      border-top: 1px solid var(--footer-rule);
+      content: "";
+    }
+    .institutional-footer .footer-tree li a {
+      color: var(--footer-muted);
+      text-decoration: none;
+    }
+    .footer-signature { padding: 34px 0 54px; }
+    .institutional-footer .footer-motto {
+      margin: 0 0 3px;
+      color: var(--footer-ink);
+    }
+    .institutional-footer .footer-translation {
+      margin: 0;
+      color: var(--footer-muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+    }
+    .institutional-footer .footer-founder {
+      margin: 24px 0 0;
+      color: var(--footer-muted);
+      font-size: .78rem;
+    }
+    .footer-resource-note {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(238, 236, 230, .2);
+    }
+    .institutional-footer .footer-resource-note p {
+      margin: 4px 0;
+      color: var(--footer-muted);
+      font-size: .8rem;
+    }
+    @media (max-width: 720px) {
+      .institutional-footer .footer-shell { width: min(100% - 28px, 1180px); }
+      .footer-top {
+        min-height: 126px;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+      }
+      .footer-tree { grid-template-columns: 1fr; }
+      .footer-tree-column,
+      .footer-tree-column + .footer-tree-column {
+        min-height: auto;
+        padding: 24px 0 28px;
+        border-top: 1px solid var(--footer-rule);
+        border-left: 0;
+      }
+      .footer-tree-column:first-child { border-top: 0; }
+    }
   </style>
+  <script src="../assets/counter.js?v=2" defer></script>
 </head>
-<body>
+<body id="top">
   <header>
     <div class="shell">
-      <p class="eyebrow">Business Data Management · Interactive Activity</p>
+      <p class="eyebrow">Working Artifact · Interactive Activity</p>
       <h1>Build the Entity</h1>
       <p class="lede">Practice translating business requirements into entities, attributes, primary keys, and connection paths—before adding cardinality.</p>
       <nav class="resource-nav" aria-label="Activity resources">
-        <a class="resource-link" href="https://github.com/workingartifact/workingartifact.github.io/releases/latest/download/build-the-entity.html">Download standalone HTML</a>
-        <a class="resource-link" href="https://workingartifact.github.io/" target="_blank" rel="noopener">Working Artifact</a>
+        <a class="resource-link" data-counted-download href="https://github.com/workingartifact/workingartifact.github.io/releases/latest/download/build-the-entity.html">Download standalone HTML</a>
+        <a class="resource-link" href="https://workingartifact.github.io/">Working Artifact</a>
       </nav>
+      <p class="inline-download-counter" data-download-counter data-artifact="build-the-entity" data-local-counter-origin="http://127.0.0.1:8787" hidden>
+        <span>standalone downloads · </span><output data-counter-value aria-live="polite" aria-atomic="true">000000</output>
+        <span class="visually-hidden" data-counter-status>Aggregate download requests; repeat requests may be included.</span>
+      </p>
       <div class="progress-wrap" aria-label="Activity progress">
         <div class="progress-label"><span id="progressText">Round 1 of 4</span><span id="progressPercent">25%</span></div>
         <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
@@ -286,11 +458,46 @@
     </aside>
   </main>
 
-  <footer>
-    <div class="shell">
-      <p>Created by Josh Ayala · <a href="https://workingartifact.github.io/" target="_blank" rel="noopener">Working Artifact</a></p>
-      <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
-      <p>Free to use and share for educational purposes with attribution.</p>
+  <footer class="institutional-footer">
+    <div class="footer-shell">
+      <div class="footer-top">
+        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+        <a class="back-to-top" href="#top">Back to top ↑</a>
+      </div>
+
+      <nav class="footer-tree" aria-label="Institutional tree">
+        <div class="footer-tree-column footer-tree-root">
+          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/lab.html">Lab</a></li>
+            <li><a href="https://exapterendapter.com/studio.html">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
+            <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+        </div>
+      </nav>
+
+      <div class="footer-signature">
+        <p class="footer-motto">QUAESTIO ET VERITAS</p>
+        <p class="footer-translation">Inquiry and Truth</p>
+        <p class="footer-founder">Josh Ayala · 2026 · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+        <div class="footer-resource-note">
+          <p>Created by Josh Ayala · <a href="https://workingartifact.github.io/">Working Artifact</a>.</p>
+          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+          <p>Free to use and share for educational purposes with attribution.</p>
+        </div>
+      </div>
     </div>
   </footer>
 
