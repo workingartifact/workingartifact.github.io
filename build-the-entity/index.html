@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build the Entity | Working Artifact</title>
+  <meta name="description" content="A free, self-contained interactive activity for learning entities, attributes, primary keys, and connecting entities in business data management.">
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5c6875;
+      --paper: #f4f6f8;
+      --panel: #ffffff;
+      --blue: #1e5aa8;
+      --blue-dark: #153f76;
+      --green: #13795b;
+      --red: #b42318;
+      --amber: #9a6700;
+      --line: #d7dde4;
+      --shadow: 0 8px 28px rgba(22, 33, 43, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
+    header {
+      color: #fff;
+      background: linear-gradient(120deg, #112b4d, #1e5aa8);
+      padding: 34px 0 30px;
+    }
+    .eyebrow { margin: 0 0 5px; font-size: .78rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; opacity: .82; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; }
+    .lede { max-width: 760px; margin: 12px 0 0; font-size: 1.08rem; }
+    .progress-wrap { margin-top: 22px; }
+    .progress-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; font-size: .9rem; }
+    .progress-track { height: 10px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.24); }
+    .progress-bar { width: 25%; height: 100%; background: #fff; transition: width .3s ease; }
+
+    main { padding: 28px 0 56px; }
+    .notice, .round {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+    }
+    .notice { padding: 16px 19px; margin-bottom: 20px; border-left: 5px solid var(--blue); }
+    .notice strong { display: block; margin-bottom: 3px; }
+    .round { display: none; padding: clamp(18px, 3vw, 30px); }
+    .round.active { display: block; }
+    .round-tag { color: var(--blue); margin: 0 0 4px; font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    h2 { margin: 0 0 8px; font-size: clamp(1.45rem, 3vw, 2rem); }
+    h3 { margin: 0 0 8px; }
+    .instructions { max-width: 850px; margin: 0 0 21px; color: var(--muted); }
+
+    .bank {
+      min-height: 90px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-content: flex-start;
+      padding: 16px;
+      border: 2px dashed #98a5b3;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+    .bank-title { width: 100%; margin: 0 0 2px; color: var(--muted); font-size: .82rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .card {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 12px;
+      border: 2px solid #c5ced8;
+      border-radius: 8px;
+      color: #14243a;
+      background: #fff;
+      font-family: Consolas, Monaco, monospace;
+      font-size: .94rem;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(20, 36, 58, .06);
+      user-select: none;
+    }
+    .card:hover, .card:focus { border-color: var(--blue); outline: none; }
+    .card.selected { color: #fff; border-color: var(--blue); background: var(--blue); }
+    .card.correct { border-color: var(--green); background: #ecfdf3; }
+    .card.incorrect { border-color: var(--red); background: #fff1f0; }
+    .card[draggable="true"] { cursor: grab; }
+    .card[draggable="true"]:active { cursor: grabbing; }
+
+    .entities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 15px; }
+    .entity {
+      min-height: 176px;
+      padding: 15px;
+      border: 2px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      transition: border-color .15s, background .15s;
+    }
+    .entity:hover, .entity:focus, .entity.dragover { border-color: var(--blue); background: #f4f8fd; outline: none; }
+    .entity h3 { display: flex; align-items: center; justify-content: space-between; font-size: 1rem; letter-spacing: .05em; }
+    .entity h3 span { color: var(--muted); font-size: .78rem; font-weight: 400; letter-spacing: 0; }
+    .slot { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; min-height: 108px; }
+
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 21px; }
+    .btn { min-height: 44px; padding: 10px 16px; border: 2px solid var(--blue); border-radius: 8px; font-weight: 700; }
+    .btn-primary { color: #fff; background: var(--blue); }
+    .btn-primary:hover, .btn-primary:focus { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .btn-secondary { color: var(--blue); background: #fff; }
+    .btn-secondary:hover, .btn-secondary:focus { background: #edf4fc; }
+    .btn:disabled { cursor: not-allowed; opacity: .48; }
+    .feedback { min-height: 25px; margin: 15px 0 0; font-weight: 700; }
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--red); }
+    .feedback.neutral { color: var(--amber); }
+
+    .question-card { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: #fafbfc; }
+    .attribute-large { margin: 4px 0 17px; color: #132f52; font-family: Consolas, Monaco, monospace; font-size: clamp(1.4rem, 4vw, 2.1rem); font-weight: 700; }
+    .choices { display: grid; gap: 9px; }
+    .choice { width: 100%; padding: 12px 14px; text-align: left; border: 2px solid var(--line); border-radius: 8px; background: #fff; }
+    .choice:hover, .choice:focus { border-color: var(--blue); }
+    .choice.right { border-color: var(--green); background: #ecfdf3; }
+    .choice.wrong { border-color: var(--red); background: #fff1f0; }
+    .explanation { display: none; margin-top: 14px; padding: 14px; border-left: 4px solid var(--blue); background: #eef5fd; }
+    .explanation.show { display: block; }
+    .counter { color: var(--muted); margin: 0 0 10px; font-size: .9rem; }
+
+    .key-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .key-item { padding: 17px; border: 1px solid var(--line); border-radius: 10px; background: #fafbfc; }
+    .key-item label { display: block; margin-bottom: 8px; font-weight: 700; }
+    .key-item select { width: 100%; min-height: 44px; padding: 8px; border: 2px solid #b8c3cf; border-radius: 7px; background: #fff; }
+    .key-item.correct { border: 2px solid var(--green); background: #ecfdf3; }
+    .key-item.incorrect { border: 2px solid var(--red); background: #fff1f0; }
+
+    .workflow-list { display: grid; gap: 18px; }
+    .workflow-example { padding: 18px; border: 2px solid var(--line); border-radius: 11px; background: #fafbfc; }
+    .workflow-example.correct { border-color: var(--green); background: #f3fcf7; }
+    .workflow-heading { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 4px; }
+    .workflow-heading h3 { font-size: 1.05rem; }
+    .workflow-number { color: var(--blue); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .workflow-prompt { margin: 0 0 13px; color: var(--muted); }
+    .workflow-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 55px; padding: 10px; border: 2px dashed #aeb9c5; border-radius: 8px; background: #fff; }
+    .connection-card { min-height: 38px; padding: 8px 11px; border: 2px solid #c5ced8; border-radius: 7px; color: #14243a; background: #fff; font-family: Consolas, Monaco, monospace; font-size: .86rem; font-weight: 700; }
+    .connection-card:hover, .connection-card:focus { border-color: var(--blue); outline: none; }
+    .connection-card.selected { color: #fff; border-color: var(--blue); background: var(--blue); }
+    .connection-chain { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
+    .connection-slot { flex: 1; min-width: 0; min-height: 68px; display: flex; align-items: center; justify-content: center; padding: 8px; border: 2px solid #b8c3cf; border-radius: 8px; background: #fff; }
+    .connection-slot:hover, .connection-slot:focus, .connection-slot.dragover { border-color: var(--blue); background: #eef5fd; outline: none; }
+    .connection-slot .connection-card { width: 100%; height: 100%; }
+    .connection-slot.correct { border-color: var(--green); background: #e9f8f1; }
+    .connection-slot.correct .connection-card { color: #0b5b43; border-color: var(--green); background: #dff5e9; }
+    .connection-slot.incorrect { border-color: var(--red); background: #fff1f0; }
+    .connection-slot.incorrect .connection-card { color: #8f1b13; border-color: var(--red); background: #ffe2df; }
+    .chain-arrow { align-self: center; color: var(--blue); font-size: 1.35rem; font-weight: 700; }
+    .shared-keys { display: none; margin-top: 13px; padding: 13px; border-left: 4px solid var(--green); background: #e9f8f1; }
+    .shared-keys.show { display: block; }
+    .key-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 8px; }
+    .key-node { padding: 7px 9px; border: 1px solid #9dcdbd; border-radius: 6px; background: #fff; font-size: .84rem; }
+    .completion { display: none; margin-top: 20px; padding: 20px; color: #fff; border-radius: 10px; background: #153f76; }
+    .completion.show { display: block; }
+    .completion h3 { font-size: 1.3rem; }
+    .small { color: var(--muted); font-size: .88rem; }
+    .resource-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .resource-link { display: inline-flex; align-items: center; min-height: 42px; padding: 9px 14px; color: #fff; border: 2px solid rgba(255,255,255,.72); border-radius: 8px; font-weight: 700; text-decoration: none; }
+    .resource-link:hover, .resource-link:focus { color: var(--blue-dark); background: #fff; outline: none; }
+    .educator-note { margin-top: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
+    .educator-note h2 { font-size: 1.3rem; }
+    .educator-note ul { margin: 10px 0 0; padding-left: 22px; }
+    footer { padding: 26px 0 38px; color: var(--muted); border-top: 1px solid var(--line); font-size: .88rem; }
+    footer p { margin: 4px 0; }
+    footer a { color: var(--blue); }
+
+    @media (max-width: 720px) {
+      .entities, .key-grid { grid-template-columns: 1fr; }
+      .entity { min-height: 145px; }
+      header { padding-top: 26px; }
+      .connection-chain { flex-direction: column; }
+      .chain-arrow { transform: rotate(90deg); }
+      .connection-slot { width: 100%; min-height: 58px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <p class="eyebrow">Business Data Management · Interactive Activity</p>
+      <h1>Build the Entity</h1>
+      <p class="lede">Practice translating business requirements into entities, attributes, primary keys, and connection paths—before adding cardinality.</p>
+      <nav class="resource-nav" aria-label="Activity resources">
+        <a class="resource-link" href="https://github.com/workingartifact/workingartifact.github.io/releases/latest/download/build-the-entity.html">Download standalone HTML</a>
+        <a class="resource-link" href="https://workingartifact.github.io/" target="_blank" rel="noopener">Working Artifact</a>
+      </nav>
+      <div class="progress-wrap" aria-label="Activity progress">
+        <div class="progress-label"><span id="progressText">Round 1 of 4</span><span id="progressPercent">25%</span></div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="notice">
+      <strong>Use this activity individually or with a small group.</strong>
+      Drag the cards or use click/tap controls, then check each round. No account is required, no answers are submitted, and no data is collected.
+    </div>
+
+    <section class="round active" id="round1" aria-labelledby="r1title">
+      <p class="round-tag">Round 1 · Entity and attribute</p>
+      <h2 id="r1title">Sort the attributes</h2>
+      <p class="instructions">Place every attribute under the entity it describes. Drag cards, or select a card and then select an entity box. A card may be moved again at any time.</p>
+      <div class="bank" id="bank" tabindex="0">
+        <p class="bank-title">Attribute bank</p>
+      </div>
+      <div class="entities" id="entities"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="checkSort">Check choices</button>
+        <button class="btn btn-secondary" id="clearSortCheck">Clear check marks</button>
+        <button class="btn btn-secondary" id="resetSort">Reset and shuffle</button>
+        <button class="btn btn-secondary" id="toRound2" disabled>Continue to Round 2</button>
+      </div>
+      <p class="feedback" id="sortFeedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="round" id="round2" aria-labelledby="r2title">
+      <p class="round-tag">Round 2 · Attribute quality</p>
+      <h2 id="r2title">Question the attribute</h2>
+      <p class="instructions">Some labels are ambiguous, combine multiple facts, or conceal a relationship. Choose the strongest diagnosis. A discussion may reveal more than one concern.</p>
+      <div class="question-card">
+        <p class="counter" id="trickyCounter"></p>
+        <div class="attribute-large" id="trickyTerm"></div>
+        <div class="choices" id="trickyChoices"></div>
+        <div class="explanation" id="trickyExplanation" role="status"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="nextTricky" disabled>Next attribute</button>
+        <button class="btn btn-secondary" id="toRound3" style="display:none">Continue to Round 3</button>
+      </div>
+    </section>
+
+    <section class="round" id="round3" aria-labelledby="r3title">
+      <p class="round-tag">Round 3 · Unique identifiers</p>
+      <h2 id="r3title">Choose a primary key</h2>
+      <p class="instructions">Which attribute should uniquely identify each individual customer, product, order, or employee? Select the strongest choice for each entity.</p>
+      <div class="key-grid" id="keyGrid"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="checkKeys">Check primary keys</button>
+        <button class="btn btn-secondary" id="toRound4" disabled>Continue to Final Question</button>
+      </div>
+      <p class="feedback" id="keyFeedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="round" id="round4" aria-labelledby="r4title">
+      <p class="round-tag">Round 4 · Connecting entities</p>
+      <h2 id="r4title">Build the connection</h2>
+      <p class="instructions">Arrange each set of entities from left to right according to the business workflow. Look for the entity that carries keys from the entities it touches. Drag the cards, or select a card and then select a position.</p>
+      <div class="workflow-list" id="workflowList"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="checkConnections">Check connections</button>
+        <button class="btn btn-secondary" id="clearConnectionCheck">Clear check marks</button>
+        <button class="btn btn-secondary" id="resetConnections">Reset examples</button>
+      </div>
+      <p class="feedback" id="connectionFeedback" role="status" aria-live="polite"></p>
+      <div class="completion" id="connectionCompletion">
+        <h3>The shared keys reveal the path.</h3>
+        <p>The connecting entity carries the identifiers needed to link the entities on either side. You have not described how many records participate yet—you have only established which entities connect and which keys make the connection possible.</p>
+        <p><strong>Be prepared to explain:</strong> In the sneaker-store example, why does <code>ORDER_ITEM</code> need both <code>order_id</code> and <code>product_id</code>?</p>
+      </div>
+      <div class="actions"><button class="btn btn-secondary" id="restart">Restart the activity</button></div>
+    </section>
+
+    <aside class="educator-note" aria-labelledby="educator-title">
+      <h2 id="educator-title">For educators</h2>
+      <p>This four-round activity helps learners distinguish entities from attributes, evaluate attribute quality, select stable primary keys, and trace connections through entities that carry shared identifiers. It deliberately stops before cardinality so learners can first understand what connects and why.</p>
+      <ul>
+        <li>Runs as one self-contained HTML file in a modern browser.</li>
+        <li>Works for individual practice, pairs, or small-group discussion.</li>
+        <li>Stores no responses and uses no external scripts or services.</li>
+      </ul>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p>Created by Josh Ayala · <a href="https://workingartifact.github.io/" target="_blank" rel="noopener">Working Artifact</a></p>
+      <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+      <p>Free to use and share for educational purposes with attribution.</p>
+    </div>
+  </footer>
+
+  <script>
+    const entityData = {
+      CUSTOMER: ["customer_id", "customer_first_name", "customer_last_name", "customer_email"],
+      PRODUCT: ["product_id", "product_name", "unit_price", "quantity_in_stock"],
+      ORDER: ["order_id", "order_date", "order_total", "order_status"],
+      EMPLOYEE: ["employee_id", "employee_email", "hire_date", "job_title", "department"]
+    };
+
+    const tricky = [
+      { term: "customer_contact_preference", choices: ["Too broad to have any business meaning", "Usable if allowed values such as email, text, and phone are clearly defined", "Should contain the customer's email address and phone number together"], answer: 1, explain: "This can be a useful attribute when it stores one controlled choice—such as <code>email</code>, <code>text</code>, or <code>phone</code>. It should not become a container for the actual contact details." },
+      { term: "order_placed_at", choices: ["A clear attribute for the date and time an order was placed", "Ambiguous because every date attribute is invalid", "A substitute for order_id"], answer: 0, explain: "This is a strong contextual label. It identifies the business event and suggests that both date and time may matter. Not every attribute in this round needs revision." },
+      { term: "current_unit_price", choices: ["Always preserves the price the customer actually paid", "Must be moved into CUSTOMER", "Useful for the current catalog, but insufficient if the business needs price history or the transaction price"], answer: 2, explain: "The label is reasonably precise, but its adequacy depends on the business requirement. A current catalog price can change; the price charged on a completed order may need to be stored separately." },
+      { term: "customer_profile", choices: ["Likely too broad if it hides name, email, phone, and other facts inside one field", "A reliable primary key because every profile is unique", "Automatically belongs in ORDER"], answer: 0, explain: "The label sounds plausible, but it may conceal several distinct facts. The database should store the specific customer attributes the business needs to search, validate, and update." },
+      { term: "product_ids", choices: ["A good attribute because the plural makes its purpose clear", "Should be renamed product_id even if several values remain in the cell", "The plural suggests multiple identifiers in one attribute; model the ORDER–PRODUCT connection instead"], answer: 2, explain: "A plural attribute often signals that one cell will contain a list. That makes individual products difficult to query and avoids the real task of representing the connection between ORDER and PRODUCT." },
+      { term: "assigned_employee_ids", choices: ["Potentially stores several employee identifiers in one field; an assignment entity may represent the connection more cleanly", "A stronger primary key than employee_id", "Correct whenever fewer than ten employees are assigned"], answer: 0, explain: "The label describes a genuine business need, but a list of IDs in one field is difficult to maintain. A separate assignment record can connect each employee to the relevant project or task." },
+      { term: "shipping_address", choices: ["Always invalid because addresses cannot be attributes", "Reasonable at a high level, but the design depends on whether street, city, state, and postal code must be searched or validated separately", "A unique identifier for CUSTOMER"], answer: 1, explain: "This attribute is not automatically wrong. Its design depends on how the business uses the address and whether the order must preserve the exact destination used at the time of purchase." }
+    ];
+
+    const keyQuestions = [
+      { entity: "CUSTOMER", answer: "customer_id", options: ["customer_email", "customer_last_name", "customer_id"] },
+      { entity: "PRODUCT", answer: "product_id", options: ["product_name", "unit_price", "product_id"] },
+      { entity: "ORDER", answer: "order_id", options: ["order_date", "order_total", "order_id"] },
+      { entity: "EMPLOYEE", answer: "employee_id", options: ["employee_email", "job_title", "employee_id"] }
+    ];
+
+    const connectionExamples = [
+      {
+        title: "Online sneaker purchase",
+        prompt: "Start with the customer who makes the purchase and end with the product being purchased.",
+        answer: ["CUSTOMER", "ORDER", "ORDER_ITEM", "PRODUCT"],
+        keys: ["CUSTOMER: customer_id", "ORDER: order_id, customer_id", "ORDER_ITEM: order_id, product_id", "PRODUCT: product_id"]
+      },
+      {
+        title: "Student course registration",
+        prompt: "Start with the student and end with the course the student selects.",
+        answer: ["STUDENT", "ENROLLMENT", "COURSE"],
+        keys: ["STUDENT: student_id", "ENROLLMENT: student_id, course_id", "COURSE: course_id"]
+      },
+      {
+        title: "Medical appointment",
+        prompt: "Start with the doctor and end with the patient scheduled to be seen.",
+        answer: ["DOCTOR", "APPOINTMENT", "PATIENT"],
+        keys: ["DOCTOR: doctor_id", "APPOINTMENT: doctor_id, patient_id", "PATIENT: patient_id"]
+      },
+      {
+        title: "Employee project assignment",
+        prompt: "Start with the employee and end with the project receiving the employee's work.",
+        answer: ["EMPLOYEE", "PROJECT_ASSIGNMENT", "PROJECT"],
+        keys: ["EMPLOYEE: employee_id", "PROJECT_ASSIGNMENT: employee_id, project_id", "PROJECT: project_id"]
+      }
+    ];
+
+    let selectedCard = null;
+    let selectedConnectionCard = null;
+    let trickyIndex = 0;
+    const $ = id => document.getElementById(id);
+    const shuffle = arr => arr.map(v => ({v, r: Math.random()})).sort((a,b) => a.r-b.r).map(x => x.v);
+
+    function buildSort() {
+      selectedCard = null;
+      document.querySelectorAll(".card").forEach(c => c.remove());
+      const cards = [];
+      Object.entries(entityData).forEach(([entity, attrs]) => attrs.forEach(attr => cards.push({entity, attr})));
+      shuffle(cards).forEach(({entity, attr}) => {
+        const card = document.createElement("button");
+        card.className = "card";
+        card.textContent = attr;
+        card.dataset.answer = entity;
+        card.draggable = true;
+        card.type = "button";
+        card.addEventListener("click", e => { e.stopPropagation(); selectCard(card); });
+        card.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", attr); selectedCard = card; });
+        $("bank").appendChild(card);
+      });
+      $("toRound2").disabled = true;
+      $("sortFeedback").textContent = "";
+    }
+
+    function buildEntities() {
+      $("entities").innerHTML = "";
+      Object.keys(entityData).forEach(entity => {
+        const box = document.createElement("div");
+        box.className = "entity";
+        box.tabIndex = 0;
+        box.dataset.entity = entity;
+        box.innerHTML = `<h3>${entity}<span>select to place</span></h3><div class="slot"></div>`;
+        box.addEventListener("click", () => placeSelected(box));
+        box.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && selectedCard) { e.preventDefault(); placeSelected(box); } });
+        box.addEventListener("dragover", e => { e.preventDefault(); box.classList.add("dragover"); });
+        box.addEventListener("dragleave", () => box.classList.remove("dragover"));
+        box.addEventListener("drop", e => { e.preventDefault(); box.classList.remove("dragover"); if (selectedCard) placeSelected(box); });
+        $("entities").appendChild(box);
+      });
+      $("bank").addEventListener("click", e => { if (e.target === $("bank") && selectedCard) moveToBank(); });
+      $("bank").addEventListener("dragover", e => e.preventDefault());
+      $("bank").addEventListener("drop", e => { e.preventDefault(); if (selectedCard) moveToBank(); });
+    }
+
+    function selectCard(card) {
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+      selectedCard = card;
+      card.classList.remove("correct", "incorrect");
+      card.classList.add("selected");
+    }
+
+    function placeSelected(box) {
+      if (!selectedCard) return;
+      clearSortCheck();
+      box.querySelector(".slot").appendChild(selectedCard);
+      selectedCard.classList.remove("selected", "correct", "incorrect");
+      selectedCard = null;
+    }
+
+    function moveToBank() {
+      clearSortCheck();
+      $("bank").appendChild(selectedCard);
+      selectedCard.classList.remove("selected", "correct", "incorrect");
+      selectedCard = null;
+    }
+
+    function clearSortCheck() {
+      document.querySelectorAll(".card").forEach(card => card.classList.remove("correct", "incorrect"));
+      $("sortFeedback").textContent = "";
+      $("sortFeedback").className = "feedback";
+      $("toRound2").disabled = true;
+    }
+
+    function checkSort() {
+      const cards = [...document.querySelectorAll(".card")];
+      let correct = 0, unplaced = 0;
+      cards.forEach(card => {
+        card.classList.remove("correct", "incorrect", "selected");
+        const box = card.closest(".entity");
+        if (!box) { unplaced++; return; }
+        const right = box.dataset.entity === card.dataset.answer;
+        card.classList.add(right ? "correct" : "incorrect");
+        if (right) correct++;
+      });
+      selectedCard = null;
+      const fb = $("sortFeedback");
+      if (correct === cards.length) {
+        fb.className = "feedback good";
+        fb.textContent = `All ${correct} attributes are correctly placed. Explain one decision that required careful thought.`;
+        $("toRound2").disabled = false;
+      } else {
+        fb.className = "feedback " + (unplaced ? "neutral" : "bad");
+        fb.textContent = `${correct} of ${cards.length} correct${unplaced ? `; ${unplaced} still in the bank` : ""}. Red cards need another look.`;
+      }
+    }
+
+    function showRound(number) {
+      document.querySelectorAll(".round").forEach(r => r.classList.remove("active"));
+      $(`round${number}`).classList.add("active");
+      $("progressText").textContent = `Round ${number} of 4`;
+      $("progressPercent").textContent = `${number * 25}%`;
+      $("progressBar").style.width = `${number * 25}%`;
+      window.scrollTo({top: 0, behavior: "smooth"});
+    }
+
+    function renderTricky() {
+      const q = tricky[trickyIndex];
+      $("trickyCounter").textContent = `Attribute ${trickyIndex + 1} of ${tricky.length}`;
+      $("trickyTerm").textContent = q.term;
+      $("trickyChoices").innerHTML = "";
+      $("trickyExplanation").classList.remove("show");
+      $("nextTricky").disabled = true;
+      q.choices.forEach((label, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "choice";
+        btn.textContent = label;
+        btn.addEventListener("click", () => answerTricky(i));
+        $("trickyChoices").appendChild(btn);
+      });
+    }
+
+    function answerTricky(index) {
+      const q = tricky[trickyIndex];
+      const buttons = [...document.querySelectorAll(".choice")];
+      buttons.forEach((b, i) => { b.disabled = true; if (i === q.answer) b.classList.add("right"); });
+      if (index !== q.answer) buttons[index].classList.add("wrong");
+      $("trickyExplanation").innerHTML = `<strong>${index === q.answer ? "Strong diagnosis." : "Not the strongest diagnosis."}</strong> ${q.explain}`;
+      $("trickyExplanation").classList.add("show");
+      if (trickyIndex === tricky.length - 1) {
+        $("nextTricky").style.display = "none";
+        $("toRound3").style.display = "inline-block";
+      } else $("nextTricky").disabled = false;
+    }
+
+    function buildKeys() {
+      $("keyGrid").innerHTML = "";
+      keyQuestions.forEach(q => {
+        const item = document.createElement("div");
+        item.className = "key-item";
+        item.dataset.answer = q.answer;
+        item.innerHTML = `<label for="key-${q.entity}">${q.entity}</label><select id="key-${q.entity}"><option value="">Choose an attribute…</option>${q.options.map(o => `<option value="${o}">${o}</option>`).join("")}</select>`;
+        $("keyGrid").appendChild(item);
+      });
+    }
+
+    function checkKeys() {
+      let correct = 0, blank = 0;
+      document.querySelectorAll(".key-item").forEach(item => {
+        item.classList.remove("correct", "incorrect");
+        const value = item.querySelector("select").value;
+        if (!value) { blank++; return; }
+        const right = value === item.dataset.answer;
+        item.classList.add(right ? "correct" : "incorrect");
+        if (right) correct++;
+      });
+      const fb = $("keyFeedback");
+      if (correct === keyQuestions.length) {
+        fb.className = "feedback good";
+        fb.textContent = "Correct. Each ID is designed to identify one record uniquely and remain stable even when descriptive information changes.";
+        $("toRound4").disabled = false;
+      } else {
+        fb.className = "feedback " + (blank ? "neutral" : "bad");
+        fb.textContent = `${correct} of ${keyQuestions.length} correct${blank ? `; ${blank} unanswered` : ""}. Ask whether two records could share the selected value.`;
+      }
+    }
+
+    function buildConnections() {
+      selectedConnectionCard = null;
+      $("workflowList").innerHTML = "";
+      connectionExamples.forEach((example, index) => {
+        const section = document.createElement("div");
+        section.className = "workflow-example";
+        section.dataset.index = index;
+        section.innerHTML = `
+          <div class="workflow-heading"><h3>${example.title}</h3><span class="workflow-number">Example ${index + 1} of ${connectionExamples.length}</span></div>
+          <p class="workflow-prompt">${example.prompt}</p>
+          <div class="workflow-bank" aria-label="Entity bank for ${example.title}"></div>
+          <div class="connection-chain" aria-label="Connection positions"></div>
+          <div class="shared-keys"><strong>Follow the shared keys:</strong><div class="key-chain">${example.keys.map((key, i) => `${i ? '<span aria-hidden="true">→</span>' : ''}<span class="key-node">${key}</span>`).join("")}</div></div>`;
+        const bank = section.querySelector(".workflow-bank");
+        const chain = section.querySelector(".connection-chain");
+
+        shuffle(example.answer).forEach(entity => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "connection-card";
+          card.textContent = entity;
+          card.dataset.entity = entity;
+          card.draggable = true;
+          card.addEventListener("click", e => { e.stopPropagation(); selectConnectionCard(card); });
+          card.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", entity); selectedConnectionCard = card; });
+          bank.appendChild(card);
+        });
+
+        example.answer.forEach((_, position) => {
+          if (position) {
+            const arrow = document.createElement("span");
+            arrow.className = "chain-arrow";
+            arrow.setAttribute("aria-hidden", "true");
+            arrow.textContent = "→";
+            chain.appendChild(arrow);
+          }
+          const slot = document.createElement("div");
+          slot.className = "connection-slot";
+          slot.tabIndex = 0;
+          slot.dataset.position = position;
+          slot.setAttribute("aria-label", `Position ${position + 1}`);
+          slot.addEventListener("click", () => placeConnectionCard(slot));
+          slot.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && selectedConnectionCard) { e.preventDefault(); placeConnectionCard(slot); } });
+          slot.addEventListener("dragover", e => { e.preventDefault(); slot.classList.add("dragover"); });
+          slot.addEventListener("dragleave", () => slot.classList.remove("dragover"));
+          slot.addEventListener("drop", e => { e.preventDefault(); slot.classList.remove("dragover"); placeConnectionCard(slot); });
+          chain.appendChild(slot);
+        });
+
+        bank.addEventListener("click", e => { if (e.target === bank && selectedConnectionCard) returnConnectionToBank(bank); });
+        bank.addEventListener("dragover", e => e.preventDefault());
+        bank.addEventListener("drop", e => { e.preventDefault(); returnConnectionToBank(bank); });
+        $("workflowList").appendChild(section);
+      });
+      clearConnectionCheck();
+    }
+
+    function selectConnectionCard(card) {
+      document.querySelectorAll(".connection-card").forEach(c => c.classList.remove("selected"));
+      selectedConnectionCard = card;
+      card.classList.add("selected");
+    }
+
+    function placeConnectionCard(slot) {
+      if (!selectedConnectionCard) return;
+      const cardExample = selectedConnectionCard.closest(".workflow-example");
+      const slotExample = slot.closest(".workflow-example");
+      if (cardExample !== slotExample) return;
+      clearConnectionCheck();
+      const occupied = slot.querySelector(".connection-card");
+      if (occupied && occupied !== selectedConnectionCard) slotExample.querySelector(".workflow-bank").appendChild(occupied);
+      slot.appendChild(selectedConnectionCard);
+      selectedConnectionCard.classList.remove("selected");
+      selectedConnectionCard = null;
+    }
+
+    function returnConnectionToBank(bank) {
+      if (!selectedConnectionCard || selectedConnectionCard.closest(".workflow-example") !== bank.closest(".workflow-example")) return;
+      clearConnectionCheck();
+      bank.appendChild(selectedConnectionCard);
+      selectedConnectionCard.classList.remove("selected");
+      selectedConnectionCard = null;
+    }
+
+    function clearConnectionCheck() {
+      document.querySelectorAll(".workflow-example").forEach(example => {
+        example.classList.remove("correct");
+        example.querySelectorAll(".connection-slot").forEach(slot => slot.classList.remove("correct", "incorrect"));
+        example.querySelector(".shared-keys").classList.remove("show");
+      });
+      $("connectionFeedback").textContent = "";
+      $("connectionFeedback").className = "feedback";
+      $("connectionCompletion").classList.remove("show");
+    }
+
+    function checkConnections() {
+      let correct = 0, incomplete = 0;
+      document.querySelectorAll(".workflow-example").forEach(section => {
+        const example = connectionExamples[Number(section.dataset.index)];
+        const slots = [...section.querySelectorAll(".connection-slot")];
+        const placed = slots.map(slot => slot.querySelector(".connection-card")?.dataset.entity || "");
+        const complete = placed.every(Boolean);
+        const right = complete && placed.every((entity, i) => entity === example.answer[i]);
+        section.classList.toggle("correct", right);
+        slots.forEach((slot, i) => {
+          slot.classList.remove("correct", "incorrect");
+          slot.classList.add(placed[i] === example.answer[i] ? "correct" : "incorrect");
+        });
+        section.querySelector(".shared-keys").classList.toggle("show", right);
+        if (right) correct++;
+        if (!complete) incomplete++;
+      });
+      const fb = $("connectionFeedback");
+      if (correct === connectionExamples.length) {
+        fb.className = "feedback good";
+        fb.textContent = "All four connection paths are correct. Compare the identifiers in each neighboring entity.";
+        $("connectionCompletion").classList.add("show");
+      } else {
+        fb.className = "feedback " + (incomplete ? "neutral" : "bad");
+        fb.textContent = `${correct} of ${connectionExamples.length} examples correct${incomplete ? `; ${incomplete} incomplete` : ""}. Recheck the business workflow and the keys carried by the connecting entity.`;
+      }
+    }
+
+    $("checkSort").addEventListener("click", checkSort);
+    $("clearSortCheck").addEventListener("click", clearSortCheck);
+    $("resetSort").addEventListener("click", buildSort);
+    $("toRound2").addEventListener("click", () => showRound(2));
+    $("nextTricky").addEventListener("click", () => { trickyIndex++; renderTricky(); });
+    $("toRound3").addEventListener("click", () => showRound(3));
+    $("checkKeys").addEventListener("click", checkKeys);
+    $("toRound4").addEventListener("click", () => showRound(4));
+    $("checkConnections").addEventListener("click", checkConnections);
+    $("clearConnectionCheck").addEventListener("click", clearConnectionCheck);
+    $("resetConnections").addEventListener("click", buildConnections);
+    $("restart").addEventListener("click", () => location.reload());
+
+    buildEntities();
+    buildSort();
+    renderTricky();
+    buildKeys();
+    buildConnections();
+  </script>
+</body>
+</html>
