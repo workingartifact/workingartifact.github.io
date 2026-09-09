@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
+  <title id="title">Pick the Cardinality</title>
+  <desc id="description">One customer may place zero or many orders.</desc>
+
+  <rect width="1200" height="630" fill="#123b63"/>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="70" y="120" fill="#ffffff" font-size="76" font-weight="700" letter-spacing="-1">PICK THE CARDINALITY</text>
+    <text x="74" y="190" fill="#b9d4e8" font-size="34" font-weight="700">BUSINESS RULE → CARDINALITY → MODEL</text>
+
+    <rect x="70" y="280" width="330" height="150" rx="4" fill="#ffffff" stroke="#b9d4e8" stroke-width="6"/>
+    <text x="235" y="369" fill="#123b63" font-size="42" font-weight="700" text-anchor="middle">CUSTOMER</text>
+
+    <rect x="800" y="280" width="330" height="150" rx="4" fill="#ffffff" stroke="#b9d4e8" stroke-width="6"/>
+    <text x="965" y="369" fill="#123b63" font-size="42" font-weight="700" text-anchor="middle">ORDER</text>
+
+    <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="400" y1="355" x2="800" y2="355"/>
+      <line x1="428" y1="321" x2="428" y2="389"/>
+      <line x1="452" y1="321" x2="452" y2="389"/>
+      <circle cx="732" cy="355" r="15" fill="#123b63"/>
+      <polyline points="798,319 765,355 798,391"/>
+      <line x1="765" y1="355" x2="800" y2="355"/>
+    </g>
+
+    <text x="1130" y="568" fill="#b9d4e8" font-size="26" font-weight="700" letter-spacing="4" text-anchor="end">WORKING ARTIFACT</text>
+  </g>
+</svg>
