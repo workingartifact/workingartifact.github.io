@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A free, self-contained interactive activity for learning minimum and maximum cardinality and Crow's Foot notation from business rules.">
+  <title>Pick the Cardinality | Working Artifact</title>
+  <style>
+    :root {
+      --ink: #152534;
+      --navy: #123b63;
+      --blue: #1e5a8a;
+      --blue-dark: #17486f;
+      --pale-blue: #eef5fa;
+      --paper: #ffffff;
+      --page-bg: #f4f6f8;
+      --line: #cbd5df;
+      --muted: #5c6b78;
+      --amber: #9a6200;
+      --amber-bg: #fff6db;
+      --green: #176b65;
+      --green-bg: #eaf7f5;
+      --red: #a13939;
+      --red-bg: #fff1f1;
+      --shadow: 0 10px 30px rgba(21, 37, 52, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--page-bg); }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, var(--navy) 0, var(--navy) 12rem, var(--page-bg) 12rem);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    button { font: inherit; }
+
+    button:focus-visible {
+      outline: 3px solid #f2b84b;
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 112px;
+      color: #fff;
+      padding: 8px 4px 28px;
+    }
+
+    .brand {
+      margin: 0 0 5px;
+      color: #b9d4e8;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.85rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .lesson-tag {
+      max-width: 31rem;
+      margin: 0 0 4px;
+      color: #e6f0f7;
+      font-size: 0.96rem;
+      text-align: right;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .activity-card,
+    .key-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .activity-card { min-width: 0; overflow: hidden; }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .counter {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .question-body { padding: 24px 28px 28px; }
+
+    .instruction {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .rules {
+      margin: 0 0 24px;
+      padding: 17px 20px 17px 42px;
+      background: var(--pale-blue);
+      border-left: 5px solid var(--blue);
+      border-radius: 5px;
+    }
+
+    .rules li + li { margin-top: 7px; }
+
+    .diagram-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 360px;
+      margin: 0;
+      overflow: visible;
+      background:
+        linear-gradient(rgba(18, 59, 99, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 59, 99, 0.035) 1px, transparent 1px),
+        #fbfcfd;
+      background-size: 24px 24px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      transition: border-color 160ms, box-shadow 160ms;
+    }
+
+    .diagram-wrap.is-correct {
+      border-color: var(--green);
+      box-shadow: inset 0 0 0 2px rgba(23, 107, 101, 0.14);
+    }
+
+    .diagram-art { display: block; width: 100%; height: auto; min-height: 360px; }
+    .bridge-diagram, .bridge-diagram .diagram-art { min-height: 510px; }
+
+    .entity-box {
+      fill: #fff;
+      stroke: var(--navy);
+      stroke-width: 3;
+      rx: 3;
+    }
+
+    .entity-box.associative {
+      fill: var(--pale-blue);
+      stroke-width: 3.5;
+      rx: 20;
+    }
+
+    .entity-text {
+      fill: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .relationship-line,
+    .unary-line {
+      fill: none;
+      stroke: #31485d;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .relationship-label-bg { fill: #fbfcfd; }
+    .relationship-label,
+    .role-label {
+      fill: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+
+    .relationship-label { font-size: 22px; }
+    .role-label { font-size: 17px; }
+
+    .endpoint {
+      position: absolute;
+      z-index: 4;
+      transform: translate(-50%, -50%);
+    }
+
+    .endpoint.is-open { z-index: 1000; }
+
+    .endpoint-trigger {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 46px;
+      padding: 0;
+      color: var(--navy);
+      background: #fff;
+      border: 2px solid var(--blue);
+      border-radius: 5px;
+      box-shadow: 0 4px 12px rgba(21, 37, 52, 0.13);
+      cursor: pointer;
+    }
+
+    .endpoint-trigger:hover { background: var(--pale-blue); }
+
+    .endpoint-trigger[aria-expanded="true"] {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(154, 98, 0, 0.16);
+    }
+
+    .endpoint.is-left .endpoint-trigger .cardinality-icon { transform: scaleX(-1); }
+    .endpoint.is-up .endpoint-trigger .cardinality-icon { transform: rotate(-90deg); }
+    .endpoint.is-down .endpoint-trigger .cardinality-icon { transform: rotate(90deg); }
+
+    .endpoint.is-wrong .endpoint-trigger {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .endpoint.is-right-answer .endpoint-trigger {
+      border-color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .placeholder-mark {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .endpoint-caption {
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 50%;
+      width: max-content;
+      max-width: 130px;
+      transform: translateX(-50%);
+      color: var(--muted);
+      background: rgba(251, 252, 253, 0.93);
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .palette {
+      position: absolute;
+      z-index: 1001;
+      top: calc(100% + 9px);
+      left: 50%;
+      width: 224px;
+      padding: 7px;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #9eacb8;
+      border-radius: 7px;
+      box-shadow: 0 14px 35px rgba(21, 37, 52, 0.2);
+    }
+
+    .palette.flip-up { top: auto; bottom: calc(100% + 9px); }
+
+    .palette-choice {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 9px;
+      align-items: center;
+      width: 100%;
+      min-height: 44px;
+      padding: 6px 8px;
+      color: var(--ink);
+      background: #fff;
+      border: 0;
+      border-radius: 4px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .palette-choice:hover,
+    .palette-choice:focus-visible { background: var(--pale-blue); }
+    .palette-choice strong { display: block; font-size: 0.78rem; line-height: 1.15; }
+    .palette-choice small { color: var(--muted); font-size: 0.71rem; }
+
+    .cardinality-icon { display: block; width: 48px; height: 28px; overflow: visible; }
+    .cardinality-icon line,
+    .cardinality-icon circle,
+    .cardinality-icon polyline {
+      fill: #fff;
+      stroke: currentColor;
+      stroke-width: 2.6;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 17px 19px;
+      border-left: 5px solid;
+      border-radius: 5px;
+    }
+
+    .feedback[hidden] { display: none; }
+    .feedback.correct { color: #124f4a; background: var(--green-bg); border-color: var(--green); }
+    .feedback.incorrect { color: #732b2b; background: var(--red-bg); border-color: var(--red); }
+    .feedback.neutral { color: #654600; background: var(--amber-bg); border-color: var(--amber); }
+    .feedback h3 { margin: 0 0 8px; font-size: 1rem; }
+    .feedback p { margin: 6px 0 0; }
+    .feedback ul { margin: 8px 0 0; padding-left: 20px; }
+    .feedback li + li { margin-top: 7px; }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .button {
+      min-height: 44px;
+      padding: 10px 20px;
+      border: 2px solid var(--blue);
+      border-radius: 5px;
+      font-weight: 800;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .button-primary { color: #fff; background: var(--blue); }
+    .button-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .button-secondary { color: var(--blue); background: #fff; }
+    .button-secondary:hover { background: var(--pale-blue); }
+    .button[hidden] { display: none; }
+
+    .key-card {
+      position: sticky;
+      top: 16px;
+      padding: 20px;
+    }
+
+    .key-card h2 { margin-bottom: 4px; font-size: 1.05rem; letter-spacing: 0; }
+    .key-reminder { margin: 0 0 14px; color: var(--muted); font-size: 0.82rem; line-height: 1.35; }
+    .key-list { display: grid; gap: 8px; }
+    .key-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #e2e7ec;
+    }
+
+    .key-item strong { display: block; font-size: 0.78rem; line-height: 1.2; }
+    .key-item span { color: var(--muted); font-size: 0.76rem; }
+
+    .interstitial {
+      display: grid;
+      min-height: 580px;
+      place-items: center;
+      padding: 40px 28px;
+      text-align: center;
+    }
+
+    .interstitial-inner { max-width: 610px; }
+    .round-stamp {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 8px 12px;
+      color: var(--blue);
+      background: var(--pale-blue);
+      border: 1px solid #b8cfdf;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .interstitial h2 { font-size: clamp(1.9rem, 5vw, 3rem); }
+    .interstitial p { margin: 14px auto 24px; color: var(--muted); font-size: 1.08rem; }
+    .takeaway { max-width: 660px; }
+
+    .public-notice.shell {
+      padding: 0;
+      margin-top: 18px;
+      margin-bottom: 18px;
+    }
+
+    .public-notice-inner {
+      padding: 14px 18px;
+      color: var(--ink);
+      background: #f8fbfe;
+      border: 1px solid #b8cfdf;
+      border-left: 5px solid var(--blue);
+      border-radius: 6px;
+      box-shadow: 0 5px 18px rgba(21, 37, 52, 0.06);
+    }
+
+    .public-notice-inner p { margin: 0; }
+    .public-notice-inner p + p { margin-top: 2px; color: var(--muted); }
+
+    .resource-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .resource-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 14px;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.72);
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .resource-link:hover,
+    .resource-link:focus-visible {
+      color: var(--blue-dark);
+      background: #fff;
+      outline: none;
+    }
+
+    .educator-note {
+      grid-column: 1 / -1;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      box-shadow: var(--shadow);
+    }
+
+    .educator-note h2 { font-size: 1.3rem; }
+    .educator-note p { margin: 8px 0 0; }
+    .educator-note ul { margin: 10px 0 0; padding-left: 22px; }
+
+    .institutional-footer {
+      --footer-ink: #eeece6;
+      --footer-muted: #a8a69f;
+      --footer-signal: #a4bd83;
+      --footer-rule: rgba(238, 236, 230, 0.34);
+      padding: 0;
+      color: var(--footer-muted);
+      border-top: 1px solid var(--footer-rule);
+      background: #0c0d0d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .institutional-footer .footer-shell {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .institutional-footer a {
+      color: inherit;
+      text-decoration-color: var(--footer-signal);
+      text-underline-offset: 4px;
+    }
+
+    .institutional-footer a:hover,
+    .institutional-footer a:focus-visible { color: var(--footer-signal); }
+    .institutional-footer a:focus-visible { outline: 1px solid var(--footer-signal); outline-offset: 5px; }
+
+    .footer-top {
+      min-height: 138px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+
+    .institutional-footer .footer-path { margin: 0; color: var(--footer-muted); font-size: 1rem; }
+    .institutional-footer .back-to-top,
+    .institutional-footer .footer-motto { font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .institutional-footer .back-to-top { color: var(--footer-signal); }
+
+    .footer-tree {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr 1.55fr 0.58fr;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+
+    .footer-tree-column { min-width: 0; min-height: 170px; padding: 30px 28px 34px 0; }
+    .footer-tree-column + .footer-tree-column { padding-left: 28px; border-left: 1px solid var(--footer-rule); }
+    .institutional-footer .footer-tree-title {
+      display: inline-block;
+      color: var(--footer-ink);
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      line-height: 1.18;
+      text-decoration: none;
+    }
+    .institutional-footer .footer-tree-title.signal { color: var(--footer-signal); }
+
+    .footer-tree ul { position: relative; margin: 23px 0 0; padding: 0 0 0 19px; list-style: none; }
+    .footer-tree ul::before { position: absolute; top: 0; bottom: 0; left: 0; border-left: 1px solid var(--footer-rule); content: ""; }
+    .footer-tree li { position: relative; margin: 10px 0; padding-left: 2px; }
+    .footer-tree li::before { position: absolute; top: 0.75em; left: -19px; width: 12px; border-top: 1px solid var(--footer-rule); content: ""; }
+    .institutional-footer .footer-tree li a { color: var(--footer-muted); text-decoration: none; }
+
+    .footer-signature { padding: 34px 0 54px; }
+    .institutional-footer .footer-motto { margin: 0 0 3px; color: var(--footer-ink); }
+    .institutional-footer .footer-translation { margin: 0; color: var(--footer-muted); font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+    .institutional-footer .footer-founder { margin: 24px 0 0; color: var(--footer-muted); font-size: 0.78rem; }
+    .footer-resource-note { margin-top: 24px; padding-top: 22px; border-top: 1px solid rgba(238, 236, 230, 0.2); }
+    .institutional-footer .footer-resource-note p { margin: 4px 0; color: var(--footer-muted); font-size: 0.8rem; }
+
+    .completion-stage {
+      width: min(100%, 680px);
+      margin: 0 auto 24px;
+      padding: 18px 18px 15px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(18, 59, 99, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 59, 99, 0.035) 1px, transparent 1px),
+        #fbfcfd;
+      background-size: 24px 24px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .completion-erd { display: block; width: 100%; height: auto; }
+    .completion-entity,
+    .completion-link,
+    .completion-endpoint,
+    .completion-path-label,
+    .completion-heading { opacity: 0; }
+    .completion-entity { transform: translateY(7px); transform-box: fill-box; transform-origin: center; }
+    .completion-link {
+      stroke-dasharray: 320;
+      stroke-dashoffset: 320;
+    }
+    .completion-endpoint line,
+    .completion-endpoint circle,
+    .completion-endpoint polyline {
+      fill: #fff;
+      stroke: var(--blue-dark);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .completion-path-label {
+      margin: 8px 0 0;
+      color: var(--blue-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+    .completion-heading { margin-top: 0; }
+    .completion-bridge {
+      margin: 10px auto 0 !important;
+      color: var(--ink) !important;
+      font-weight: 700;
+    }
+
+    .completion-stage.is-animating .completion-entity-left { animation: completion-entity-in 420ms ease-out 80ms forwards; }
+    .completion-stage.is-animating .completion-entity-right { animation: completion-entity-in 420ms ease-out 220ms forwards; }
+    .completion-stage.is-animating .completion-link { animation: completion-line-draw 720ms ease-in-out 540ms forwards; }
+    .completion-stage.is-animating .completion-endpoint-left { animation: completion-fade-in 300ms ease-out 1060ms forwards; }
+    .completion-stage.is-animating .completion-endpoint-right { animation: completion-fade-in 300ms ease-out 1220ms forwards; }
+    .completion-stage.is-animating .completion-path-label { animation: completion-fade-in 360ms ease-out 2640ms forwards; }
+    .completion-stage.is-animating + .completion-heading { animation: completion-fade-in 380ms ease-out 2940ms forwards; }
+
+    .completion-stage.is-settled .completion-entity,
+    .completion-stage.is-settled .completion-link,
+    .completion-stage.is-settled .completion-endpoint,
+    .completion-stage.is-settled .completion-path-label,
+    .completion-stage.is-settled + .completion-heading {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+
+    .completion-stage.is-settled .completion-entity { transform: none; }
+
+    @keyframes completion-entity-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes completion-line-draw {
+      to { opacity: 1; stroke-dashoffset: 0; }
+    }
+
+    @keyframes completion-fade-in {
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 860px) {
+      body { background: linear-gradient(180deg, var(--navy) 0, var(--navy) 11rem, var(--page-bg) 11rem); }
+      .masthead { min-height: 100px; align-items: flex-start; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+      .lesson-tag { text-align: left; }
+      .layout { grid-template-columns: 1fr; }
+      .key-card { position: static; }
+      .key-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .key-item { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    @media (max-width: 600px) {
+      .shell { width: min(100% - 20px, 1180px); padding-top: 14px; }
+      .masthead { min-height: 128px; padding-inline: 2px; }
+      .brand { font-size: 0.7rem; }
+      .lesson-tag { font-size: 0.87rem; }
+      .question-header { padding: 19px 18px 16px; }
+      .question-body { padding: 19px 16px 22px; }
+      .question-header { align-items: flex-start; }
+      .counter { font-size: 0.72rem; }
+      .rules { padding: 14px 16px 14px 36px; }
+      .diagram-wrap, .diagram-art { min-height: 520px; }
+      .bridge-diagram, .bridge-diagram .diagram-art { min-height: 650px; }
+      .endpoint-trigger { width: 54px; height: 44px; }
+      .palette { width: 208px; }
+      .palette.edge-left { left: -12px; transform: none; }
+      .palette.edge-right { right: -12px; left: auto; transform: none; }
+      .actions { flex-direction: column; }
+      .button { width: 100%; }
+      .key-card { padding: 17px; }
+      .key-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .interstitial { min-height: 500px; padding: 36px 22px; }
+    }
+
+    /* Visual alignment with the Build the Entity activity family. */
+    body {
+      background: var(--page-bg);
+      line-height: 1.5;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 28px));
+      padding: 0 0 56px;
+    }
+
+    .masthead {
+      position: relative;
+      display: block;
+      min-height: 0;
+      padding: 34px 0 30px;
+      color: #fff;
+      background: linear-gradient(120deg, #112b4d, #1e5aa8);
+    }
+
+    .masthead::before { display: none; }
+    .masthead-content { padding-bottom: 0; }
+
+    .brand {
+      margin: 0 0 5px;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      opacity: 0.82;
+    }
+
+    h1 { font-size: clamp(2rem, 5vw, 3.4rem); letter-spacing: -0.025em; }
+
+    .lesson-tag {
+      max-width: 760px;
+      margin: 12px 0 0;
+      color: #fff;
+      font-size: 1.08rem;
+      text-align: left;
+    }
+
+    .progress-wrap { margin-top: 22px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 7px;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.24);
+      border-radius: 99px;
+    }
+    .progress-bar {
+      width: 14.285%;
+      height: 100%;
+      background: #fff;
+      transition: width 0.3s ease;
+    }
+
+    .layout {
+      grid-template-columns: minmax(0, 1fr) 224px;
+      gap: 20px;
+      padding-top: 28px;
+    }
+
+    .activity-card,
+    .key-card {
+      border: 1px solid #d7dde4;
+      border-radius: 13px;
+      box-shadow: 0 8px 28px rgba(22, 33, 43, 0.09);
+    }
+
+    .activity-card { overflow: visible; }
+
+    .question-header {
+      align-items: flex-start;
+      padding: clamp(20px, 3vw, 30px) clamp(20px, 3vw, 30px) 0;
+      border-bottom: 0;
+    }
+
+    .question-header .eyebrow {
+      margin: 0 0 4px;
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      opacity: 1;
+    }
+
+    .question-header h2 { margin: 0 0 8px; font-size: clamp(1.45rem, 3vw, 2rem); }
+    .counter { margin-top: 4px; font-size: 0.86rem; letter-spacing: 0; text-transform: none; }
+    .question-body { padding: 0 clamp(20px, 3vw, 30px) clamp(20px, 3vw, 30px); }
+    .instruction { max-width: 850px; margin: 0 0 19px; }
+
+    .rules-title {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .rules {
+      margin: 0 0 20px;
+      padding: 13px 18px 13px 38px;
+      background: #fafbfc;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+    }
+
+    .diagram-wrap,
+    .bridge-diagram {
+      min-height: 0;
+      overflow: visible;
+      isolation: isolate;
+      background: #fafbfc;
+      background-image: none;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .diagram-art,
+    .bridge-diagram .diagram-art { min-height: 0; }
+
+    .entity-box {
+      fill: #fff;
+      stroke: #40566c;
+      stroke-width: 2;
+      rx: 2;
+    }
+
+    .entity-box.associative {
+      fill: #f5f8fb;
+      stroke: var(--blue);
+      stroke-width: 2;
+      rx: 14;
+    }
+
+    .entity-text { font-size: 22px; letter-spacing: 0.7px; }
+    .relationship-line,
+    .unary-line { stroke: #607285; stroke-width: 2.25; }
+    .relationship-label-bg { fill: #fafbfc; }
+    .relationship-label { fill: #455667; font-size: 16px; font-weight: 700; }
+    .role-label { fill: #687786; font-size: 13px; font-weight: 700; }
+
+    .endpoint-trigger {
+      width: 38px;
+      height: 38px;
+      color: var(--blue);
+      background: #fff;
+      border: 2px dashed #8aa3bb;
+      border-radius: 8px;
+      box-shadow: none;
+    }
+
+    .endpoint-trigger.has-selection {
+      width: 54px;
+      padding: 0;
+      background: #fafbfc;
+      border-color: transparent;
+    }
+
+    .endpoint-trigger:hover { background: #edf4fc; border-color: var(--blue); }
+    .endpoint-trigger.has-selection:hover { border-style: solid; }
+    .endpoint.is-wrong .endpoint-trigger,
+    .endpoint.is-right-answer .endpoint-trigger { border-style: solid; }
+    .endpoint.is-right-answer .endpoint-trigger.has-selection {
+      background: #fafbfc;
+      border-color: transparent;
+    }
+    .endpoint-caption {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    .palette { width: 216px; padding: 6px; border-radius: 8px; box-shadow: 0 8px 28px rgba(22, 33, 43, 0.16); }
+    .palette-choice { min-height: 42px; }
+    .cardinality-icon { width: 46px; height: 26px; }
+    .cardinality-icon line,
+    .cardinality-icon circle,
+    .cardinality-icon polyline { stroke-width: 2.2; }
+
+    .feedback {
+      margin-top: 15px;
+      padding: 14px;
+      background: #eef5fd;
+      border: 0;
+      border-left: 4px solid var(--blue);
+      border-radius: 0;
+    }
+    .feedback.correct { color: #0b5b43; background: #ecfdf3; border-color: var(--green); }
+    .feedback.incorrect { color: #8f1b13; background: #fff1f0; border-color: var(--red); }
+    .feedback.neutral { color: #795200; background: #fff8e1; border-color: var(--amber); }
+    .feedback ul { margin: 7px 0 0; }
+    .feedback li + li { margin-top: 5px; }
+
+    .actions { align-items: center; margin-top: 21px; }
+    .button { min-height: 44px; padding: 10px 16px; border-radius: 8px; font-weight: 700; letter-spacing: 0; text-transform: none; }
+
+    .key-card { padding: 17px; }
+    .key-card h2 { font-size: 1rem; }
+    .key-list { gap: 4px; }
+    .key-item { grid-template-columns: 46px 1fr; gap: 7px; padding-top: 7px; }
+
+    .interstitial { min-height: 430px; }
+    .round-stamp { border-radius: 8px; }
+    .interstitial h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); }
+
+    @media (max-width: 860px) {
+      body { background: var(--page-bg); }
+      .masthead { min-height: 0; padding: 28px 0 26px; }
+      .lesson-tag { font-size: 1rem; }
+      .layout { grid-template-columns: 1fr; }
+      .key-card { position: static; }
+      .key-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .shell { width: min(100% - 28px, 1120px); padding-bottom: 38px; }
+      .masthead { min-height: 0; padding: 26px 0 24px; }
+      .brand { font-size: 0.72rem; }
+      .question-header { padding: 20px 18px 0; }
+      .question-body { padding: 0 18px 20px; }
+      .diagram-wrap,
+      .diagram-art,
+      .bridge-diagram,
+      .bridge-diagram .diagram-art { min-height: 0; }
+      .endpoint-trigger { width: 38px; height: 38px; }
+      .endpoint-trigger.has-selection { width: 52px; }
+      .key-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .actions { flex-direction: row; flex-wrap: wrap; }
+      .button { width: auto; flex: 1 1 130px; }
+      .public-notice.shell { margin-top: 12px; margin-bottom: 14px; }
+      .public-notice-inner { padding: 13px 15px; }
+      .completion-stage { padding: 12px 8px 11px; }
+      .completion-path-label { font-size: 0.69rem; letter-spacing: 0.075em; }
+    }
+
+    @media (max-width: 720px) {
+      .institutional-footer .footer-shell { width: min(100% - 28px, 1180px); }
+      .footer-top { min-height: 126px; align-items: flex-start; flex-direction: column; justify-content: center; gap: 20px; }
+      .footer-tree { grid-template-columns: 1fr; }
+      .footer-tree-column,
+      .footer-tree-column + .footer-tree-column { min-height: auto; padding: 24px 0 28px; border-top: 1px solid var(--footer-rule); border-left: 0; }
+      .footer-tree-column:first-child { border-top: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      .completion-stage.is-animating .completion-entity,
+      .completion-stage.is-animating .completion-link,
+      .completion-stage.is-animating .completion-endpoint,
+      .completion-stage.is-animating .completion-path-label,
+      .completion-stage.is-animating + .completion-heading {
+        animation: none !important;
+        opacity: 1;
+        stroke-dashoffset: 0;
+      }
+      .completion-stage.is-animating .completion-entity { transform: none; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="masthead">
+    <div class="shell masthead-content">
+      <div>
+        <p class="brand">Business Data Management · Interactive Activity</p>
+        <h1>Pick the Cardinality</h1>
+        <p class="lesson-tag">Practice translating business rules into minimum and maximum cardinality using Crow’s Foot notation.</p>
+        <nav class="resource-nav" aria-label="Activity resources">
+          <a class="resource-link" href="https://github.com/workingartifact/workingartifact.github.io/releases/latest/download/pick-the-cardinality.html">Download standalone HTML</a>
+          <a class="resource-link" href="https://workingartifact.github.io/">Working Artifact</a>
+        </nav>
+      </div>
+      <div class="progress-wrap" aria-label="Activity progress">
+        <div class="progress-label"><span id="progress-text">Question 1 of 7</span><span id="progress-percent">14%</span></div>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="shell public-notice" aria-label="Activity notice">
+    <div class="public-notice-inner">
+      <p><strong>Use this activity individually or with a small group.</strong></p>
+      <p>Choose the Crow’s Foot symbol at each relationship endpoint, then check your reasoning. No account is required, no answers are submitted, and no data is collected.</p>
+    </div>
+  </section>
+
+  <main class="shell layout">
+    <section class="activity-card" id="activity" aria-live="polite"></section>
+    <aside class="key-card" aria-labelledby="key-heading">
+      <h2 id="key-heading">Quick key</h2>
+      <p class="key-reminder">Minimum = optional or required.<br>Maximum = one or many.</p>
+      <div class="key-list" id="key-list"></div>
+    </aside>
+    <section class="educator-note" aria-labelledby="educator-heading">
+      <h2 id="educator-heading">For educators</h2>
+      <p>This three-round activity helps learners translate natural-language business rules into minimum and maximum cardinality using Crow’s Foot notation. It progresses from unary relationships to binary relationships and concludes with a bridge entity representing a three-way business fact.</p>
+      <ul>
+        <li>Runs as one self-contained HTML file in a modern browser.</li>
+        <li>Works for individual practice, pairs, small groups, or classroom projection.</li>
+        <li>Uses immediate explanatory feedback rather than scoring.</li>
+        <li>Stores no responses and uses no external scripts or services.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="institutional-footer">
+    <div class="footer-shell">
+      <div class="footer-top">
+        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+        <a class="back-to-top" href="#top">Back to top</a>
+      </div>
+      <nav class="footer-tree" aria-label="Institutional tree">
+        <div class="footer-tree-column footer-tree-root">
+          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/atelier.html#commissions">Commissions</a></li>
+            <li><a href="https://exapterendapter.com/atelier.html#projects">Projects</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+          <ul>
+            <li><a href="https://workingartifact.github.io/">Working Artifact</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+        </div>
+      </nav>
+      <div class="footer-signature">
+        <p class="footer-motto">QUAESTIO ET VERITAS</p>
+        <p class="footer-translation">Inquiry and Truth</p>
+        <p class="footer-founder">Josh Ayala · 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+        <div class="footer-resource-note">
+          <p>Created by Josh Ayala · <a href="https://workingartifact.github.io/">Working Artifact</a>.</p>
+          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+          <p>Free to use and share for educational purposes with attribution.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    'use strict';
+
+    const CARDINALITIES = Object.freeze({
+      one: {
+        label: 'Exactly one', short: '1..1', min: '1', max: '1',
+        description: 'mandatory one', marks: ['bar', 'bar']
+      },
+      zeroOne: {
+        label: 'Zero or one', short: '0..1', min: '0', max: '1',
+        description: 'optional one', marks: ['circle', 'bar']
+      },
+      oneMany: {
+        label: 'One or many', short: '1..M', min: '1', max: 'many',
+        description: 'mandatory many', marks: ['bar', 'crow']
+      },
+      zeroMany: {
+        label: 'Zero or many', short: '0..M', min: '0', max: 'many',
+        description: 'optional many', marks: ['circle', 'crow']
+      }
+    });
+
+    const QUESTIONS = [
+      {
+        round: 1, roundName: 'Unary', degree: 'unary', title: 'Employee Mentors',
+        relationship: 'Mentors', entities: ['EMPLOYEE'], roles: ['Mentor', 'Mentee'],
+        rules: [
+          'An employee may mentor zero or many other employees.',
+          'Every employee participating as a mentee must have exactly one mentor.'
+        ],
+        endpoints: [
+          { id: 'mentor', label: 'Mentor role', answer: 'one', side: 'down',
+            reason: '“must have exactly one mentor” makes the minimum 1 and the maximum 1.' },
+          { id: 'mentee', label: 'Mentee role', answer: 'zeroMany', side: 'down',
+            reason: '“may mentor zero or many” makes the minimum 0 and the maximum many.' }
+        ],
+        summary: 'Both ends involve EMPLOYEE, but they describe different roles. One mentee has exactly one mentor; one mentor may have zero or many mentees.'
+      },
+      {
+        round: 1, roundName: 'Unary', degree: 'unary', title: 'Person Marriage',
+        relationship: 'Is Married To', entities: ['PERSON'], roles: ['Person', 'Other person'],
+        rules: [
+          'A person may be married to zero or one other person.',
+          'The same rule applies in the opposite direction.'
+        ],
+        endpoints: [
+          { id: 'person-a', label: 'Person role', answer: 'zeroOne', side: 'down',
+            reason: '“may” makes the minimum 0, and “one” makes the maximum 1.' },
+          { id: 'person-b', label: 'Other person role', answer: 'zeroOne', side: 'down',
+            reason: 'The same rule in the opposite direction also gives minimum 0 and maximum 1.' }
+        ],
+        summary: 'The circle means optional participation (minimum zero). The bar means the maximum is one.'
+      },
+      {
+        round: 1, roundName: 'Unary', degree: 'unary', title: 'Course Prerequisites',
+        relationship: 'Prerequisite', entities: ['COURSE'], roles: ['Has prerequisite', 'Is prerequisite for'],
+        rules: [
+          'A course may require zero or many other courses as prerequisites.',
+          'A course may serve as a prerequisite for zero or many other courses.'
+        ],
+        endpoints: [
+          { id: 'has-prerequisite', label: 'Has prerequisite', answer: 'zeroMany', side: 'down',
+            reason: '“may require zero or many” makes the minimum 0 and the maximum many.' },
+          { id: 'prerequisite-for', label: 'Is prerequisite for', answer: 'zeroMany', side: 'down',
+            reason: '“may serve ... for zero or many” also makes the minimum 0 and the maximum many.' }
+        ],
+        summary: 'Zero or many at both ends makes this a unary many-to-many relationship, with optional participation in both roles.'
+      },
+      {
+        round: 2, roundName: 'Binary', degree: 'binary', title: 'Customer Orders',
+        relationship: 'Places', entities: ['CUSTOMER', 'ORDER'],
+        rules: [
+          'A customer may place zero or many orders.',
+          'Each order must be placed by exactly one customer.'
+        ],
+        endpoints: [
+          { id: 'customer', label: 'Near Customer', answer: 'one', side: 'left',
+            reason: 'For one ORDER, “exactly one customer” makes the CUSTOMER endpoint minimum 1 and maximum 1.' },
+          { id: 'order', label: 'Near Order', answer: 'zeroMany', side: 'right',
+            reason: 'For one CUSTOMER, “may place zero or many orders” makes the ORDER endpoint minimum 0 and maximum many.' }
+        ],
+        summary: 'A symbol beside an entity describes how many instances of that entity may participate for one instance at the opposite end.'
+      },
+      {
+        round: 2, roundName: 'Binary', degree: 'binary', title: 'Device Warranty',
+        relationship: 'Covered By', entities: ['DEVICE', 'WARRANTY'],
+        rules: [
+          'A device may have zero or one active warranty record.',
+          'Each warranty record must belong to exactly one device.'
+        ],
+        endpoints: [
+          { id: 'device', label: 'Near Device', answer: 'one', side: 'left',
+            reason: 'For one WARRANTY, “must belong to exactly one device” makes the DEVICE endpoint 1..1.' },
+          { id: 'warranty', label: 'Near Warranty', answer: 'zeroOne', side: 'right',
+            reason: 'For one DEVICE, “may have zero or one” makes the WARRANTY endpoint 0..1.' }
+        ],
+        summary: 'Both endpoints have a maximum of one. The difference is minimum cardinality: DEVICE is required, while WARRANTY is optional.'
+      },
+      {
+        round: 2, roundName: 'Binary', degree: 'binary', title: 'Club Membership',
+        relationship: 'Membership', entities: ['CLUB', 'MEMBER'],
+        rules: [
+          'Each club must have one or more members.',
+          'A member may belong to zero or many clubs.'
+        ],
+        endpoints: [
+          { id: 'club', label: 'Near Club', answer: 'zeroMany', side: 'left',
+            reason: 'For one MEMBER, “may belong to zero or many clubs” makes the CLUB endpoint 0..M.' },
+          { id: 'member', label: 'Near Member', answer: 'oneMany', side: 'right',
+            reason: 'For one CLUB, “must have one or more members” makes the MEMBER endpoint 1..M.' }
+        ],
+        summary: 'Both endpoints allow many. MEMBER is mandatory-many for a club; CLUB is optional-many for a member.'
+      },
+      {
+        round: 3, roundName: 'Bridge Entity', degree: 'bridge', title: 'Project Assignment',
+        relationship: 'Assignment', entities: ['EMPLOYEE', 'PROJECT', 'ROLE', 'ASSIGNMENT'],
+        rules: [
+          'An assignment records one employee working on one project in one role.',
+          'Every assignment must reference exactly one employee, exactly one project, and exactly one role.',
+          'An employee may participate in zero or many assignments.',
+          'A project must participate in one or more assignments.',
+          'A role may appear in zero or many assignments.'
+        ],
+        endpoints: [
+          { id: 'employee', label: 'Near Employee', answer: 'one', side: 'up',
+            reason: 'Each ASSIGNMENT must reference exactly one EMPLOYEE: minimum 1, maximum 1.' },
+          { id: 'employee-assignment', label: 'Assignment for Employee', answer: 'zeroMany', side: 'down',
+            reason: 'One EMPLOYEE may participate in zero or many ASSIGNMENT records: minimum 0, maximum many.' },
+          { id: 'project', label: 'Near Project', answer: 'one', side: 'left',
+            reason: 'Each ASSIGNMENT must reference exactly one PROJECT: minimum 1, maximum 1.' },
+          { id: 'project-assignment', label: 'Assignment for Project', answer: 'oneMany', side: 'right',
+            reason: 'One PROJECT must participate in one or more ASSIGNMENT records: minimum 1, maximum many.' },
+          { id: 'role', label: 'Near Role', answer: 'one', side: 'right',
+            reason: 'Each ASSIGNMENT must reference exactly one ROLE: minimum 1, maximum 1.' },
+          { id: 'role-assignment', label: 'Assignment for Role', answer: 'zeroMany', side: 'left',
+            reason: 'One ROLE may appear in zero or many ASSIGNMENT records: minimum 0, maximum many.' }
+        ],
+        summary: 'The bridge entity records the three-way business fact. Every ASSIGNMENT references exactly one Employee, one Project, and one Role; Project participation is required, while Employee and Role participation is optional.'
+      }
+    ];
+
+    const TRANSITIONS = {
+      1: { title: 'Round 1 complete', text: 'Unary relationships use one entity type in two roles.', next: 'Begin Binary' },
+      2: { title: 'Round 2 complete', text: 'Binary relationships connect two entity types.', next: 'Begin Bridge Problem' }
+    };
+
+    const activity = document.getElementById('activity');
+    const selections = {};
+    let questionIndex = 0;
+    let openPalette = null;
+    let completionAnimationTimers = [];
+
+    function cardinalityMarks(type) {
+      const definition = CARDINALITIES[type];
+      const mark = (kind, x) => {
+        if (kind === 'circle') return `<circle cx="${x}" cy="14" r="5.5"></circle>`;
+        if (kind === 'bar') return `<line x1="${x}" y1="5" x2="${x}" y2="23"></line>`;
+        return `<polyline points="${x + 10},3 ${x},14 ${x + 10},25"></polyline>`;
+      };
+      return `<line x1="4" y1="14" x2="48" y2="14"></line>
+        ${mark(definition.marks[0], 13)}
+        ${mark(definition.marks[1], 27)}`;
+    }
+
+    function cardinalityIcon(type, title = '') {
+      const definition = CARDINALITIES[type];
+      return `<svg class="cardinality-icon" viewBox="0 0 52 28" role="img" aria-label="${title || definition.label}">
+        ${cardinalityMarks(type)}
+      </svg>`;
+    }
+
+    function renderKey() {
+      document.getElementById('key-list').innerHTML = Object.entries(CARDINALITIES).map(([key, item]) => `
+        <div class="key-item">
+          ${cardinalityIcon(key)}
+          <div><strong>${item.label}</strong><span>${item.short}</span></div>
+        </div>`).join('');
+    }
+
+    function strongEntity(x, y, width, height, name) {
+      return `<g><rect class="entity-box" x="${x}" y="${y}" width="${width}" height="${height}"></rect>
+        <text class="entity-text" x="${x + width / 2}" y="${y + height / 2}">${name}</text></g>`;
+    }
+
+    function associativeEntity(x, y, width, height, name) {
+      return `<g><rect class="entity-box associative" x="${x}" y="${y}" width="${width}" height="${height}"></rect>
+        <text class="entity-text" x="${x + width / 2}" y="${y + height / 2}">${name}</text></g>`;
+    }
+
+    function relationshipLine(x1, y1, x2, y2) {
+      return `<line class="relationship-line" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`;
+    }
+
+    function relationshipLabel(x, y, text, width = 170) {
+      return `<rect class="relationship-label-bg" x="${x - width / 2}" y="${y - 20}" width="${width}" height="34" rx="4"></rect>
+        <text class="relationship-label" x="${x}" y="${y}">${text}</text>`;
+    }
+
+    function endpointSelector(endpoint, left, top, paletteClass = '') {
+      const selected = selections[endpoint.id];
+      const value = selected ? CARDINALITIES[selected].label : 'Not selected';
+      return `<div class="endpoint is-${endpoint.side}" data-endpoint="${endpoint.id}" style="left:${left}%;top:${top}%">
+        <button class="endpoint-trigger${selected ? ' has-selection' : ''}" type="button" aria-label="${endpoint.label}: ${value}. Choose cardinality" aria-expanded="false" data-open="${endpoint.id}">
+          ${selected ? cardinalityIcon(selected) : '<span class="placeholder-mark" aria-hidden="true">?</span>'}
+        </button>
+        <span class="endpoint-caption">${endpoint.label}</span>
+        <div class="palette ${paletteClass}" data-palette="${endpoint.id}" hidden>
+          ${Object.entries(CARDINALITIES).map(([key, item]) => `
+            <button class="palette-choice" type="button" data-choose="${key}" data-for="${endpoint.id}">
+              ${cardinalityIcon(key)}
+              <span><strong>${item.label}</strong><small>${item.short} · ${item.description}</small></span>
+            </button>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    function unaryLoop(question, mobile) {
+      const [a, b] = question.endpoints;
+      if (mobile) {
+        return `<div class="diagram-wrap" id="diagram">
+          <svg class="diagram-art" viewBox="0 0 400 300" aria-label="Unary ${question.entities[0]} relationship diagram" role="img">
+            ${strongEntity(70, 24, 260, 70, question.entities[0])}
+            <path class="unary-line" d="M140 94 L140 154 C140 224 260 224 260 154 L260 94"></path>
+            ${relationshipLabel(200, 238, question.relationship, 175)}
+            <text class="role-label" x="82" y="144">${question.roles[0]}</text>
+            <text class="role-label" x="318" y="144">${question.roles[1]}</text>
+          </svg>
+          ${endpointSelector({...a, side: 'up'}, 35, 39, 'edge-left')}
+          ${endpointSelector({...b, side: 'up'}, 65, 39, 'edge-right')}
+        </div>`;
+      }
+      return `<div class="diagram-wrap" id="diagram">
+        <svg class="diagram-art" viewBox="0 0 800 270" aria-label="Unary ${question.entities[0]} relationship diagram" role="img">
+          ${strongEntity(270, 24, 260, 68, question.entities[0])}
+          <path class="unary-line" d="M330 92 L330 145 C330 205 470 205 470 145 L470 92"></path>
+          ${relationshipLabel(400, 224, question.relationship, 190)}
+          <text class="role-label" x="238" y="130">${question.roles[0]}</text>
+          <text class="role-label" x="562" y="130">${question.roles[1]}</text>
+        </svg>
+        ${endpointSelector({...a, side: 'up'}, 41.25, 43, 'edge-left')}
+        ${endpointSelector({...b, side: 'up'}, 58.75, 43, 'edge-right')}
+      </div>`;
+    }
+
+    function binaryConnection(question, mobile) {
+      const [left, right] = question.endpoints;
+      if (mobile) {
+        return `<div class="diagram-wrap" id="diagram">
+          <svg class="diagram-art" viewBox="0 0 400 360" aria-label="${question.entities[0]} to ${question.entities[1]} relationship diagram" role="img">
+            ${relationshipLine(200, 94, 200, 266)}
+            ${strongEntity(90, 30, 220, 64, question.entities[0])}
+            ${strongEntity(90, 266, 220, 64, question.entities[1])}
+            ${relationshipLabel(200, 188, question.relationship, 175)}
+          </svg>
+          ${endpointSelector({...left, side: 'up'}, 50, 32, 'edge-left')}
+          ${endpointSelector({...right, side: 'down'}, 50, 68, 'edge-right flip-up')}
+        </div>`;
+      }
+      return `<div class="diagram-wrap" id="diagram">
+        <svg class="diagram-art" viewBox="0 0 800 220" aria-label="${question.entities[0]} to ${question.entities[1]} relationship diagram" role="img">
+          ${relationshipLine(280, 110, 520, 110)}
+          ${strongEntity(70, 78, 210, 64, question.entities[0])}
+          ${strongEntity(520, 78, 210, 64, question.entities[1])}
+          ${relationshipLabel(400, 88, question.relationship, 170)}
+        </svg>
+        ${endpointSelector(left, 37.5, 50, 'edge-left')}
+        ${endpointSelector(right, 62.5, 50, 'edge-right')}
+      </div>`;
+    }
+
+    function bridgeLayout(question, mobile) {
+      const e = Object.fromEntries(question.endpoints.map(item => [item.id, item]));
+      if (mobile) {
+        return `<div class="diagram-wrap bridge-diagram" id="diagram">
+          <svg class="diagram-art" viewBox="0 0 400 400" aria-label="Employee, Project, Role, and Assignment bridge entity diagram" role="img">
+            ${relationshipLine(200, 82, 200, 158)}
+            ${relationshipLine(180, 228, 100, 308)}
+            ${relationshipLine(220, 228, 300, 308)}
+            ${strongEntity(85, 22, 230, 60, 'EMPLOYEE')}
+            ${strongEntity(20, 308, 160, 60, 'PROJECT')}
+            ${strongEntity(220, 308, 160, 60, 'ROLE')}
+            ${associativeEntity(85, 158, 230, 70, 'ASSIGNMENT')}
+          </svg>
+          ${endpointSelector({...e.employee, side: 'up'}, 50, 25, 'edge-left')}
+          ${endpointSelector({...e['employee-assignment'], side: 'down'}, 50, 36, 'edge-right')}
+          ${endpointSelector(e.project, 29, 72, 'edge-left flip-up')}
+          ${endpointSelector(e['project-assignment'], 40, 61, 'edge-left')}
+          ${endpointSelector(e.role, 71, 72, 'edge-right flip-up')}
+          ${endpointSelector(e['role-assignment'], 60, 61, 'edge-right')}
+        </div>`;
+      }
+      return `<div class="diagram-wrap bridge-diagram" id="diagram">
+        <svg class="diagram-art" viewBox="0 0 800 340" aria-label="Employee, Project, Role, and Assignment bridge entity diagram" role="img">
+          ${relationshipLine(400, 80, 400, 165)}
+          ${relationshipLine(210, 200, 305, 200)}
+          ${relationshipLine(495, 200, 590, 200)}
+          ${strongEntity(295, 20, 210, 60, 'EMPLOYEE')}
+          ${strongEntity(20, 168, 190, 64, 'PROJECT')}
+          ${strongEntity(590, 168, 190, 64, 'ROLE')}
+          ${associativeEntity(305, 165, 190, 70, 'ASSIGNMENT')}
+        </svg>
+        ${endpointSelector({...e.employee, side: 'up'}, 50, 30, 'edge-left')}
+        ${endpointSelector({...e['employee-assignment'], side: 'down'}, 50, 43, 'edge-right')}
+        ${endpointSelector(e.project, 29, 59, 'edge-left')}
+        ${endpointSelector(e['project-assignment'], 36, 59, 'edge-left')}
+        ${endpointSelector(e.role, 71, 59, 'edge-right')}
+        ${endpointSelector(e['role-assignment'], 64, 59, 'edge-right')}
+      </div>`;
+    }
+
+    function renderDiagram(question) {
+      const mobile = window.innerWidth <= 600;
+      if (question.degree === 'unary') return unaryLoop(question, mobile);
+      if (question.degree === 'binary') return binaryConnection(question, mobile);
+      return bridgeLayout(question, mobile);
+    }
+
+    function updateProgress(position, complete = false) {
+      const percent = complete ? 100 : Math.round((position / QUESTIONS.length) * 100);
+      document.getElementById('progress-text').textContent = complete ? 'Activity complete' : `Question ${position} of ${QUESTIONS.length}`;
+      document.getElementById('progress-percent').textContent = `${percent}%`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+    }
+
+    function renderQuestion() {
+      const question = QUESTIONS[questionIndex];
+      const inRound = QUESTIONS.slice(0, questionIndex + 1).filter(q => q.round === question.round).length;
+      const roundTotal = QUESTIONS.filter(q => q.round === question.round).length;
+      openPalette = null;
+      updateProgress(questionIndex + 1);
+      activity.innerHTML = `
+        <div class="question-header">
+          <div><p class="eyebrow">Round ${question.round} · ${question.roundName}</p><h2>${question.title}</h2></div>
+          <div class="counter">${inRound} of ${roundTotal}</div>
+        </div>
+        <div class="question-body">
+          <p class="instruction">Read the rules, then choose the complete symbol at every endpoint.</p>
+          <p class="rules-title">Business rules</p>
+          <ul class="rules">${question.rules.map(rule => `<li>${rule}</li>`).join('')}</ul>
+          ${renderDiagram(question)}
+          <div class="feedback" id="feedback" role="status" tabindex="-1" hidden></div>
+          <div class="actions">
+            <button class="button button-secondary" id="check" type="button">Check</button>
+            <button class="button button-primary" id="continue" type="button" hidden>Continue</button>
+          </div>
+        </div>`;
+      bindQuestionEvents();
+    }
+
+    function closePalette(returnFocus = false) {
+      if (!openPalette) return;
+      const palette = activity.querySelector(`[data-palette="${openPalette}"]`);
+      const trigger = activity.querySelector(`[data-open="${openPalette}"]`);
+      const endpoint = activity.querySelector(`[data-endpoint="${openPalette}"]`);
+      if (palette) palette.hidden = true;
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      if (endpoint) endpoint.classList.remove('is-open');
+      const previous = trigger;
+      openPalette = null;
+      if (returnFocus && previous) previous.focus();
+    }
+
+    function openEndpointPalette(id) {
+      if (openPalette === id) { closePalette(true); return; }
+      closePalette(false);
+      const palette = activity.querySelector(`[data-palette="${id}"]`);
+      const trigger = activity.querySelector(`[data-open="${id}"]`);
+      if (!palette || !trigger) return;
+      const endpoint = activity.querySelector(`[data-endpoint="${id}"]`);
+      palette.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      if (endpoint) endpoint.classList.add('is-open');
+      openPalette = id;
+      palette.querySelector('.palette-choice').focus();
+    }
+
+    function chooseCardinality(endpointId, type) {
+      selections[endpointId] = type;
+      const endpoint = activity.querySelector(`[data-endpoint="${endpointId}"]`);
+      const trigger = endpoint.querySelector('.endpoint-trigger');
+      trigger.innerHTML = cardinalityIcon(type);
+      trigger.classList.add('has-selection');
+      trigger.setAttribute('aria-label', `${endpoint.querySelector('.endpoint-caption').textContent}: ${CARDINALITIES[type].label}. Choose cardinality`);
+      endpoint.classList.remove('is-wrong', 'is-right-answer');
+      closePalette(false);
+      trigger.focus();
+      const feedback = document.getElementById('feedback');
+      feedback.hidden = true;
+      document.getElementById('continue').hidden = true;
+    }
+
+    function checkAnswers() {
+      closePalette(false);
+      const question = QUESTIONS[questionIndex];
+      const unanswered = question.endpoints.filter(endpoint => !selections[endpoint.id]);
+      const feedback = document.getElementById('feedback');
+      const continueButton = document.getElementById('continue');
+
+      activity.querySelectorAll('.endpoint').forEach(node => node.classList.remove('is-wrong', 'is-right-answer'));
+      document.getElementById('diagram').classList.remove('is-correct');
+
+      if (unanswered.length) {
+        feedback.className = 'feedback neutral';
+        feedback.innerHTML = `<h3>Choose every endpoint first.</h3><p>${unanswered.map(item => item.label).join(', ')} ${unanswered.length === 1 ? 'still needs' : 'still need'} a cardinality symbol.</p>`;
+        feedback.hidden = false;
+        continueButton.hidden = true;
+        feedback.focus();
+        return;
+      }
+
+      const incorrect = question.endpoints.filter(endpoint => selections[endpoint.id] !== endpoint.answer);
+      question.endpoints.forEach(endpoint => {
+        const node = activity.querySelector(`[data-endpoint="${endpoint.id}"]`);
+        node.classList.add(selections[endpoint.id] === endpoint.answer ? 'is-right-answer' : 'is-wrong');
+      });
+
+      if (incorrect.length) {
+        feedback.className = 'feedback incorrect';
+        feedback.innerHTML = `<h3>Revisit ${incorrect.length === 1 ? 'this endpoint' : 'these endpoints'}.</h3>
+          <ul>${incorrect.map(endpoint => {
+            const answer = CARDINALITIES[endpoint.answer];
+            return `<li><strong>${endpoint.label}:</strong> ${answer.label} is needed. ${endpoint.reason} ${answer.min === '0' ? 'Circle' : 'Bar'} = minimum ${answer.min}; ${answer.max === 'many' ? 'crow’s foot' : 'bar'} = maximum ${answer.max}.</li>`;
+          }).join('')}</ul>
+          <p>Change the highlighted symbol${incorrect.length === 1 ? '' : 's'}, then check again.</p>`;
+        feedback.hidden = false;
+        continueButton.hidden = true;
+        feedback.focus();
+        return;
+      }
+
+      document.getElementById('diagram').classList.add('is-correct');
+      feedback.className = 'feedback correct';
+      if (question.degree === 'bridge') {
+        feedback.innerHTML = `<h3>Correct relationship</h3>
+          <ul>
+            <li><strong>Outer entity endpoints — Exactly one.</strong> Every ASSIGNMENT references exactly one Employee, one Project, and one Role. Bar + bar = 1..1.</li>
+            <li><strong>Employee assignments — Zero or many.</strong> An Employee may participate in zero or many assignments. Circle + crow’s foot = 0..M.</li>
+            <li><strong>Project assignments — One or many.</strong> A Project must participate in one or more assignments. Bar + crow’s foot = 1..M.</li>
+            <li><strong>Role assignments — Zero or many.</strong> A Role may participate in zero or many assignments. Circle + crow’s foot = 0..M.</li>
+          </ul>
+          <p><strong>${question.summary}</strong></p>`;
+      } else {
+        feedback.innerHTML = `<h3>Correct relationship</h3>
+          <ul>${question.endpoints.map(endpoint => {
+            const answer = CARDINALITIES[endpoint.answer];
+            return `<li><strong>${endpoint.label} — ${answer.label}.</strong> ${endpoint.reason} ${answer.min === '0' ? 'Circle' : 'Bar'} + ${answer.max === 'many' ? 'crow’s foot' : 'bar'} = ${answer.short}.</li>`;
+          }).join('')}</ul>
+          <p><strong>${question.summary}</strong></p>`;
+      }
+      feedback.hidden = false;
+      continueButton.hidden = false;
+      feedback.focus();
+    }
+
+    function continueActivity() {
+      const finishedQuestion = QUESTIONS[questionIndex];
+      if (questionIndex === QUESTIONS.length - 1) { renderComplete(); return; }
+      if (QUESTIONS[questionIndex + 1].round !== finishedQuestion.round) {
+        renderTransition(finishedQuestion.round);
+        return;
+      }
+      questionIndex += 1;
+      renderQuestion();
+      activity.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderTransition(round) {
+      const transition = TRANSITIONS[round];
+      updateProgress(questionIndex + 1);
+      activity.innerHTML = `<div class="interstitial">
+        <div class="interstitial-inner">
+          <span class="round-stamp">Round ${round} of 3</span>
+          <h2>${transition.title}</h2>
+          <p>${transition.text}</p>
+          <button class="button button-primary" id="next-round" type="button">${transition.next}</button>
+        </div>
+      </div>`;
+      document.getElementById('next-round').addEventListener('click', () => {
+        questionIndex += 1;
+        renderQuestion();
+      });
+      document.getElementById('next-round').focus();
+    }
+
+    function renderComplete() {
+      updateProgress(QUESTIONS.length, true);
+      activity.innerHTML = `<div class="interstitial">
+        <div class="interstitial-inner takeaway">
+          <span class="round-stamp">Activity complete</span>
+          <div class="completion-stage" id="completion-stage" aria-label="Completed relationship: one customer may place zero or many orders">
+            <svg class="completion-erd" viewBox="0 0 760 170" role="img" aria-labelledby="completion-diagram-title completion-diagram-desc">
+              <title id="completion-diagram-title">Resolved Customer and Order relationship</title>
+              <desc id="completion-diagram-desc">One customer may place zero or many orders. Each order belongs to exactly one customer.</desc>
+              <g class="completion-entity completion-entity-left">${strongEntity(20, 48, 210, 68, 'CUSTOMER')}</g>
+              <g class="completion-entity completion-entity-right">${strongEntity(530, 48, 210, 68, 'ORDER')}</g>
+              <line class="relationship-line completion-link" x1="230" y1="82" x2="530" y2="82"></line>
+              <rect class="relationship-label-bg" x="334" y="60" width="92" height="28"></rect>
+              <text class="relationship-label" x="380" y="78">Places</text>
+              <g class="completion-endpoint completion-endpoint-left" id="completion-left-symbol" transform="matrix(-1 0 0 1 282 68)">${cardinalityMarks('one')}</g>
+              <g class="completion-endpoint completion-endpoint-right" id="completion-right-symbol" transform="translate(482 68)">${cardinalityMarks('zeroMany')}</g>
+            </svg>
+            <p class="completion-path-label">Business rule → Cardinality → Model</p>
+          </div>
+          <h2 class="completion-heading">Pick the Cardinality — Complete</h2>
+          <p class="completion-bridge">Read the rule. Resolve the endpoints. Build the relationship.</p>
+          <p>Minimum cardinality tells us whether participation is optional or required.<br>Maximum cardinality tells us whether the relationship allows one or many.</p>
+          <div class="actions completion-actions">
+            <button class="button button-secondary" id="replay-animation" type="button">Replay Animation</button>
+            <button class="button button-primary" id="restart" type="button">Restart Activity</button>
+          </div>
+        </div>
+      </div>`;
+      document.getElementById('replay-animation').addEventListener('click', startCompletionAnimation);
+      document.getElementById('restart').addEventListener('click', restartActivity);
+      document.getElementById('restart').focus();
+      startCompletionAnimation();
+    }
+
+    function startCompletionAnimation() {
+      const stage = document.getElementById('completion-stage');
+      const leftSymbol = document.getElementById('completion-left-symbol');
+      const rightSymbol = document.getElementById('completion-right-symbol');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const setSymbols = (left, right) => {
+        leftSymbol.innerHTML = cardinalityMarks(left);
+        rightSymbol.innerHTML = cardinalityMarks(right);
+      };
+
+      completionAnimationTimers.forEach(window.clearTimeout);
+      completionAnimationTimers = [];
+      stage.classList.remove('is-animating', 'is-settled');
+      void stage.offsetWidth;
+      setSymbols('one', 'zeroMany');
+
+      if (prefersReducedMotion) {
+        stage.classList.add('is-settled');
+        return;
+      }
+
+      stage.classList.add('is-animating');
+      const sequence = [
+        [1360, 'one', 'one'],
+        [1640, 'zeroOne', 'zeroOne'],
+        [1920, 'oneMany', 'oneMany'],
+        [2200, 'zeroMany', 'zeroMany'],
+        [2500, 'one', 'zeroMany']
+      ];
+      sequence.forEach(([delay, left, right]) => {
+        completionAnimationTimers.push(window.setTimeout(() => setSymbols(left, right), delay));
+      });
+      completionAnimationTimers.push(window.setTimeout(() => stage.classList.add('is-settled'), 3340));
+    }
+
+    function restartActivity() {
+      completionAnimationTimers.forEach(window.clearTimeout);
+      completionAnimationTimers = [];
+      Object.keys(selections).forEach(key => delete selections[key]);
+      questionIndex = 0;
+      openPalette = null;
+      renderQuestion();
+    }
+
+    function bindQuestionEvents() {
+      activity.querySelectorAll('[data-open]').forEach(button => {
+        button.addEventListener('click', () => openEndpointPalette(button.dataset.open));
+        button.addEventListener('keydown', event => {
+          if (event.key === 'ArrowDown') { event.preventDefault(); openEndpointPalette(button.dataset.open); }
+        });
+      });
+      activity.querySelectorAll('[data-choose]').forEach(button => {
+        button.addEventListener('click', () => chooseCardinality(button.dataset.for, button.dataset.choose));
+        button.addEventListener('keydown', event => {
+          const choices = [...button.parentElement.querySelectorAll('.palette-choice')];
+          const index = choices.indexOf(button);
+          if (event.key === 'ArrowDown') { event.preventDefault(); choices[(index + 1) % choices.length].focus(); }
+          if (event.key === 'ArrowUp') { event.preventDefault(); choices[(index - 1 + choices.length) % choices.length].focus(); }
+          if (event.key === 'Escape') { event.preventDefault(); closePalette(true); }
+        });
+      });
+      document.getElementById('check').addEventListener('click', checkAnswers);
+      document.getElementById('continue').addEventListener('click', continueActivity);
+    }
+
+    document.addEventListener('click', event => {
+      if (openPalette && !event.target.closest(`[data-endpoint="${openPalette}"]`)) closePalette(false);
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && openPalette) closePalette(true);
+    });
+
+    let lastMobile = window.innerWidth <= 600;
+    window.addEventListener('resize', () => {
+      const mobile = window.innerWidth <= 600;
+      if (mobile !== lastMobile && activity.querySelector('.question-body')) {
+        lastMobile = mobile;
+        renderQuestion();
+      }
+    });
+
+    renderKey();
+    renderQuestion();
+  </script>
+</body>
+</html>
