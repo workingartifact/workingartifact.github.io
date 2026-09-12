@@ -15,6 +15,19 @@ import android.view.View;
 public class TeleprompterView extends View {
     public interface ReadingLineListener { void onChanged(int percent); }
 
+    private static final int[] TEXT_COLORS = new int[]{
+            Color.WHITE,
+            Color.BLACK,
+            Color.rgb(239, 83, 80),
+            Color.rgb(255, 235, 59),
+            Color.rgb(164, 189, 131),
+            Color.rgb(77, 208, 225)
+    };
+
+    private static final String[] TEXT_COLOR_NAMES = new String[]{
+            "White", "Black", "Red", "Yellow", "Green", "Cyan"
+    };
+
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint guidePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint shadePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -29,8 +42,13 @@ public class TeleprompterView extends View {
     private float maxScrollOffset = 0f;
     private boolean running = false;
     private boolean draggingGuide = false;
+    private boolean draggingText = false;
+    private boolean resumeAfterManualDrag = false;
+    private float touchStartY = 0f;
+    private float touchStartOffset = 0f;
     private long lastFrameMs = 0L;
     private int shadeMode = 1;
+    private int textColorIndex = 0;
     private Integer countdownValue = null;
     private ReadingLineListener readingLineListener;
 
@@ -39,9 +57,8 @@ public class TeleprompterView extends View {
 
     private void init() {
         setWillNotDraw(false);
-        textPaint.setColor(Color.WHITE);
+        applyTextColor();
         textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
         guidePaint.setColor(Color.rgb(164, 189, 131));
         guidePaint.setStrokeWidth(dp(2));
         guideGripPaint.setColor(Color.rgb(164, 189, 131));
@@ -52,7 +69,7 @@ public class TeleprompterView extends View {
         countdownPaint.setShadowLayer(dp(4), 0, dp(2), Color.BLACK);
     }
 
-    public void configure(String text, int textSize, int readingLine, int speed, int backgroundMode) {
+    public void configure(String text, int textSize, int readingLine, int speed, int backgroundMode, int colorIndex) {
         script = (text == null || text.trim().isEmpty())
                 ? "Paste a script in EXAPTER ENDAPTER Prompter, then relaunch the overlay."
                 : text;
@@ -60,6 +77,7 @@ public class TeleprompterView extends View {
         readingLinePercent = readingLine;
         speedDpPerSecond = speed;
         shadeMode = backgroundMode;
+        setTextColorIndex(colorIndex);
         scrollOffset = 0f;
         running = false;
         rebuildLayout();
@@ -75,6 +93,27 @@ public class TeleprompterView extends View {
         invalidate();
     }
     public int getTextSizeRounded() { return Math.round(textSizeSp); }
+
+    public void setTextColorIndex(int index) {
+        textColorIndex = Math.max(0, Math.min(TEXT_COLORS.length - 1, index));
+        applyTextColor();
+        invalidate();
+    }
+
+    public int getTextColorIndex() { return textColorIndex; }
+    public int getTextColor() { return TEXT_COLORS[textColorIndex]; }
+    public int getTextColorCount() { return TEXT_COLORS.length; }
+    public String getTextColorName() { return TEXT_COLOR_NAMES[textColorIndex]; }
+
+    private void applyTextColor() {
+        int color = TEXT_COLORS[Math.max(0, Math.min(TEXT_COLORS.length - 1, textColorIndex))];
+        textPaint.setColor(color);
+        if (color == Color.BLACK) {
+            textPaint.setShadowLayer(dp(2.4f), 0, dp(1), Color.WHITE);
+        } else {
+            textPaint.setShadowLayer(dp(2.4f), 0, dp(1), Color.BLACK);
+        }
+    }
 
     public void setReadingLine(int percent) {
         readingLinePercent = Math.max(15, Math.min(85, percent));
@@ -149,23 +188,49 @@ public class TeleprompterView extends View {
         float guideY = getHeight() * (readingLinePercent / 100f);
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                draggingGuide = Math.abs(event.getY() - guideY) <= dp(28);
-                return draggingGuide;
-            case MotionEvent.ACTION_MOVE:
-                if (!draggingGuide) return false;
-                setReadingLine(Math.round(100f * event.getY() / Math.max(1, getHeight())));
-                if (readingLineListener != null) readingLineListener.onChanged(getReadingLineRounded());
+                draggingGuide = event.getX() >= getWidth() - dp(70)
+                        && Math.abs(event.getY() - guideY) <= dp(32);
+                draggingText = !draggingGuide;
+                if (draggingText) {
+                    touchStartY = event.getY();
+                    touchStartOffset = scrollOffset;
+                    resumeAfterManualDrag = running;
+                    running = false;
+                }
+                getParent().requestDisallowInterceptTouchEvent(true);
                 return true;
+
+            case MotionEvent.ACTION_MOVE:
+                if (draggingGuide) {
+                    setReadingLine(Math.round(100f * event.getY() / Math.max(1, getHeight())));
+                    if (readingLineListener != null) readingLineListener.onChanged(getReadingLineRounded());
+                    return true;
+                }
+                if (draggingText) {
+                    float delta = touchStartY - event.getY();
+                    scrollOffset = Math.max(0f, Math.min(maxScrollOffset, touchStartOffset + delta));
+                    invalidate();
+                    return true;
+                }
+                return true;
+
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (draggingGuide) {
                     draggingGuide = false;
                     if (readingLineListener != null) readingLineListener.onChanged(getReadingLineRounded());
-                    return true;
                 }
-                return false;
+                if (draggingText) {
+                    draggingText = false;
+                    boolean resume = resumeAfterManualDrag;
+                    resumeAfterManualDrag = false;
+                    if (resume && event.getActionMasked() == MotionEvent.ACTION_UP) start();
+                    else invalidate();
+                }
+                getParent().requestDisallowInterceptTouchEvent(false);
+                return true;
         }
-        return false;
+        return true;
     }
 
     @Override
