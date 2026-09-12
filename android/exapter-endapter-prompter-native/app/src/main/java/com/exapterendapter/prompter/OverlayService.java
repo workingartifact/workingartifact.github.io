@@ -46,6 +46,7 @@ public class OverlayService extends Service {
     private int countdownSeconds = 0;
     private TextView speedLabel;
     private TextView textSizeLabel;
+    private Button colorButton;
 
     @Override
     public void onCreate() {
@@ -121,6 +122,7 @@ public class OverlayService extends Service {
         Button textSmaller = miniButton("A−", 40);
         textSizeLabel = chip("34", INK, false);
         Button textLarger = miniButton("A+", 40);
+        colorButton = miniButton("●", 34);
         Button hide = miniButton("Hide", 48);
         Button close = miniButton("×", 34);
 
@@ -132,6 +134,7 @@ public class OverlayService extends Service {
         controls.addView(textSmaller);
         controls.addView(textSizeLabel, new LinearLayout.LayoutParams(dp(38), dp(38)));
         controls.addView(textLarger);
+        controls.addView(colorButton);
         controls.addView(hide);
         controls.addView(close);
 
@@ -235,6 +238,7 @@ public class OverlayService extends Service {
         faster.setOnClickListener(v -> setSpeed(prompter.getSpeedRounded() + 2));
         textSmaller.setOnClickListener(v -> setTextSize(prompter.getTextSizeRounded() - 2));
         textLarger.setOnClickListener(v -> setTextSize(prompter.getTextSizeRounded() + 2));
+        colorButton.setOnClickListener(v -> cycleTextColor());
         hide.setOnClickListener(v -> {
             controls.setVisibility(View.GONE);
             expand.setVisibility(View.VISIBLE);
@@ -272,10 +276,22 @@ public class OverlayService extends Service {
         refreshLiveLabels();
     }
 
+    private void cycleTextColor() {
+        if (prompter == null) return;
+        int next = (prompter.getTextColorIndex() + 1) % prompter.getTextColorCount();
+        prompter.setTextColorIndex(next);
+        prefs.edit().putInt("textColor", next).apply();
+        refreshLiveLabels();
+    }
+
     private void refreshLiveLabels() {
         if (prompter == null) return;
         if (speedLabel != null) speedLabel.setText(String.valueOf(prompter.getSpeedRounded()));
         if (textSizeLabel != null) textSizeLabel.setText(String.valueOf(prompter.getTextSizeRounded()));
+        if (colorButton != null) {
+            colorButton.setTextColor(prompter.getTextColor());
+            colorButton.setContentDescription("Text color: " + prompter.getTextColorName());
+        }
     }
 
     private void beginScrollWithCountdown(Button play) {
@@ -311,9 +327,10 @@ public class OverlayService extends Service {
         int line = prefs.getInt("readingLine", 55);
         int speed = prefs.getInt("speed", 32);
         int bg = prefs.getInt("background", 1);
+        int textColor = prefs.getInt("textColor", 0);
         int countdownIndex = prefs.getInt("countdown", 1);
         countdownSeconds = countdownIndex == 1 ? 3 : countdownIndex == 2 ? 5 : 0;
-        if (prompter != null) prompter.configure(text, size, line, speed, bg);
+        if (prompter != null) prompter.configure(text, size, line, speed, bg, textColor);
         refreshLiveLabels();
     }
 
@@ -408,6 +425,7 @@ public class OverlayService extends Service {
             promptParams = null;
             speedLabel = null;
             textSizeLabel = null;
+            colorButton = null;
         }
         if (gridAdded && gridView != null) {
             try { wm.removeView(gridView); } catch (Exception ignored) { }
