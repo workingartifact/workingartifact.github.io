@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
     private SharedPreferences prefs;
     private EditText script;
     private Spinner promptBackground;
+    private Spinner textColor;
     private Spinner countdown;
     private CheckBox grid;
     private TextView permissionStatus;
@@ -89,7 +90,7 @@ public class MainActivity extends Activity {
         brand.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         root.addView(brand);
 
-        TextView subtitle = text("Native Overlay Prompter — v0.2", 14, MUTED);
+        TextView subtitle = text("Native Overlay Prompter — v0.3", 14, MUTED);
         subtitle.setPadding(0, dp(2), 0, dp(16));
         root.addView(subtitle);
 
@@ -122,7 +123,7 @@ public class MainActivity extends Activity {
 
         root.addView(sectionTitle("OVERLAY DEFAULTS"));
         TextView liveControls = text(
-                "Adjust the floating window directly: drag EE to move it, drag the ↘ corner to resize it, drag the green reading line up or down, and use −/+ and A−/A+ in the floating bar for speed and text size.",
+                "Adjust the floating window directly: drag EE to move it, drag the ↘ corner to resize it, drag the green grip to move the reading line, swipe/drag the scrolling text to move backward or forward through the script, and use −/+ and A−/A+ in the floating bar for speed and text size. Tap ● to cycle text colors.",
                 13, MUTED);
         liveControls.setLineSpacing(0, 1.15f);
         liveControls.setPadding(0, 0, 0, dp(10));
@@ -131,6 +132,10 @@ public class MainActivity extends Activity {
         root.addView(label("Prompt background"));
         promptBackground = spinner(new String[]{"Clear", "Light shade", "Dark shade"});
         root.addView(promptBackground);
+
+        root.addView(label("Text color"));
+        textColor = spinner(new String[]{"White", "Black", "Red", "Yellow", "Green", "Cyan"});
+        root.addView(textColor);
 
         root.addView(label("Countdown before scroll"));
         countdown = spinner(new String[]{"None", "3 seconds", "5 seconds"});
@@ -251,6 +256,7 @@ public class MainActivity extends Activity {
     private void loadSettings() {
         script.setText(prefs.getString("script", ""));
         promptBackground.setSelection(prefs.getInt("background", 1));
+        textColor.setSelection(prefs.getInt("textColor", 0));
         countdown.setSelection(prefs.getInt("countdown", 1));
         grid.setChecked(prefs.getBoolean("grid", false));
     }
@@ -259,6 +265,7 @@ public class MainActivity extends Activity {
         prefs.edit()
                 .putString("script", script.getText().toString())
                 .putInt("background", promptBackground.getSelectedItemPosition())
+                .putInt("textColor", textColor.getSelectedItemPosition())
                 .putInt("countdown", countdown.getSelectedItemPosition())
                 .putBoolean("grid", grid.isChecked())
                 .apply();
