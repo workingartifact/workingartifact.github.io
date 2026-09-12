@@ -2,3 +2,8 @@
 .prompt-wrap{background:var(--prompt-bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 .prompt-track{top:calc(var(--reading-line-top) - 6%)!important}
 .guide{top:var(--reading-line-top)!important}
+@media (min-width:760px){.stage{aspect-ratio:16/9!important;max-height:none!important}}
+@media (orientation:landscape){
+  .stage{aspect-ratio:16/9!important;width:min(100%,calc(72dvh * 16 / 9))!important;height:auto!important;max-height:none!important;margin-left:auto!important;margin-right:auto!important}
+  .stage video{object-fit:contain!important}
+}
