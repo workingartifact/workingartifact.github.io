@@ -9,24 +9,30 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class TeleprompterView extends View {
+    public interface ReadingLineListener { void onChanged(int percent); }
+
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint guidePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint shadePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint countdownPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint guideGripPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private StaticLayout layout;
     private String script = "";
     private float textSizeSp = 34f;
-    private float readingLinePercent = 50f;
+    private float readingLinePercent = 55f;
     private float speedDpPerSecond = 32f;
     private float scrollOffset = 0f;
     private float maxScrollOffset = 0f;
     private boolean running = false;
+    private boolean draggingGuide = false;
     private long lastFrameMs = 0L;
     private int shadeMode = 1;
     private Integer countdownValue = null;
+    private ReadingLineListener readingLineListener;
 
     public TeleprompterView(Context context) { super(context); init(); }
     public TeleprompterView(Context context, AttributeSet attrs) { super(context, attrs); init(); }
@@ -38,6 +44,7 @@ public class TeleprompterView extends View {
         textPaint.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
         guidePaint.setColor(Color.rgb(164, 189, 131));
         guidePaint.setStrokeWidth(dp(2));
+        guideGripPaint.setColor(Color.rgb(164, 189, 131));
         shadePaint.setColor(Color.argb(42, 0, 0, 0));
         countdownPaint.setColor(Color.WHITE);
         countdownPaint.setTextAlign(Paint.Align.CENTER);
@@ -59,11 +66,22 @@ public class TeleprompterView extends View {
         invalidate();
     }
 
-    public void setSpeed(int speed) {
-        speedDpPerSecond = Math.max(1, speed);
-    }
-
+    public void setSpeed(int speed) { speedDpPerSecond = Math.max(1, speed); }
     public int getSpeedRounded() { return Math.round(speedDpPerSecond); }
+
+    public void setTextSizeSp(int textSize) {
+        textSizeSp = Math.max(18, Math.min(72, textSize));
+        rebuildLayout();
+        invalidate();
+    }
+    public int getTextSizeRounded() { return Math.round(textSizeSp); }
+
+    public void setReadingLine(int percent) {
+        readingLinePercent = Math.max(15, Math.min(85, percent));
+        invalidate();
+    }
+    public int getReadingLineRounded() { return Math.round(readingLinePercent); }
+    public void setReadingLineListener(ReadingLineListener listener) { readingLineListener = listener; }
 
     public void start() {
         if (layout == null) rebuildLayout();
@@ -72,11 +90,7 @@ public class TeleprompterView extends View {
         postOnAnimation(frameRunnable);
     }
 
-    public void pause() {
-        running = false;
-        invalidate();
-    }
-
+    public void pause() { running = false; invalidate(); }
     public boolean isRunning() { return running; }
 
     public void reset() {
@@ -86,10 +100,7 @@ public class TeleprompterView extends View {
         invalidate();
     }
 
-    public void setCountdown(Integer value) {
-        countdownValue = value;
-        invalidate();
-    }
+    public void setCountdown(Integer value) { countdownValue = value; invalidate(); }
 
     private final Runnable frameRunnable = new Runnable() {
         @Override public void run() {
@@ -134,6 +145,30 @@ public class TeleprompterView extends View {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float guideY = getHeight() * (readingLinePercent / 100f);
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                draggingGuide = Math.abs(event.getY() - guideY) <= dp(28);
+                return draggingGuide;
+            case MotionEvent.ACTION_MOVE:
+                if (!draggingGuide) return false;
+                setReadingLine(Math.round(100f * event.getY() / Math.max(1, getHeight())));
+                if (readingLineListener != null) readingLineListener.onChanged(getReadingLineRounded());
+                return true;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (draggingGuide) {
+                    draggingGuide = false;
+                    if (readingLineListener != null) readingLineListener.onChanged(getReadingLineRounded());
+                    return true;
+                }
+                return false;
+        }
+        return false;
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -144,6 +179,7 @@ public class TeleprompterView extends View {
 
         float guideY = getHeight() * (readingLinePercent / 100f);
         canvas.drawLine(dp(10), guideY, getWidth() - dp(10), guideY, guidePaint);
+        canvas.drawCircle(getWidth() - dp(18), guideY, dp(6), guideGripPaint);
 
         if (layout != null && layout.getLineCount() > 0) {
             float firstCenter = (layout.getLineTop(0) + layout.getLineBottom(0)) / 2f;
