@@ -43,7 +43,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: exapter-endapter-prompter-native-v0.1
+          name: exapter-endapter-prompter-native-v0.2
           path: android/exapter-endapter-prompter-native/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
@@ -51,13 +51,13 @@ jobs:
         run: |
           mkdir -p downloads
           cp android/exapter-endapter-prompter-native/app/build/outputs/apk/debug/app-debug.apk \
-             downloads/exapter-endapter-prompter-native-v0.1.apk
+             downloads/exapter-endapter-prompter-native-v0.2.apk
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add downloads/exapter-endapter-prompter-native-v0.1.apk
+          git add downloads/exapter-endapter-prompter-native-v0.2.apk
           if git diff --cached --quiet; then
             echo 'APK unchanged; nothing to publish.'
           else
-            git commit -m 'Publish native prompter v0.1 APK [skip ci]'
+            git commit -m 'Publish native prompter v0.2 APK [skip ci]'
             git push
           fi
