@@ -1,0 +1,4 @@
+:root{--reading-line-top:50%;--prompt-bg:rgba(0,0,0,.16)}
+.prompt-wrap{background:var(--prompt-bg)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.prompt-track{top:calc(var(--reading-line-top) - 6%)!important}
+.guide{top:var(--reading-line-top)!important}
