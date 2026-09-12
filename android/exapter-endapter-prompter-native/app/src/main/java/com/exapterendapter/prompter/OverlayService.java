@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ public class OverlayService extends Service {
 
     private WindowManager wm;
     private WindowManager.LayoutParams promptParams;
-    private LinearLayout promptRoot;
+    private FrameLayout promptRoot;
     private LinearLayout controls;
     private TeleprompterView prompter;
     private GridOverlayView gridView;
@@ -43,6 +44,8 @@ public class OverlayService extends Service {
     private SharedPreferences prefs;
     private Handler handler;
     private int countdownSeconds = 0;
+    private TextView speedLabel;
+    private TextView textSizeLabel;
 
     @Override
     public void onCreate() {
@@ -75,9 +78,7 @@ public class OverlayService extends Service {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (promptRoot != null) {
-            handler.postDelayed(this::applyWindowGeometry, 180);
-        }
+        if (promptRoot != null) handler.postDelayed(this::applyWindowGeometry, 180);
     }
 
     private void showOverlay() {
@@ -88,59 +89,66 @@ public class OverlayService extends Service {
             return;
         }
 
-        promptRoot = new LinearLayout(this);
-        promptRoot.setOrientation(LinearLayout.VERTICAL);
+        promptRoot = new FrameLayout(this);
         promptRoot.setBackgroundColor(Color.TRANSPARENT);
+
+        LinearLayout shell = new LinearLayout(this);
+        shell.setOrientation(LinearLayout.VERTICAL);
+        shell.setBackgroundColor(Color.TRANSPARENT);
+        promptRoot.addView(shell, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
 
         LinearLayout toolbar = new LinearLayout(this);
         toolbar.setOrientation(LinearLayout.HORIZONTAL);
         toolbar.setGravity(Gravity.CENTER_VERTICAL);
-        toolbar.setPadding(dp(6), dp(4), dp(6), dp(4));
+        toolbar.setPadding(dp(5), dp(4), dp(5), dp(4));
         toolbar.setBackgroundColor(Color.argb(230, 12, 13, 13));
 
-        TextView dragHandle = new TextView(this);
-        dragHandle.setText("EE");
-        dragHandle.setTextColor(ACCENT);
-        dragHandle.setTextSize(13);
-        dragHandle.setGravity(Gravity.CENTER);
-        dragHandle.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-        dragHandle.setPadding(dp(10), dp(7), dp(10), dp(7));
-        toolbar.addView(dragHandle, new LinearLayout.LayoutParams(dp(48), ViewGroup.LayoutParams.WRAP_CONTENT));
+        TextView dragHandle = chip("EE", ACCENT, true);
+        toolbar.addView(dragHandle, new LinearLayout.LayoutParams(dp(42), dp(38)));
 
         controls = new LinearLayout(this);
         controls.setOrientation(LinearLayout.HORIZONTAL);
         controls.setGravity(Gravity.CENTER_VERTICAL);
-        toolbar.addView(controls, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        toolbar.addView(controls, new LinearLayout.LayoutParams(0, dp(38), 1f));
 
-        Button play = miniButton("▶");
-        Button reset = miniButton("↺");
-        Button slower = miniButton("−");
-        Button faster = miniButton("+");
-        TextView speedLabel = new TextView(this);
-        speedLabel.setTextColor(INK);
-        speedLabel.setTextSize(11);
-        speedLabel.setGravity(Gravity.CENTER);
-        speedLabel.setPadding(dp(5), 0, dp(5), 0);
-        Button hide = miniButton("Hide");
-        Button close = miniButton("×");
+        Button play = miniButton("▶", 34);
+        Button reset = miniButton("↺", 34);
+        Button slower = miniButton("−", 32);
+        speedLabel = chip("32", INK, false);
+        Button faster = miniButton("+", 32);
+        Button textSmaller = miniButton("A−", 40);
+        textSizeLabel = chip("34", INK, false);
+        Button textLarger = miniButton("A+", 40);
+        Button hide = miniButton("Hide", 48);
+        Button close = miniButton("×", 34);
 
         controls.addView(play);
         controls.addView(reset);
         controls.addView(slower);
-        controls.addView(speedLabel, new LinearLayout.LayoutParams(dp(58), dp(38)));
+        controls.addView(speedLabel, new LinearLayout.LayoutParams(dp(38), dp(38)));
         controls.addView(faster);
+        controls.addView(textSmaller);
+        controls.addView(textSizeLabel, new LinearLayout.LayoutParams(dp(38), dp(38)));
+        controls.addView(textLarger);
         controls.addView(hide);
         controls.addView(close);
 
-        Button expand = miniButton("Show");
+        Button expand = miniButton("Show", 50);
         expand.setVisibility(View.GONE);
         toolbar.addView(expand);
 
         prompter = new TeleprompterView(this);
-        promptRoot.addView(toolbar, new LinearLayout.LayoutParams(
+        shell.addView(toolbar, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(46)));
-        promptRoot.addView(prompter, new LinearLayout.LayoutParams(
+        shell.addView(prompter, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+
+        TextView resizeHandle = chip("↘", ACCENT, true);
+        resizeHandle.setBackgroundColor(Color.argb(220, 12, 13, 13));
+        FrameLayout.LayoutParams resizeLp = new FrameLayout.LayoutParams(dp(42), dp(42), Gravity.BOTTOM | Gravity.END);
+        promptRoot.addView(resizeHandle, resizeLp);
 
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -157,17 +165,53 @@ public class OverlayService extends Service {
             float startRawX, startRawY;
             int startX, startY;
             @Override public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                     startRawX = event.getRawX();
                     startRawY = event.getRawY();
                     startX = promptParams.x;
                     startY = promptParams.y;
                     return true;
                 }
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
                     promptParams.x = startX + Math.round(event.getRawX() - startRawX);
                     promptParams.y = startY + Math.round(event.getRawY() - startRawY);
-                    try { wm.updateViewLayout(promptRoot, promptParams); } catch (Exception ignored) { }
+                    clampWindowPosition();
+                    updateWindow();
+                    return true;
+                }
+                if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                    saveWindowGeometry();
+                    return true;
+                }
+                return true;
+            }
+        });
+
+        resizeHandle.setOnTouchListener(new View.OnTouchListener() {
+            float startRawX, startRawY;
+            int startW, startH;
+            @Override public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    startRawX = event.getRawX();
+                    startRawY = event.getRawY();
+                    startW = promptParams.width;
+                    startH = promptParams.height;
+                    return true;
+                }
+                if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+                    int screenW = getResources().getDisplayMetrics().widthPixels;
+                    int screenH = getResources().getDisplayMetrics().heightPixels;
+                    int desiredW = startW + Math.round(event.getRawX() - startRawX);
+                    int desiredH = startH + Math.round(event.getRawY() - startRawY);
+                    int maxW = Math.max(dp(280), screenW - Math.max(0, promptParams.x));
+                    int maxH = Math.max(dp(170), screenH - Math.max(0, promptParams.y));
+                    promptParams.width = Math.max(dp(280), Math.min(desiredW, maxW));
+                    promptParams.height = Math.max(dp(170), Math.min(desiredH, maxH));
+                    updateWindow();
+                    return true;
+                }
+                if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                    saveWindowGeometry();
                     return true;
                 }
                 return true;
@@ -187,16 +231,10 @@ public class OverlayService extends Service {
             prompter.reset();
             play.setText("▶");
         });
-        slower.setOnClickListener(v -> {
-            int next = Math.max(8, prompter.getSpeedRounded() - 2);
-            prompter.setSpeed(next);
-            speedLabel.setText(next + "");
-        });
-        faster.setOnClickListener(v -> {
-            int next = Math.min(90, prompter.getSpeedRounded() + 2);
-            prompter.setSpeed(next);
-            speedLabel.setText(next + "");
-        });
+        slower.setOnClickListener(v -> setSpeed(prompter.getSpeedRounded() - 2));
+        faster.setOnClickListener(v -> setSpeed(prompter.getSpeedRounded() + 2));
+        textSmaller.setOnClickListener(v -> setTextSize(prompter.getTextSizeRounded() - 2));
+        textLarger.setOnClickListener(v -> setTextSize(prompter.getTextSizeRounded() + 2));
         hide.setOnClickListener(v -> {
             controls.setVisibility(View.GONE);
             expand.setVisibility(View.VISIBLE);
@@ -210,11 +248,34 @@ public class OverlayService extends Service {
             stopSelf();
         });
 
+        prompter.setReadingLineListener(percent ->
+                prefs.edit().putInt("readingLine", percent).apply());
+
         applySettingsToPrompter();
-        speedLabel.setText(String.valueOf(prefs.getInt("speed", 32)));
+        refreshLiveLabels();
         applyWindowGeometry();
         syncGrid();
         wm.addView(promptRoot, promptParams);
+    }
+
+    private void setSpeed(int value) {
+        int next = Math.max(8, Math.min(90, value));
+        prompter.setSpeed(next);
+        prefs.edit().putInt("speed", next).apply();
+        refreshLiveLabels();
+    }
+
+    private void setTextSize(int value) {
+        int next = Math.max(18, Math.min(72, value));
+        prompter.setTextSizeSp(next);
+        prefs.edit().putInt("textSize", next).apply();
+        refreshLiveLabels();
+    }
+
+    private void refreshLiveLabels() {
+        if (prompter == null) return;
+        if (speedLabel != null) speedLabel.setText(String.valueOf(prompter.getSpeedRounded()));
+        if (textSizeLabel != null) textSizeLabel.setText(String.valueOf(prompter.getTextSizeRounded()));
     }
 
     private void beginScrollWithCountdown(Button play) {
@@ -247,35 +308,65 @@ public class OverlayService extends Service {
     private void applySettingsToPrompter() {
         String text = prefs.getString("script", "");
         int size = prefs.getInt("textSize", 34);
-        int line = prefs.getInt("readingLine", 50);
+        int line = prefs.getInt("readingLine", 55);
         int speed = prefs.getInt("speed", 32);
         int bg = prefs.getInt("background", 1);
         int countdownIndex = prefs.getInt("countdown", 1);
         countdownSeconds = countdownIndex == 1 ? 3 : countdownIndex == 2 ? 5 : 0;
         if (prompter != null) prompter.configure(text, size, line, speed, bg);
+        refreshLiveLabels();
+    }
+
+    private String geometrySuffix() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? "_land" : "_port";
     }
 
     private void applyWindowGeometry() {
         if (promptParams == null) return;
         int screenW = getResources().getDisplayMetrics().widthPixels;
         int screenH = getResources().getDisplayMetrics().heightPixels;
-        int widthPct = prefs.getInt("promptWidth", 76);
-        int posPct = prefs.getInt("promptPosition", 18);
+        String s = geometrySuffix();
 
-        int width = Math.max(dp(280), Math.round(screenW * widthPct / 100f));
-        width = Math.min(width, screenW);
-        int bodyHeight = Math.max(dp(160), Math.min(dp(360), Math.round(screenH * 0.42f)));
-        int totalHeight = bodyHeight + dp(46);
-        int bottomGap = Math.round(screenH * posPct / 100f);
-        int y = screenH - totalHeight - bottomGap;
-        y = Math.max(0, Math.min(y, Math.max(0, screenH - totalHeight)));
-        int x = Math.max(0, (screenW - width) / 2);
+        int savedW = prefs.getInt("windowW" + s, -1);
+        int savedH = prefs.getInt("windowH" + s, -1);
+        int savedX = prefs.getInt("windowX" + s, -1);
+        int savedY = prefs.getInt("windowY" + s, -1);
 
-        promptParams.width = width;
-        promptParams.height = totalHeight;
-        promptParams.x = x;
-        promptParams.y = y;
+        if (savedW > 0 && savedH > 0) {
+            promptParams.width = Math.max(dp(280), Math.min(savedW, screenW));
+            promptParams.height = Math.max(dp(170), Math.min(savedH, screenH));
+            promptParams.x = Math.max(0, Math.min(savedX, Math.max(0, screenW - promptParams.width)));
+            promptParams.y = Math.max(0, Math.min(savedY, Math.max(0, screenH - promptParams.height)));
+        } else {
+            int width = Math.min(screenW, Math.max(dp(320), Math.round(screenW * 0.80f)));
+            int height = Math.min(screenH, Math.max(dp(210), Math.round(screenH * 0.34f)));
+            promptParams.width = width;
+            promptParams.height = height;
+            promptParams.x = Math.max(0, (screenW - width) / 2);
+            promptParams.y = Math.max(0, Math.round(screenH * 0.12f));
+        }
+        updateWindow();
+    }
 
+    private void clampWindowPosition() {
+        int screenW = getResources().getDisplayMetrics().widthPixels;
+        int screenH = getResources().getDisplayMetrics().heightPixels;
+        promptParams.x = Math.max(0, Math.min(promptParams.x, Math.max(0, screenW - promptParams.width)));
+        promptParams.y = Math.max(0, Math.min(promptParams.y, Math.max(0, screenH - promptParams.height)));
+    }
+
+    private void saveWindowGeometry() {
+        if (promptParams == null) return;
+        String s = geometrySuffix();
+        prefs.edit()
+                .putInt("windowW" + s, promptParams.width)
+                .putInt("windowH" + s, promptParams.height)
+                .putInt("windowX" + s, promptParams.x)
+                .putInt("windowY" + s, promptParams.y)
+                .apply();
+    }
+
+    private void updateWindow() {
         if (promptRoot != null && promptRoot.getWindowToken() != null) {
             try { wm.updateViewLayout(promptRoot, promptParams); } catch (Exception ignored) { }
         }
@@ -310,10 +401,13 @@ public class OverlayService extends Service {
     private void stopOverlay() {
         handler.removeCallbacksAndMessages(null);
         if (promptRoot != null) {
+            saveWindowGeometry();
             try { wm.removeView(promptRoot); } catch (Exception ignored) { }
             promptRoot = null;
             prompter = null;
             promptParams = null;
+            speedLabel = null;
+            textSizeLabel = null;
         }
         if (gridAdded && gridView != null) {
             try { wm.removeView(gridView); } catch (Exception ignored) { }
@@ -364,22 +458,33 @@ public class OverlayService extends Service {
                 .build();
     }
 
-    private Button miniButton(String text) {
+    private Button miniButton(String text, int widthDp) {
         Button b = new Button(this);
         b.setText(text);
-        b.setTextSize(11);
+        b.setTextSize(10);
         b.setTextColor(INK);
         b.setAllCaps(false);
-        b.setPadding(dp(4), 0, dp(4), 0);
+        b.setPadding(dp(2), 0, dp(2), 0);
         b.setMinWidth(0);
         b.setMinimumWidth(0);
         b.setMinHeight(0);
         b.setMinimumHeight(0);
         b.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(42, 44, 43)));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(text.length() > 2 ? 56 : 42), dp(38));
-        lp.setMargins(dp(2), 0, dp(2), 0);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(widthDp), dp(36));
+        lp.setMargins(dp(1), 0, dp(1), 0);
         b.setLayoutParams(lp);
         return b;
+    }
+
+    private TextView chip(String text, int color, boolean bold) {
+        TextView t = new TextView(this);
+        t.setText(text);
+        t.setTextColor(color);
+        t.setTextSize(11);
+        t.setGravity(Gravity.CENTER);
+        if (bold) t.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        t.setPadding(dp(3), 0, dp(3), 0);
+        return t;
     }
 
     private int dp(int value) { return Math.round(value * getResources().getDisplayMetrics().density); }
