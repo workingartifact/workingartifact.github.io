@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0b0b0b" />
 <title>EXAPTER ENDAPTER Prompter</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css" />
+<style>
+.camera-control-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.camera-control-actions button{flex:1 1 120px;padding:10px 9px}.camera-control-status{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45}.camera-control-status strong{color:var(--accent);font-weight:700}.field input[type=range]:disabled{opacity:.38;cursor:not-allowed}
+</style>
 </head>
 <body id="top">
 <div class="app">
   <div class="header">
     <div>
       <div class="brand">EXAPTER ENDAPTER</div>
-      <div class="sub">Local Teleprompter — v1.8</div>
+      <div class="sub">Local Teleprompter — v1.9</div>
     </div>
     <div class="small" id="formatLabel">Not recording</div>
   </div>
@@ -118,6 +121,53 @@
     </div>
   </div>
 
+  <div class="panel" id="cameraControlPanel">
+    <div class="small" style="margin-bottom:10px"><strong style="color:var(--text)">Camera control</strong> · Pixel / Chrome controls appear when supported by the active camera.</div>
+    <div class="grid">
+      <div class="field">
+        <label>White balance</label>
+        <select id="whiteBalanceMode">
+          <option value="continuous" selected>Auto</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Color temperature <span id="kelvinOut">5000</span> K</label>
+        <input id="colorTemperature" type="range" min="2850" max="7000" step="50" value="5000" disabled />
+      </div>
+      <div class="field">
+        <label>Exposure</label>
+        <select id="exposureMode">
+          <option value="continuous" selected>Auto</option>
+          <option value="manual">Lock current exposure</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Exposure compensation <span id="exposureOut">0.0</span> EV</label>
+        <input id="exposureCompensation" type="range" min="-4" max="4" step="0.1666667" value="0" />
+      </div>
+      <div class="field">
+        <label>Focus</label>
+        <select id="focusMode">
+          <option value="continuous" selected>Continuous</option>
+          <option value="single-shot">Lock focus (single shot)</option>
+          <option value="manual">Manual</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Camera-control status</label>
+        <div class="small camera-readout" id="cameraControlReadout">Start camera to inspect controls</div>
+      </div>
+    </div>
+    <div class="camera-control-actions">
+      <button id="lockWbBtn" type="button" disabled>Lock White Balance</button>
+      <button id="lockExposureBtn" type="button" disabled>Lock Exposure</button>
+      <button id="lockFocusBtn" type="button" disabled>Lock Focus</button>
+      <button id="cameraAutoBtn" type="button" disabled>Return All to Auto</button>
+    </div>
+    <div class="camera-control-status" id="cameraControlStatus">These controls change the active browser camera session only. They do not alter your Pixel Camera app settings.</div>
+  </div>
+
   <div class="panel">
     <div class="field">
       <label>Script</label>
@@ -174,5 +224,6 @@
 </footer>
 
 <script src="app.js"></script>
+<script src="camera-controls-v1.9.js"></script>
 </body>
 </html>
