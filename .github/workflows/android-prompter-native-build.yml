@@ -2,6 +2,10 @@ name: Build Native Prompter APK
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'android/exapter-endapter-prompter-native/**'
+      - '.github/workflows/android-prompter-native-build.yml'
 
 permissions:
   contents: write
