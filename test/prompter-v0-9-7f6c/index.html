@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0b0b0b" />
 <title>EXAPTER ENDAPTER Prompter</title>
 <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="prompter-v2-overrides.css" />
 <style>
 .camera-control-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.camera-control-actions button{flex:1 1 120px;padding:10px 9px}.camera-control-status{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45}.camera-control-status strong{color:var(--accent);font-weight:700}.field input[type=range]:disabled{opacity:.38;cursor:not-allowed}
 </style>
@@ -15,7 +16,7 @@
   <div class="header">
     <div>
       <div class="brand">EXAPTER ENDAPTER</div>
-      <div class="sub">Local Teleprompter — v1.9</div>
+      <div class="sub">Local Teleprompter — v2.0</div>
     </div>
     <div class="small" id="formatLabel">Not recording</div>
   </div>
@@ -68,7 +69,19 @@
       </div>
       <div class="field">
         <label>Prompt position <span id="posOut">18</span>% from bottom</label>
-        <input id="promptPos" type="range" min="4" max="52" value="18" />
+        <input id="promptPos" type="range" min="4" max="75" value="18" />
+      </div>
+      <div class="field">
+        <label>Reading line <span id="lineOut">50</span>% inside prompt</label>
+        <input id="readingLine" type="range" min="20" max="80" value="50" />
+      </div>
+      <div class="field">
+        <label>Prompt background</label>
+        <select id="promptBackground">
+          <option value="clear">Clear</option>
+          <option value="light" selected>Light shade</option>
+          <option value="dark">Dark shade</option>
+        </select>
       </div>
       <div class="field">
         <label>Camera</label>
@@ -225,5 +238,6 @@
 
 <script src="app.js"></script>
 <script src="camera-controls-v1.9.js"></script>
+<script src="prompter-v2-controls.js"></script>
 </body>
 </html>
