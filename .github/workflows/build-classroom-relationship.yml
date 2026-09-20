@@ -1,0 +1,98 @@
+name: Build classroom relationship activity
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-classroom-relationship.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create AN/MKT 324 classroom version
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          src = Path("how-strong-is-the-relationship/index.html")
+          out = Path("downloads/how-strong-is-the-relationship-canvas-activity.html")
+          html = src.read_text(encoding="utf-8")
+
+          # Classroom identity only; preserve activity logic/questions exactly.
+          html = re.sub(r'<meta name="description"[^>]*>\s*', '', html, count=1)
+          html = re.sub(r'\s*<meta property="og:[^>]+>', '', html)
+          html = re.sub(r'\s*<meta name="twitter:[^>]+>', '', html)
+          html = html.replace(
+              '<title>How Strong is the Relationship? | Working Artifact</title>',
+              '<meta name="description" content="AN/MKT 324 in-class activity for practicing strong identifying and weak non-identifying relationships.">\n  <title>How Strong is the Relationship? — AN/MKT 324</title>'
+          )
+
+          # Header: course version, no public resource/download navigation.
+          html = html.replace(
+              '<p class="brand">Working Artifact · EXAPTER ENDAPTER</p>',
+              '<p class="brand">AN/MKT 324 · In-Class Activity</p>'
+          )
+          html = re.sub(r'\s*<nav class="resource-nav"[\s\S]*?</nav>', '', html, count=1)
+
+          # Public notice -> classroom practice notice, modeled on Pick the Cardinality.
+          html = html.replace('class="shell public-notice"', 'class="shell public-notice course-notice"')
+          notice_pattern = r'<div class="public-notice-inner">[\s\S]*?</div>\s*</section>'
+          notice_replacement = '''<div class="public-notice-inner">
+      <p><strong>This activity is for practice, not submission.</strong></p>
+      <p>Read each business rule and inspect the keys before choosing the relationship line. Your answers stay only in this browser tab.</p>
+    </div>
+  </section>'''
+          html, n = re.subn(notice_pattern, notice_replacement, html, count=1)
+          if n != 1:
+              raise SystemExit("Could not replace public notice")
+
+          # Remove educator-facing public note from the classroom copy.
+          html = re.sub(r'\s*<section class="educator-note"[\s\S]*?</section>', '', html, count=1)
+
+          # Remove public institutional footer entirely. Classroom file ends after the activity.
+          html = re.sub(r'\s*<footer class="institutional-footer"[\s\S]*?</footer>', '', html, count=1)
+
+          # Remove footer/public-only CSS blocks where harmless; activity CSS remains untouched.
+          html += "\n<!-- Classroom copy derived from the public Working Artifact activity. Activity content and logic preserved. -->\n"
+
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(html, encoding="utf-8")
+
+          # Sanity checks: classroom markers present; public footer/nav absent; all 8 questions retained.
+          checks = {
+              "course brand": "AN/MKT 324 · In-Class Activity" in html,
+              "practice notice": "This activity is for practice, not submission." in html,
+              "no resource nav": '<nav class="resource-nav"' not in html,
+              "no institutional footer": '<footer class="institutional-footer"' not in html,
+              "question count": html.count("roundName:") == 8,
+              "copyright/public disclaimer removed": "Independent educational resource." not in html,
+          }
+          print(checks)
+          if not all(checks.values()):
+              raise SystemExit("Classroom build sanity check failed")
+          print(out, out.stat().st_size, "bytes")
+          PY
+
+      - name: Commit classroom version
+        run: |
+          git config user.name "workingartifact"
+          git config user.email "318367754+workingartifact@users.noreply.github.com"
+          git add downloads/how-strong-is-the-relationship-canvas-activity.html
+          git commit -m "Add classroom version of relationship activity"
+          git push
+
+      - name: Remove one-shot workflow
+        run: |
+          git pull --rebase
+          git rm .github/workflows/build-classroom-relationship.yml
+          git commit -m "Remove one-shot classroom build workflow"
+          git push
