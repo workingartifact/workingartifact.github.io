@@ -1,0 +1,1741 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A free, self-contained interactive activity for learning strong (identifying) and weak (non-identifying) relationships in Crow's Foot ER modeling.">
+  <meta property="og:title" content="How Strong is the Relationship? | Working Artifact">
+  <meta property="og:description" content="Practice deciding whether an ER relationship should be shown with a solid identifying line or a dashed non-identifying line by reading the keys.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://workingartifact.github.io/how-strong-is-the-relationship/">
+  <title>How Strong is the Relationship? | Working Artifact</title>
+
+  <style>
+    :root {
+      --ink: #152534;
+      --navy: #123b63;
+      --blue: #1e5a8a;
+      --blue-dark: #17486f;
+      --pale-blue: #eef5fa;
+      --paper: #ffffff;
+      --page-bg: #f4f6f8;
+      --line: #cbd5df;
+      --muted: #5c6b78;
+      --amber: #9a6200;
+      --amber-bg: #fff6db;
+      --green: #176b65;
+      --green-bg: #eaf7f5;
+      --red: #a13939;
+      --red-bg: #fff1f1;
+      --shadow: 0 8px 28px rgba(22, 33, 43, 0.09);
+      --footer-bg: #0c0d0d;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--page-bg); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--page-bg);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button, select { font: inherit; }
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid #f2b84b;
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .masthead {
+      color: #fff;
+      background: linear-gradient(120deg, #112b4d, #1e5aa8);
+    }
+
+    .masthead .shell { padding: 34px 0 30px; }
+
+    .brand {
+      margin: 0 0 5px;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.82;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+
+    .lesson-tag {
+      max-width: 780px;
+      margin: 12px 0 0;
+      color: #fff;
+      font-size: 1.08rem;
+    }
+
+    .resource-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .resource-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 14px;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,.72);
+      border-radius: 8px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .resource-link:hover { color: var(--blue-dark); background: #fff; }
+
+    .progress-wrap { margin-top: 22px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 7px;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .progress-track {
+      height: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,.24);
+      border-radius: 99px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 12.5%;
+      background: #fff;
+      transition: width .3s ease;
+    }
+
+    .public-notice { padding: 18px 0 0; }
+    .public-notice-inner {
+      padding: 14px 18px;
+      background: #f8fbfe;
+      border: 1px solid #b8cfdf;
+      border-left: 5px solid var(--blue);
+      border-radius: 7px;
+      box-shadow: 0 5px 18px rgba(21,37,52,.05);
+    }
+    .public-notice p { margin: 0; }
+    .public-notice p + p { margin-top: 2px; color: var(--muted); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 20px;
+      align-items: start;
+      padding: 28px 0 56px;
+    }
+
+    .activity-card, .side-card, .educator-note {
+      background: var(--paper);
+      border: 1px solid #d7dde4;
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+    }
+
+    .activity-card { min-width: 0; overflow: visible; }
+
+    .question-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      padding: clamp(20px,3vw,30px) clamp(20px,3vw,30px) 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--blue);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.45rem,3vw,2rem);
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .counter {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .question-body {
+      padding: 0 clamp(20px,3vw,30px) clamp(20px,3vw,30px);
+    }
+
+    .instruction {
+      max-width: 850px;
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .rules-title, .micro-label {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .rules {
+      margin: 0 0 18px;
+      padding: 13px 18px 13px 38px;
+      background: #fafbfc;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+    }
+    .rules li + li { margin-top: 6px; }
+
+    .diagram-wrap {
+      position: relative;
+      width: 100%;
+      margin: 0 0 18px;
+      padding: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(18,59,99,.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,59,99,.032) 1px, transparent 1px),
+        #fbfcfd;
+      background-size: 24px 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .diagram-wrap.is-correct {
+      border-color: var(--green);
+      box-shadow: inset 0 0 0 2px rgba(23,107,101,.13);
+    }
+
+    .diagram {
+      display: grid;
+      grid-template-columns: minmax(160px,1fr) minmax(150px,220px) minmax(160px,1fr);
+      gap: 16px;
+      align-items: center;
+      min-height: 210px;
+    }
+
+    .entity {
+      background: #fff;
+      border: 2px solid #40566c;
+      border-radius: 4px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .entity-name {
+      padding: 10px 12px;
+      background: #edf2f6;
+      border-bottom: 1px solid #aebbc7;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-align: center;
+    }
+
+    .attribute-list {
+      margin: 0;
+      padding: 8px 0;
+      list-style: none;
+      font-size: .9rem;
+    }
+
+    .attribute-row {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 8px;
+      padding: 5px 10px;
+    }
+
+    .attribute-row + .attribute-row { border-top: 1px solid #edf0f3; }
+    .key-tag { color: var(--blue-dark); font-size: .76rem; font-weight: 800; }
+    .key-tag.blank { color: transparent; user-select: none; }
+    .attribute-name { overflow-wrap: anywhere; }
+    .pk .attribute-name { font-weight: 800; }
+
+    .relationship-visual {
+      display: grid;
+      gap: 12px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .relationship-name {
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .line-stage {
+      position: relative;
+      height: 48px;
+    }
+
+    .line-stage::before {
+      position: absolute;
+      top: 23px;
+      right: 0;
+      left: 0;
+      border-top: 4px solid #607285;
+      content: "";
+    }
+
+    .line-stage.dashed::before { border-top-style: dashed; }
+    .line-stage.unknown::before {
+      border-top-color: #90a0ae;
+      border-top-style: dashed;
+    }
+
+    .line-badge {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 9px;
+      color: var(--muted);
+      background: #fbfcfd;
+      border: 1px solid #d8dfe6;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 800;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .strength-choice {
+      min-height: 116px;
+      padding: 14px;
+      color: var(--ink);
+      background: #fff;
+      border: 2px solid #b7c2cc;
+      border-radius: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+
+    .strength-choice:hover {
+      border-color: var(--blue);
+      background: var(--pale-blue);
+      transform: translateY(-1px);
+    }
+
+    .strength-choice.selected {
+      border-color: var(--blue);
+      background: #edf5fd;
+      box-shadow: inset 0 0 0 1px rgba(30,90,138,.15);
+    }
+
+    .strength-choice.wrong {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .strength-choice.right {
+      border-color: var(--green);
+      background: var(--green-bg);
+    }
+
+    .choice-line {
+      display: block;
+      width: 100%;
+      height: 0;
+      margin: 5px 0 12px;
+      border-top: 5px solid #3e566d;
+    }
+
+    .choice-line.dashed { border-top-style: dashed; }
+
+    .strength-choice strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: .95rem;
+    }
+
+    .strength-choice span {
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .logic-card {
+      margin-top: 14px;
+      padding: 13px 15px;
+      background: #f8fafc;
+      border: 1px solid #dce3e9;
+      border-radius: 8px;
+    }
+
+    .logic-card strong { color: var(--blue-dark); }
+
+    .feedback {
+      margin-top: 15px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--blue);
+      background: #eef5fd;
+    }
+
+    .feedback[hidden] { display: none; }
+    .feedback.correct { color: #0b5b43; background: #ecfdf3; border-color: var(--green); }
+    .feedback.incorrect { color: #8f1b13; background: #fff1f0; border-color: var(--red); }
+    .feedback.neutral { color: #795200; background: #fff8e1; border-color: var(--amber); }
+    .feedback h3 { margin: 0 0 7px; font-size: 1rem; }
+    .feedback p { margin: 6px 0 0; }
+    .feedback ul { margin: 7px 0 0; padding-left: 20px; }
+    .feedback li + li { margin-top: 5px; }
+
+    .business-lens {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0,0,0,.09);
+    }
+    .business-lens strong { display: block; margin-bottom: 2px; }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .button {
+      min-height: 44px;
+      padding: 10px 16px;
+      border: 2px solid var(--blue);
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button-primary { color: #fff; background: var(--blue); }
+    .button-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .button-secondary { color: var(--blue); background: #fff; }
+    .button-secondary:hover { background: var(--pale-blue); }
+    .button[hidden] { display: none; }
+
+    .side-card {
+      position: sticky;
+      top: 16px;
+      padding: 18px;
+    }
+
+    .side-card h2 {
+      margin-bottom: 6px;
+      font-size: 1.08rem;
+      letter-spacing: 0;
+    }
+
+    .side-card p { margin: 0; color: var(--muted); font-size: .85rem; }
+
+    .key-rule {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e7ec;
+    }
+
+    .key-sample {
+      display: block;
+      width: 100%;
+      height: 0;
+      margin: 8px 0 7px;
+      border-top: 4px solid #3e566d;
+    }
+    .key-sample.dashed { border-top-style: dashed; }
+
+    .key-rule strong { display: block; font-size: .82rem; }
+    .key-rule span { color: var(--muted); font-size: .78rem; }
+
+    .myth-card {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--amber-bg);
+      border: 1px solid #efd99f;
+      border-radius: 8px;
+    }
+    .myth-card strong { display: block; color: #6e4c00; font-size: .82rem; }
+    .myth-card span { display: block; margin-top: 4px; color: #6e4c00; font-size: .76rem; }
+
+    .interstitial {
+      display: grid;
+      min-height: 460px;
+      place-items: center;
+      padding: 40px 28px;
+      text-align: center;
+    }
+
+    .interstitial-inner { max-width: 650px; }
+    .round-stamp {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 8px 12px;
+      color: var(--blue);
+      background: var(--pale-blue);
+      border: 1px solid #b8cfdf;
+      border-radius: 8px;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .interstitial h2 { font-size: clamp(1.7rem,4vw,2.6rem); }
+    .interstitial p { margin: 14px auto 22px; color: var(--muted); font-size: 1.06rem; }
+
+    .rule-stack {
+      display: grid;
+      gap: 9px;
+      max-width: 620px;
+      margin: 18px auto 24px;
+      text-align: left;
+    }
+
+    .rule-stack div {
+      padding: 11px 13px;
+      background: #f8fafc;
+      border: 1px solid #dce3e9;
+      border-radius: 8px;
+    }
+
+    .educator-note {
+      grid-column: 1;
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .educator-note h2 { font-size: 1.3rem; }
+    .educator-note p { margin: 8px 0 0; }
+    .educator-note ul { margin: 10px 0 0; padding-left: 22px; }
+
+    .institutional-footer {
+      padding: 0;
+      color: #a8a69f;
+      background: var(--footer-bg);
+      border-top: 1px solid rgba(238,236,230,.34);
+    }
+
+    .footer-shell { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
+
+    .footer-top {
+      min-height: 128px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid rgba(238,236,230,.34);
+    }
+
+    .institutional-footer a { color: inherit; text-decoration-color: #a4bd83; text-underline-offset: 4px; }
+    .institutional-footer a:hover { color: #a4bd83; }
+    .footer-path { margin: 0; }
+    .back-to-top { color: #a4bd83 !important; font-size: .76rem; letter-spacing: .12em; text-transform: uppercase; }
+
+    .footer-tree {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr 1.55fr .58fr;
+      border-bottom: 1px solid rgba(238,236,230,.34);
+    }
+
+    .footer-tree-column {
+      min-width: 0;
+      min-height: 165px;
+      padding: 30px 28px 34px 0;
+    }
+    .footer-tree-column + .footer-tree-column {
+      padding-left: 28px;
+      border-left: 1px solid rgba(238,236,230,.34);
+    }
+
+    .footer-tree-title {
+      color: #eeece6 !important;
+      font-size: clamp(1rem,1.7vw,1.4rem);
+      line-height: 1.18;
+      text-decoration: none;
+    }
+    .footer-tree-title.signal { color: #a4bd83 !important; }
+
+    .footer-tree ul {
+      position: relative;
+      margin: 23px 0 0;
+      padding: 0 0 0 19px;
+      list-style: none;
+    }
+    .footer-tree ul::before {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      border-left: 1px solid rgba(238,236,230,.34);
+      content: "";
+    }
+    .footer-tree li { position: relative; margin: 10px 0; }
+    .footer-tree li::before {
+      position: absolute;
+      top: .75em;
+      left: -19px;
+      width: 12px;
+      border-top: 1px solid rgba(238,236,230,.34);
+      content: "";
+    }
+    .footer-tree li a { text-decoration: none; }
+
+    .footer-signature { padding: 34px 0 52px; }
+    .footer-motto {
+      margin: 0 0 3px;
+      color: #eeece6;
+      font-size: .76rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .footer-translation { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+    .footer-founder { margin: 24px 0 0; font-size: .78rem; }
+    .footer-resource-note {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(238,236,230,.2);
+    }
+    .footer-resource-note p { margin: 4px 0; font-size: .8rem; }
+
+
+    /* V2: preserve ERD readability instead of squeezing attribute names on narrow screens. */
+    .diagram-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .diagram {
+      min-width: 760px;
+      grid-template-columns: 230px 220px 230px;
+      justify-content: center;
+    }
+
+    .entity {
+      width: 230px;
+      min-width: 230px;
+      flex: 0 0 230px;
+    }
+
+    .attribute-row {
+      grid-template-columns: 64px minmax(0, 1fr);
+    }
+
+    .attribute-name {
+      overflow-wrap: normal;
+      word-break: normal;
+      white-space: nowrap;
+      font-size: 0.92rem;
+    }
+
+    .key-tag {
+      white-space: nowrap;
+    }
+
+    .relationship-visual {
+      min-width: 220px;
+    }
+
+    /* Drag-and-drop line palette */
+    .drag-instruction {
+      margin: 2px 0 10px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .line-palette {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+
+    .line-token {
+      min-height: 92px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 2px solid #b7c2cc;
+      border-radius: 10px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .line-token:active { cursor: grabbing; }
+
+    .line-token.wrong { border-color: var(--red); background: var(--red-bg); }
+    .line-token.right { border-color: var(--green); background: var(--green-bg); }
+
+    .line-token.is-selected {
+      border-color: var(--blue);
+      background: #edf5fd;
+      box-shadow: inset 0 0 0 1px rgba(30,90,138,.15);
+    }
+
+    .line-token .token-line {
+      display: block;
+      width: 100%;
+      height: 0;
+      margin: 6px 0 11px;
+      border-top: 5px solid #3e566d;
+      pointer-events: none;
+    }
+
+    .line-token .token-line.dashed { border-top-style: dashed; }
+
+    .line-token strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: .93rem;
+      pointer-events: none;
+    }
+
+    .line-token span {
+      display: block;
+      color: var(--muted);
+      font-size: .79rem;
+      pointer-events: none;
+    }
+
+    .relationship-dropzone {
+      display: grid;
+      place-items: center;
+      min-height: 74px;
+      padding: 9px;
+      border: 2px dashed #9aabb9;
+      border-radius: 10px;
+      background: rgba(255,255,255,.72);
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+
+    .relationship-dropzone.drag-over {
+      border-color: var(--blue);
+      background: #eef6fd;
+      transform: scale(1.01);
+    }
+
+    .relationship-dropzone.has-line {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .relationship-dropzone .drop-label {
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      text-align: center;
+    }
+
+    .relationship-dropzone .dropped-line {
+      width: 100%;
+      height: 0;
+      border-top: 5px solid #3e566d;
+    }
+
+    .relationship-dropzone .dropped-line.dashed {
+      border-top-style: dashed;
+    }
+
+    .drop-hint {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .72rem;
+      text-align: center;
+    }
+
+
+    /* V5 completion reward: the relationship resolves from keys into line style. */
+    .completion-reward {
+      width: min(100%, 720px);
+      margin: 22px auto 24px;
+      padding: 22px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(18,59,99,.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,59,99,.032) 1px, transparent 1px),
+        #fbfcfd;
+      background-size: 24px 24px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .reward-diagram {
+      display: grid;
+      grid-template-columns: 190px 1fr 190px;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .reward-entity {
+      opacity: 0;
+      transform: translateY(8px);
+      background: #fff;
+      border: 2px solid #40566c;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .reward-entity-name {
+      padding: 10px;
+      background: #edf2f6;
+      border-bottom: 1px solid #aebbc7;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-align: center;
+    }
+
+    .reward-attrs {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: .82rem;
+    }
+
+    .reward-attrs div + div { margin-top: 4px; }
+    .reward-attrs b { color: var(--blue-dark); }
+
+    .reward-center {
+      display: grid;
+      gap: 10px;
+      align-items: center;
+      text-align: center;
+    }
+
+    .reward-line-wrap {
+      position: relative;
+      height: 54px;
+    }
+
+    .reward-line {
+      position: absolute;
+      top: 25px;
+      left: 0;
+      width: 100%;
+      border-top: 5px solid #3e566d;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .reward-line.dashed {
+      border-top-style: dashed;
+    }
+
+    .reward-label {
+      opacity: 0;
+      color: var(--blue-dark);
+      font-size: .79rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .reward-key-flash {
+      opacity: 0;
+      margin: 0;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    .completion-reward.animate .reward-parent {
+      animation: rewardEntityIn .38s ease-out .10s forwards;
+    }
+
+    .completion-reward.animate .reward-dependent {
+      animation: rewardEntityIn .38s ease-out .28s forwards;
+    }
+
+    .completion-reward.animate .reward-key-flash {
+      animation: rewardFadeIn .35s ease-out .72s forwards;
+    }
+
+    .completion-reward.animate .reward-line {
+      animation: rewardLineDraw .78s cubic-bezier(.2,.8,.2,1) 1.12s forwards;
+    }
+
+    .completion-reward.animate .reward-label {
+      animation: rewardFadeIn .4s ease-out 1.82s forwards;
+    }
+
+    .completion-reward.settled .reward-entity,
+    .completion-reward.settled .reward-key-flash,
+    .completion-reward.settled .reward-label {
+      opacity: 1;
+      transform: none;
+    }
+
+    .completion-reward.settled .reward-line {
+      transform: scaleX(1);
+    }
+
+    @keyframes rewardEntityIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes rewardLineDraw {
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes rewardFadeIn {
+      to { opacity: 1; }
+    }
+
+    .reward-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 700px) {
+      .reward-diagram {
+        grid-template-columns: 1fr;
+      }
+      .reward-center {
+        padding: 4px 28px;
+      }
+      .reward-line-wrap {
+        transform: rotate(90deg);
+        height: 90px;
+      }
+      .reward-label { margin-top: 6px; }
+      .reward-controls { flex-direction: column; }
+      .reward-controls .button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .completion-reward.animate .reward-entity,
+      .completion-reward.animate .reward-key-flash,
+      .completion-reward.animate .reward-line,
+      .completion-reward.animate .reward-label {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .diagram {
+        grid-template-columns: 230px 220px 230px;
+        min-width: 760px;
+      }
+
+      .relationship-visual { padding: 0; }
+      .line-stage { transform: none; height: 48px; }
+      .line-badge { transform: none; }
+    }
+
+    @media (max-width: 600px) {
+      .line-palette { grid-template-columns: 1fr; }
+      .diagram-wrap { padding: 12px; }
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .educator-note { grid-column: 1; }
+      .side-card { position: static; }
+      .diagram { grid-template-columns: 1fr; }
+      .relationship-visual { padding: 6px 24px; }
+      .line-stage { transform: rotate(90deg); height: 70px; }
+      .line-badge { transform: rotate(-90deg); }
+      .footer-tree { grid-template-columns: 1fr; }
+      .footer-tree-column, .footer-tree-column + .footer-tree-column {
+        min-height: auto;
+        padding: 24px 0 28px;
+        border-top: 1px solid rgba(238,236,230,.34);
+        border-left: 0;
+      }
+      .footer-tree-column:first-child/dependent { border-top: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .masthead .shell { padding: 26px 0 24px; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .question-header { padding: 20px 18px 0; }
+      .question-body { padding: 0 18px 20px; }
+      .actions { flex-direction: column; }
+      .button { width: 100%; }
+      .footer-top {
+        min-height: 120px;
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        gap: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <header class="masthead">
+    <div class="shell">
+      <p class="brand">Business Data Management · Interactive Activity</p>
+      <h1>How Strong is the Relationship?</h1>
+      <p class="lesson-tag">Read the keys. Decide whether the relationship is strong (identifying) or weak (non-identifying). Then choose the line the ERD should use.</p>
+      <nav class="resource-nav" aria-label="Activity resources">
+        <a class="resource-link" href="https://workingartifact.github.io/downloads/how-strong-is-the-relationship.html">Download standalone HTML</a>
+        <a class="resource-link" href="https://workingartifact.github.io/">Working Artifact</a>
+      </nav>
+      <div class="progress-wrap" aria-label="Activity progress">
+        <div class="progress-label">
+          <span id="progress-text">Question 1 of 8</span>
+          <span id="progress-percent">13%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="shell public-notice" aria-label="Activity notice">
+    <div class="public-notice-inner">
+      <p><strong>The line is not about how many.</strong></p>
+      <p>Cardinality tells you how many instances may participate. Relationship strength tells you whether the parent/determinant key becomes part of the child/dependent primary key.</p>
+    </div>
+  </section>
+
+  <main class="shell layout">
+    <section class="activity-card" id="activity" aria-live="polite"></section>
+
+    <aside class="side-card" aria-labelledby="quick-key-heading">
+      <h2 id="quick-key-heading">Quick key</h2>
+      <p>Ask one question: <strong>Did the parent/determinant PK become part of the child/dependent PK?</strong></p>
+
+      <div class="key-rule">
+        <span class="key-sample"></span>
+        <strong>Solid line</strong>
+        <span>Strong / identifying relationship. The parent/determinant PK is part of the child/dependent PK.</span>
+      </div>
+
+      <div class="key-rule">
+        <span class="key-sample dashed"></span>
+        <strong>Dashed line</strong>
+        <span>Weak / non-identifying relationship. The parent/determinant PK migrates only as an FK.</span>
+      </div>
+
+      <div class="myth-card">
+        <strong>Do not use cardinality to decide strength.</strong>
+        <span>A 1:M relationship can be strong (identifying) or weak (non-identifying). Optionality can also be present in either case.</span>
+      </div>
+    </aside>
+
+    <section class="educator-note" aria-labelledby="educator-heading">
+      <h2 id="educator-heading">For educators</h2>
+      <p>This activity targets a common ER-modeling confusion: students often treat line style as another form of cardinality or assume existence dependence automatically makes a relationship identifying. The activity instead makes them inspect the primary-key structure first, then connect the key structure to the Crow’s Foot line.</p>
+      <ul>
+        <li>Round 1: recognize the pattern from PK/FK structure.</li>
+        <li>Round 2: compare the same business relationship implemented two different ways.</li>
+        <li>Round 3: apply the rule to business records, weak entities, and bridge entities.</li>
+        <li>Immediate feedback explains both the database logic and the business consequence.</li>
+        <li>No account, submission system, external script, or data collection.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="institutional-footer">
+    <div class="footer-shell">
+      <div class="footer-top">
+        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Technical Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+        <a class="back-to-top" href="#top">Back to top ↑</a>
+      </div>
+
+      <nav class="footer-tree" aria-label="Institutional tree">
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/lab.html">Technical Lab</a></li>
+            <li><a href="https://exapterendapter.com/studio.html">Creative Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
+            <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+        </div>
+      </nav>
+
+      <div class="footer-signature">
+        <p class="footer-motto">QUAESTIO ET VERITAS</p>
+        <p class="footer-translation">Inquiry and Truth</p>
+        <p class="footer-founder">Josh Ayala · 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+        <div class="footer-resource-note">
+          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+          <p>Free to use and share for educational purposes with attribution.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    'use strict';
+
+    const STRENGTHS = Object.freeze({
+      strong: {
+        title: 'Strong (Identifying)',
+        line: 'solid',
+        short: 'SOLID',
+        rule: 'The parent/determinant primary key migrates into the child/dependent and becomes part of the child/dependent primary key.'
+      },
+      weak: {
+        title: 'Weak (Non-identifying)',
+        line: 'dashed',
+        short: 'DASHED',
+        rule: 'The parent/determinant primary key migrates into the child/dependent as a foreign key, but does not become part of the child/dependent primary key.'
+      }
+    });
+
+    const QUESTIONS = [
+      {
+        round: 1,
+        roundName: 'Read the Keys',
+        title: 'Customer → Order',
+        relationship: 'places',
+        parent: {
+          name: 'CUSTOMER',
+          attrs: [
+            ['PK', 'customer_id'],
+            ['', 'customer_name'],
+            ['', 'email']
+          ]
+        },
+        child: {
+          name: 'ORDER',
+          attrs: [
+            ['PK', 'order_id'],
+            ['FK', 'customer_id'],
+            ['', 'order_date']
+          ]
+        },
+        rules: [
+          'One CUSTOMER may place many ORDERs.',
+          'Each ORDER belongs to one CUSTOMER.'
+        ],
+        answer: 'weak',
+        explanation: 'ORDER has its own primary key: order_id. customer_id migrated into ORDER only as a foreign key, so the CUSTOMER key is not part of ORDER’s identity.',
+        business: 'This design fits a business where an order has its own enterprise-wide identifier. The order can be referenced directly by order_id without needing customer_id as part of the key.'
+      },
+      {
+        round: 1,
+        roundName: 'Read the Keys',
+        title: 'Order → Order Item',
+        relationship: 'contains',
+        parent: {
+          name: 'ORDER',
+          attrs: [
+            ['PK', 'order_id'],
+            ['', 'order_date']
+          ]
+        },
+        child: {
+          name: 'ORDER_ITEM',
+          attrs: [
+            ['PK, FK', 'order_id'],
+            ['PK', 'line_num'],
+            ['', 'quantity']
+          ]
+        },
+        rules: [
+          'One ORDER contains one or many ORDER_ITEMs.',
+          'Each ORDER_ITEM belongs to exactly one ORDER.'
+        ],
+        answer: 'strong',
+        explanation: 'order_id migrated from ORDER into ORDER_ITEM and became part of ORDER_ITEM’s composite primary key: (order_id, line_num).',
+        business: 'Line 2 means nothing by itself. “Line 2 of order 10422” identifies the record. The child/dependent identity is built partly from the parent/determinant.'
+      },
+      {
+        round: 1,
+        roundName: 'Read the Keys',
+        title: 'Department → Employee',
+        relationship: 'employs',
+        parent: {
+          name: 'DEPARTMENT',
+          attrs: [
+            ['PK', 'department_id'],
+            ['', 'department_name']
+          ]
+        },
+        child: {
+          name: 'EMPLOYEE',
+          attrs: [
+            ['PK', 'employee_id'],
+            ['FK', 'department_id'],
+            ['', 'employee_name']
+          ]
+        },
+        rules: [
+          'One DEPARTMENT may employ many EMPLOYEEs.',
+          'An EMPLOYEE may be assigned to one DEPARTMENT.'
+        ],
+        answer: 'weak',
+        explanation: 'EMPLOYEE is identified by employee_id. department_id is a foreign key reference, but it is not part of the EMPLOYEE primary key.',
+        business: 'An employee keeps the same employee_id if the employee transfers from Finance to Marketing. The relationship can change without redefining the employee’s identity.'
+      },
+      {
+        round: 2,
+        roundName: 'Same Rule, Different Design',
+        title: 'Course → Class, Version A',
+        relationship: 'generates',
+        parent: {
+          name: 'COURSE',
+          attrs: [
+            ['PK', 'crs_code'],
+            ['', 'crs_title']
+          ]
+        },
+        child: {
+          name: 'CLASS',
+          attrs: [
+            ['PK', 'class_code'],
+            ['FK', 'crs_code'],
+            ['', 'class_section']
+          ]
+        },
+        rules: [
+          'A COURSE may generate many CLASSes.',
+          'Each CLASS belongs to one COURSE.',
+          'In this implementation, class_code independently identifies a CLASS.'
+        ],
+        answer: 'weak',
+        explanation: 'The business rule is 1:M, but the line is still dashed because CLASS has an independent primary key, class_code. crs_code is only an FK.',
+        business: 'This is the key lesson: cardinality did not decide the line. The key design did.'
+      },
+      {
+        round: 2,
+        roundName: 'Same Rule, Different Design',
+        title: 'Course → Class, Version B',
+        relationship: 'generates',
+        parent: {
+          name: 'COURSE',
+          attrs: [
+            ['PK', 'crs_code'],
+            ['', 'crs_title']
+          ]
+        },
+        child: {
+          name: 'CLASS',
+          attrs: [
+            ['PK, FK', 'crs_code'],
+            ['PK', 'class_section'],
+            ['', 'class_time']
+          ]
+        },
+        rules: [
+          'A COURSE may generate many CLASSes.',
+          'Each CLASS belongs to one COURSE.',
+          'In this implementation, CLASS is identified by (crs_code, class_section).'
+        ],
+        answer: 'strong',
+        explanation: 'crs_code migrated from COURSE and became part of the CLASS composite primary key. That makes the relationship identifying.',
+        business: 'Section 001 is not unique by itself. AN/MKT 324 + Section 001 is the identity. The child/dependent record is identified inside the parent/determinant context.'
+      },
+      {
+        round: 3,
+        roundName: 'Apply It to Business',
+        title: 'Employee → Dependent',
+        relationship: 'claims',
+        parent: {
+          name: 'EMPLOYEE',
+          attrs: [
+            ['PK', 'emp_num'],
+            ['', 'emp_name']
+          ]
+        },
+        child: {
+          name: 'DEPENDENT',
+          attrs: [
+            ['PK, FK', 'emp_num'],
+            ['PK', 'dep_num'],
+            ['', 'dep_name']
+          ]
+        },
+        rules: [
+          'An EMPLOYEE may claim zero or many DEPENDENTs.',
+          'A DEPENDENT exists in this database only in connection with an EMPLOYEE.',
+          'DEPENDENT is identified by (emp_num, dep_num).'
+        ],
+        answer: 'strong',
+        explanation: 'emp_num is simultaneously a foreign key and part of DEPENDENT’s composite primary key. The parent/determinant key participates in the child/dependent identity.',
+        business: 'This is a classic weak-entity pattern: the entity is existence-dependent and its key is partially derived from the parent/determinant. Weak entity, strong (identifying) relationship.'
+      },
+      {
+        round: 3,
+        roundName: 'Apply It to Business',
+        title: 'Maintenance → Maintenance Line',
+        relationship: 'includes',
+        parent: {
+          name: 'MAINTENANCE',
+          attrs: [
+            ['PK', 'maint_num'],
+            ['', 'maint_date']
+          ]
+        },
+        child: {
+          name: 'MAINT_LINE',
+          attrs: [
+            ['PK, FK', 'maint_num'],
+            ['PK', 'line_num'],
+            ['', 'line_description']
+          ]
+        },
+        rules: [
+          'One MAINTENANCE event may contain several MAINT_LINE records.',
+          'A line is uniquely identified only when maint_num and line_num are read together.'
+        ],
+        answer: 'strong',
+        explanation: 'maint_num migrated into MAINT_LINE and became part of MAINT_LINE’s primary key. That is the definition of an identifying relationship.',
+        business: 'The structure mirrors an invoice or work order: “line 3” is ambiguous, while “maintenance 10001, line 3” identifies the work performed.'
+      },
+      {
+        round: 3,
+        roundName: 'Apply It to Business',
+        title: 'Employee ↔ Education Through EMP_EDUC',
+        relationship: 'records',
+        parent: {
+          name: 'EMPLOYEE / EDUCATION',
+          attrs: [
+            ['PK', 'emp_num'],
+            ['PK', 'edu_code']
+          ]
+        },
+        child: {
+          name: 'EMP_EDUC',
+          attrs: [
+            ['PK, FK', 'emp_num'],
+            ['PK, FK', 'edu_code'],
+            ['', 'emp_educ_date']
+          ]
+        },
+        rules: [
+          'An EMPLOYEE may have many educational qualifications.',
+          'An EDUCATION qualification may be held by many EMPLOYEEs.',
+          'EMP_EDUC resolves the M:N relationship and is identified by (emp_num, edu_code).'
+        ],
+        answer: 'strong',
+        explanation: 'Both parent/determinant identifiers migrate into EMP_EDUC and together form its composite primary key. Each parent/determinant-to-bridge relationship is identifying.',
+        business: 'The bridge stores a business fact about the pairing: when this employee earned this qualification. The bridge’s identity comes from the two parent/determinant records.'
+      }
+    ];
+
+    const activity = document.getElementById('activity');
+    const selections = {};
+    let questionIndex = 0;
+
+    function entityBox(entity) {
+      return `
+        <div class="entity">
+          <div class="entity-name">${entity.name}</div>
+          <ul class="attribute-list">
+            ${entity.attrs.map(([tag, name]) => `
+              <li class="attribute-row ${tag.includes('PK') ? 'pk' : ''}">
+                <span class="key-tag ${tag ? '' : 'blank'}">${tag || '—'}</span>
+                <span class="attribute-name">${name}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>`;
+    }
+
+    function linePreview(state = 'unknown') {
+      const klass = state === 'strong' ? '' : state === 'weak' ? 'dashed' : 'unknown';
+      const label = state === 'strong'
+        ? 'solid / identifying'
+        : state === 'weak'
+          ? 'dashed / non-identifying'
+          : 'choose the line';
+      return `<div class="line-stage ${klass}"><span class="line-badge">${label}</span></div>`;
+    }
+
+    function relationshipDiagram(q, selected = null) {
+      return `
+        <div class="diagram-wrap" id="diagram">
+          <div class="diagram">
+            <div><p class="micro-label" style="text-align:center;margin-bottom:7px;">Parent / Determinant</p>${entityBox(q.parent)}</div>
+            <div class="relationship-visual">
+              <div class="relationship-name">${q.relationship}</div>
+              <div class="relationship-dropzone ${selected ? 'has-line' : ''}" id="relationship-dropzone" tabindex="0" aria-label="Relationship line drop zone">
+                ${selected
+                  ? `<span class="dropped-line ${STRENGTHS[selected].line === 'dashed' ? 'dashed' : ''}"></span>
+                     <span class="drop-hint">${STRENGTHS[selected].short} — ${STRENGTHS[selected].title}</span>`
+                  : `<span class="drop-label">Drag a line here<br>between the entities</span>`}
+              </div>
+            </div>
+            <div><p class="micro-label" style="text-align:center;margin-bottom:7px;">Child / Dependent</p>${entityBox(q.child)}</div>
+          </div>
+        </div>`;
+    }
+
+    function lineToken(key) {
+      const item = STRENGTHS[key];
+      return `
+        <div class="line-token" draggable="true" role="button" tabindex="0" data-strength="${key}" aria-pressed="false">
+          <span class="token-line ${item.line === 'dashed' ? 'dashed' : ''}"></span>
+          <strong>${item.short} — ${item.title}</strong>
+          <span>${item.rule}</span>
+        </div>`;
+    }
+
+    function updateProgress(position, complete = false) {
+      const total = QUESTIONS.length;
+      const percent = complete ? 100 : Math.round((position / total) * 100);
+      document.getElementById('progress-text').textContent = complete ? 'Activity complete' : `Question ${position} of ${total}`;
+      document.getElementById('progress-percent').textContent = `${percent}%`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+    }
+
+    function renderQuestion() {
+      const q = QUESTIONS[questionIndex];
+      const inRound = QUESTIONS.slice(0, questionIndex + 1).filter(item => item.round === q.round).length;
+      const roundTotal = QUESTIONS.filter(item => item.round === q.round).length;
+      const selected = selections[questionIndex] || null;
+
+      updateProgress(questionIndex + 1);
+
+      activity.innerHTML = `
+        <div class="question-header">
+          <div>
+            <p class="eyebrow">Round ${q.round} · ${q.roundName}</p>
+            <h2>${q.title}</h2>
+          </div>
+          <div class="counter">${inRound} of ${roundTotal}</div>
+        </div>
+
+        <div class="question-body">
+          <p class="instruction">Read the business rules and inspect the keys. Then decide which line belongs between the entities.</p>
+
+          <p class="rules-title">Business rules</p>
+          <ul class="rules">${q.rules.map(rule => `<li>${rule}</li>`).join('')}</ul>
+
+          ${relationshipDiagram(q, selected)}
+
+          <p class="micro-label">Build the relationship</p>
+          <p class="drag-instruction">Drag the line you want onto the connector between the parent/determinant and child/dependent. On a touch device, tap a line and then tap the connector.</p>
+          <div class="line-palette" aria-label="Relationship line choices">
+            ${lineToken('strong')}
+            ${lineToken('weak')}
+          </div>
+
+          <div class="logic-card">
+            <strong>Decision test:</strong>
+            Find the parent/determinant primary key in the child/dependent. Is it part of the child/dependent primary key, or is it only a foreign key?
+          </div>
+
+          <div class="feedback" id="feedback" role="status" tabindex="-1" hidden></div>
+
+          <div class="actions">
+            <button class="button button-secondary" id="check" type="button">Check Relationship</button>
+            <button class="button button-primary" id="continue" type="button" hidden>Continue</button>
+          </div>
+        </div>`;
+
+      bindQuestionEvents();
+
+      if (selected) applySelectedState(selected);
+    }
+
+    function applySelectedState(value) {
+      activity.querySelectorAll('.line-token').forEach(token => {
+        const isSelected = token.dataset.strength === value;
+        token.classList.toggle('is-selected', isSelected);
+        token.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+      });
+
+      const q = QUESTIONS[questionIndex];
+      const diagram = document.getElementById('diagram');
+      if (diagram) diagram.outerHTML = relationshipDiagram(q, value);
+      bindDropZone();
+    }
+
+    function selectStrength(value) {
+      selections[questionIndex] = value;
+      applySelectedState(value);
+
+      const feedback = document.getElementById('feedback');
+      if (feedback) feedback.hidden = true;
+      const continueButton = document.getElementById('continue');
+      if (continueButton) continueButton.hidden = true;
+    }
+
+    function checkAnswer() {
+      const q = QUESTIONS[questionIndex];
+      const selected = selections[questionIndex];
+      const feedback = document.getElementById('feedback');
+      const continueButton = document.getElementById('continue');
+
+      activity.querySelectorAll('.line-token').forEach(button => {
+        button.classList.remove('wrong', 'right');
+      });
+
+      if (!selected) {
+        feedback.className = 'feedback neutral';
+        feedback.innerHTML = `<h3>Choose a line first.</h3><p>Use the child/dependent primary key as your evidence.</p>`;
+        feedback.hidden = false;
+        continueButton.hidden = true;
+        feedback.focus();
+        return;
+      }
+
+      const correct = selected === q.answer;
+      const selectedButton = activity.querySelector(`[data-strength="${selected}"]`);
+      const correctButton = activity.querySelector(`[data-strength="${q.answer}"]`);
+
+      if (!correct) {
+        selectedButton.classList.add('wrong');
+        correctButton.classList.add('right');
+        feedback.className = 'feedback incorrect';
+        feedback.innerHTML = `
+          <h3>Look at the child/dependent primary key again.</h3>
+          <p><strong>${STRENGTHS[q.answer].short} — ${STRENGTHS[q.answer].title}</strong> is the correct line.</p>
+          <p>${q.explanation}</p>
+          <div class="business-lens">
+            <strong>Why it matters in business</strong>
+            ${q.business}
+          </div>`;
+        feedback.hidden = false;
+        continueButton.hidden = true;
+        feedback.focus();
+        return;
+      }
+
+      selectedButton.classList.add('right');
+      document.getElementById('diagram').classList.add('is-correct');
+      feedback.className = 'feedback correct';
+      feedback.innerHTML = `
+        <h3>Correct: ${STRENGTHS[q.answer].short} line.</h3>
+        <p>${q.explanation}</p>
+        <div class="business-lens">
+          <strong>Why it matters in business</strong>
+          ${q.business}
+        </div>
+        <div class="business-lens">
+          <strong>What this does not tell you</strong>
+          Line strength does not by itself determine cardinality, optionality, or delete/cascade behavior. Those are separate design decisions.
+        </div>`;
+      feedback.hidden = false;
+      continueButton.hidden = false;
+      feedback.focus();
+    }
+
+    function continueActivity() {
+      if (questionIndex === QUESTIONS.length - 1) {
+        renderComplete();
+        return;
+      }
+      questionIndex += 1;
+      renderQuestion();
+      activity.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderComplete() {
+      updateProgress(QUESTIONS.length, true);
+
+      activity.innerHTML = `
+        <div class="interstitial">
+          <div class="interstitial-inner">
+            <span class="round-stamp">Activity complete</span>
+            <h2>Read the keys. Then draw the line.</h2>
+            <p>Relationship strength is not a guess about how “important” the relationship feels. It is a precise statement about identity.</p>
+
+            <div class="completion-reward" id="completion-reward" aria-label="Animated example resolving an identifying relationship">
+              <div class="reward-diagram">
+                <div class="reward-entity reward-parent">
+                  <div class="reward-entity-name">ORDER</div>
+                  <div class="reward-attrs">
+                    <div><b>PK</b> order_id</div>
+                    <div>order_date</div>
+                  </div>
+                </div>
+
+                <div class="reward-center">
+                  <p class="reward-key-flash">order_id migrates into the child/dependent PK</p>
+                  <div class="reward-line-wrap">
+                    <div class="reward-line"></div>
+                  </div>
+                  <div class="reward-label">Strong (Identifying) · Solid line</div>
+                </div>
+
+                <div class="reward-entity reward-dependent">
+                  <div class="reward-entity-name">ORDER_ITEM</div>
+                  <div class="reward-attrs">
+                    <div><b>PK, FK</b> order_id</div>
+                    <div><b>PK</b> line_num</div>
+                    <div>quantity</div>
+                  </div>
+                </div>
+              </div>
+              <div class="reward-controls">
+                <button class="button button-secondary" id="replay-reward" type="button">Replay Animation</button>
+              </div>
+            </div>
+
+            <div class="rule-stack">
+              <div><strong>Solid line:</strong> parent/determinant PK becomes part of child/dependent PK → strong (identifying).</div>
+              <div><strong>Dashed line:</strong> parent/determinant PK migrates only as an FK → weak (non-identifying).</div>
+              <div><strong>Do not confuse:</strong> 1:M vs. M:N, optional vs. mandatory, and strong (identifying) vs. weak (non-identifying) answer different questions.</div>
+              <div><strong>Business question:</strong> does this child/dependent record have an independent identity, or is its identity defined inside the parent/determinant context?</div>
+              <div><strong>Advanced distinction:</strong> existence dependence and identifying dependence are related ideas, but they are not interchangeable. Referential rules can require a child/dependent to have a parent/determinant without making the parent/determinant key part of the child/dependent primary key.</div>
+              <div><strong>Model in layers:</strong> first determine cardinality, then participation, then identification. Each answers a different design question.</div>
+            </div>
+
+            <p><strong>Example:</strong> ORDER has its own order_id → CUSTOMER–ORDER can be weak (non-identifying). ORDER_ITEM uses order_id + line_num → ORDER–ORDER_ITEM is strong (identifying).</p>
+
+            <button class="button button-primary" id="restart" type="button">Restart Activity</button>
+          </div>
+        </div>`;
+
+      document.getElementById('replay-reward').addEventListener('click', startRewardAnimation);
+      document.getElementById('restart').addEventListener('click', restartActivity);
+      document.getElementById('restart').focus();
+      startRewardAnimation();
+    }
+
+    function startRewardAnimation() {
+      const stage = document.getElementById('completion-reward');
+      if (!stage) return;
+      stage.classList.remove('animate', 'settled');
+      void stage.offsetWidth;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        stage.classList.add('settled');
+        return;
+      }
+
+      stage.classList.add('animate');
+      window.setTimeout(() => stage.classList.add('settled'), 2350);
+    }
+
+    function restartActivity() {
+      Object.keys(selections).forEach(key => delete selections[key]);
+      questionIndex = 0;
+      renderQuestion();
+    }
+
+    let armedStrength = null;
+
+    function bindDropZone() {
+      const dropzone = document.getElementById('relationship-dropzone');
+      if (!dropzone) return;
+
+      dropzone.addEventListener('dragover', event => {
+        event.preventDefault();
+        dropzone.classList.add('drag-over');
+      });
+
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+      });
+
+      dropzone.addEventListener('drop', event => {
+        event.preventDefault();
+        dropzone.classList.remove('drag-over');
+        const value = event.dataTransfer.getData('text/plain') || armedStrength;
+        if (value && STRENGTHS[value]) {
+          armedStrength = null;
+          selectStrength(value);
+        }
+      });
+
+      dropzone.addEventListener('click', () => {
+        if (armedStrength) {
+          const value = armedStrength;
+          armedStrength = null;
+          selectStrength(value);
+        }
+      });
+
+      dropzone.addEventListener('keydown', event => {
+        if ((event.key === 'Enter' || event.key === ' ') && armedStrength) {
+          event.preventDefault();
+          const value = armedStrength;
+          armedStrength = null;
+          selectStrength(value);
+        }
+      });
+    }
+
+    function bindQuestionEvents() {
+      activity.querySelectorAll('.line-token').forEach(token => {
+        token.addEventListener('dragstart', event => {
+          armedStrength = token.dataset.strength;
+          event.dataTransfer.effectAllowed = 'copy';
+          event.dataTransfer.setData('text/plain', token.dataset.strength);
+        });
+
+        token.addEventListener('dragend', () => {
+          const dropzone = document.getElementById('relationship-dropzone');
+          if (dropzone) dropzone.classList.remove('drag-over');
+        });
+
+        token.addEventListener('click', () => {
+          armedStrength = token.dataset.strength;
+          activity.querySelectorAll('.line-token').forEach(t => {
+            const on = t === token;
+            t.classList.toggle('is-selected', on);
+            t.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          const dropzone = document.getElementById('relationship-dropzone');
+          if (dropzone) {
+            dropzone.focus();
+            dropzone.classList.add('drag-over');
+          }
+        });
+
+        token.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            token.click();
+          }
+        });
+      });
+
+      bindDropZone();
+      document.getElementById('check').addEventListener('click', checkAnswer);
+      document.getElementById('continue').addEventListener('click', continueActivity);
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
