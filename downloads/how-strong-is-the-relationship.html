@@ -999,7 +999,100 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
     }
-  </style>
+  
+    /* Responsive repair: on phones/tablets, stack the ERD instead of forcing the
+       desktop 760px-wide diagram into a horizontally scrolling viewport. */
+    @media (max-width: 860px) {
+      body { overflow-x: hidden; }
+
+      .question-header {
+        flex-wrap: wrap;
+      }
+
+      .diagram-wrap {
+        overflow-x: hidden;
+        overflow-y: visible;
+      }
+
+      .diagram {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        justify-items: center;
+      }
+
+      .diagram > div {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .entity {
+        width: min(100%, 360px);
+        min-width: 0;
+        max-width: 360px;
+        margin: 0 auto;
+        flex: none;
+      }
+
+      .relationship-visual {
+        width: min(100%, 360px);
+        min-width: 0;
+        margin: 0 auto;
+        padding: 0 10px;
+      }
+
+      .relationship-name {
+        overflow-wrap: anywhere;
+      }
+
+      .relationship-dropzone {
+        width: 100%;
+        min-height: 68px;
+      }
+
+      .attribute-name {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .line-palette {
+        width: 100%;
+      }
+
+      .line-token {
+        min-width: 0;
+      }
+
+      .footer-tree-title,
+      .footer-tree a {
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .diagram-wrap {
+        padding: 14px 10px;
+      }
+
+      .relationship-visual {
+        padding: 0 4px;
+      }
+
+      .micro-label {
+        text-align: center;
+      }
+
+      .question-header {
+        gap: 8px 14px;
+      }
+
+      .counter {
+        margin-top: 0;
+      }
+    }
+
+</style>
 </head>
 
 <body id="top">
