@@ -977,7 +977,7 @@
         border-top: 1px solid rgba(238,236,230,.34);
         border-left: 0;
       }
-      .footer-tree-column:first-child/dependent { border-top: 0; }
+      .footer-tree-column:first-child { border-top: 0; }
     }
 
     @media (max-width: 600px) {
@@ -1039,13 +1039,13 @@
       <div class="key-rule">
         <span class="key-sample"></span>
         <strong>Solid line</strong>
-        <span>Strong / identifying relationship. The parent/determinant PK is part of the child/dependent PK.</span>
+        <span>Strong (Identifying) relationship. The parent/determinant PK is part of the child/dependent PK.</span>
       </div>
 
       <div class="key-rule">
         <span class="key-sample dashed"></span>
         <strong>Dashed line</strong>
-        <span>Weak / non-identifying relationship. The parent/determinant PK migrates only as an FK.</span>
+        <span>Weak (Non-identifying) relationship. The parent/determinant PK migrates only as an FK.</span>
       </div>
 
       <div class="myth-card">
