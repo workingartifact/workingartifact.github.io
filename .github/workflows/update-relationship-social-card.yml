@@ -1,0 +1,142 @@
+name: Update relationship social card
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/update-relationship-social-card.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate revised 1200x630 preview
+        run: |
+          python -m pip install --quiet pillow
+          python <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageDraw, ImageFont
+
+          W,H=1200,630
+          out=Path("assets/how-strong-is-the-relationship-preview-v3.png")
+          out.parent.mkdir(parents=True,exist_ok=True)
+
+          img=Image.new("RGB",(W,H),"#0d4c8f")
+          px=img.load()
+          for y in range(H):
+              for x in range(W):
+                  t=(x+y*.28)/(W+H*.28)
+                  px[x,y]=(int(10+13*t),int(61+53*t),int(116+91*t))
+
+          d=ImageDraw.Draw(img)
+          bold_candidates=[
+              "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+              "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf"]
+          reg_candidates=[
+              "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+              "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"]
+          def F(sz,bold=False):
+              for p in (bold_candidates if bold else reg_candidates):
+                  if Path(p).exists(): return ImageFont.truetype(p,sz)
+              return ImageFont.load_default()
+
+          white="#ffffff"; pale="#dbeafe"; navy="#123b63"; ink="#14283b"; line="#174f82"; light="#f8fbff"; grid="#cbd5e1"
+          d.text((42,24),"BUSINESS DATA MANAGEMENT  ·  INTERACTIVE ACTIVITY",font=F(19,True),fill=pale)
+          d.text((42,62),"How Strong is the",font=F(59,True),fill=white)
+          d.text((42,126),"Relationship?",font=F(59,True),fill=white)
+          d.text((42,203),"Strong (Identifying) vs. Weak (Non-identifying) Relationships",font=F(25,True),fill=white)
+          d.text((42,238),"Read the keys. Then draw the line.",font=F(22),fill=pale)
+
+          # Working Artifact badge, deliberately oversized for comfortable padding.
+          bx1,by1,bx2,by2=804,34,1145,99
+          d.rounded_rectangle((bx1,by1,bx2,by2),radius=14,outline=white,width=2)
+          label="Working Artifact"
+          font=F(27,True)
+          bb=d.textbbox((0,0),label,font=font)
+          tw,th=bb[2]-bb[0],bb[3]-bb[1]
+          d.text(((bx1+bx2-tw)/2,(by1+by2-th)/2-2),label,font=font,fill=white)
+
+          # Main card
+          d.rounded_rectangle((25,286,1175,525),radius=18,fill=light)
+          d.line((600,305,600,507),fill=grid,width=2)
+
+          d.text((195,304),"Strong (Identifying)",font=F(21,True),fill=navy)
+          d.text((780,304),"Weak (Non-identifying)",font=F(21,True),fill=navy)
+
+          def entity(x1,y1,x2,y2,title,rows):
+              d.rounded_rectangle((x1,y1,x2,y2),radius=7,fill=white,outline=line,width=3)
+              d.line((x1,y1+38,x2,y1+38),fill="#9fb2c6",width=2)
+              tf=F(17,True)
+              tb=d.textbbox((0,0),title,font=tf); tw=tb[2]-tb[0]
+              d.text(((x1+x2-tw)/2,y1+9),title,font=tf,fill=navy)
+              yy=y1+50
+              for tag,val in rows:
+                  if tag:
+                      d.text((x1+12,yy),tag,font=F(14,True),fill="#1e5a8a")
+                  d.text((x1+69,yy),val,font=F(14, tag.startswith("PK")),fill=ink)
+                  yy+=28
+
+          # Strong example: ORDER -> ORDER_ITEM
+          entity(48,345,268,493,"ORDER",[("PK","order_id"),("","order_date")])
+          entity(374,345,572,493,"ORDER_ITEM",[("PK, FK","order_id"),("PK","line_num"),("","quantity")])
+          y=420
+          d.line((268,y,374,y),fill=line,width=5)
+          d.line((283,y-13,283,y+13),fill=line,width=4)
+          d.line((360,y,374,y-12),fill=line,width=4); d.line((360,y,374,y+12),fill=line,width=4)
+
+          # Weak example: CUSTOMER -> ORDER
+          entity(628,345,848,493,"CUSTOMER",[("PK","customer_id"),("","customer_name")])
+          entity(956,345,1145,493,"ORDER",[("PK","order_id"),("FK","customer_id"),("","order_date")])
+          y=420
+          d.line((862,y-13,862,y+13),fill=line,width=4)
+          x=848
+          while x<956:
+              d.line((x,y,min(x+12,956),y),fill=line,width=5)
+              x+=22
+          d.line((942,y,956,y-12),fill=line,width=4); d.line((942,y,956,y+12),fill=line,width=4)
+
+          d.text((44,562),"Free interactive browser activity",font=F(18,True),fill=white)
+          brand="EXAPTER ENDAPTER"
+          bf=F(19,True); bb=d.textbbox((0,0),brand,font=bf); tw=bb[2]-bb[0]
+          d.text((W-tw-44,562),brand,font=bf,fill=white)
+
+          img.save(out,"PNG",optimize=True)
+          print(out, out.stat().st_size)
+
+          page=Path("how-strong-is-the-relationship/index.html")
+          html=page.read_text(encoding="utf-8")
+          import re
+          newurl="https://workingartifact.github.io/assets/how-strong-is-the-relationship-preview-v3.png"
+          html=re.sub(r'https://workingartifact\.github\.io/assets/how-strong-is-the-relationship-preview-v\d+\.png',newurl,html)
+          html=re.sub(r'https://workingartifact\.github\.io/how-strong-is-the-relationship/how-strong-is-the-relationship-og\.jpg',newurl,html)
+          html=html.replace('<meta property="og:image:type" content="image/jpeg">','<meta property="og:image:type" content="image/png">')
+          html=re.sub(r'<meta property="og:image:width" content="\d+">','<meta property="og:image:width" content="1200">',html)
+          html=re.sub(r'<meta property="og:image:height" content="\d+">','<meta property="og:image:height" content="630">',html)
+          page.write_text(html,encoding="utf-8")
+          PY
+
+      - name: Commit revised preview
+        run: |
+          git config user.name "workingartifact"
+          git config user.email "318367754+workingartifact@users.noreply.github.com"
+          git add assets/how-strong-is-the-relationship-preview-v3.png how-strong-is-the-relationship/index.html
+          git commit -m "Update relationship social preview card"
+          git push
+
+      - name: Remove one-shot workflow
+        run: |
+          git pull --rebase
+          git rm .github/workflows/update-relationship-social-card.yml
+          git commit -m "Remove one-shot social card workflow"
+          git push
