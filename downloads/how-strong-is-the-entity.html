@@ -9,7 +9,7 @@
     :root {
       --ink: #152534; --navy: #123b63; --blue: #1e5a8a; --blue-dark: #17486f;
       --pale-blue: #eef5fa; --paper: #fff; --page-bg: #f4f6f8; --line: #cbd5df;
-      --muted: #5c6b78; --amber-bg: #fff6db; --green: #176b65;
+      --muted: #5c6b78; --amber: #9a6200; --amber-bg: #fff6db; --green: #176b65;
       --green-bg: #eaf7f5; --red: #a13939; --red-bg: #fff1f1;
       --shadow: 0 8px 28px rgba(22,33,43,.09);
     }
@@ -21,7 +21,7 @@
     .shell { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
     .masthead { color: #fff; background: linear-gradient(120deg, #112b4d, #1e5aa8); }
     .masthead .shell { padding: 34px 0 30px; }
-    .brand { margin: 0 0 5px; font-size: .78rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; opacity: .82; }
+    .brand { margin: 0 0 5px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; opacity: .82; }
     h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; letter-spacing: -.025em; }
     .lesson-tag { max-width: 780px; margin: 12px 0 0; font-size: 1.08rem; }
     .progress-wrap { margin-top: 22px; }
@@ -32,49 +32,47 @@
     .public-notice-inner { padding: 14px 18px; background: #f8fbfe; border: 1px solid #b8cfdf; border-left: 5px solid var(--blue); border-radius: 7px; box-shadow: 0 5px 18px rgba(21,37,52,.05); }
     .public-notice p { margin: 0; }
     .public-notice p + p { margin-top: 2px; color: var(--muted); }
-    .layout { display: grid; grid-template-columns: minmax(0,1fr) 224px; gap: 20px; align-items: start; padding: 28px 0 56px; }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 224px; gap: 20px; align-items: start; padding: 28px 0; }
     .activity-card, .side-card { min-width: 0; background: var(--paper); border: 1px solid #d7dde4; border-radius: 13px; box-shadow: var(--shadow); }
     .question-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: clamp(20px,3vw,30px) clamp(20px,3vw,30px) 0; }
-    .eyebrow { margin: 0 0 4px; color: var(--blue); font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .eyebrow { margin: 0 0 4px; color: var(--blue); font-size: .82rem; font-weight: 700; letter-spacing: .06em; }
     h2 { margin: 0; font-size: clamp(1.45rem,3vw,2rem); line-height: 1.2; letter-spacing: -.02em; }
     .counter { margin-top: 4px; color: var(--muted); font-size: .86rem; font-weight: 700; white-space: nowrap; }
     .question-body { padding: 0 clamp(20px,3vw,30px) clamp(20px,3vw,30px); }
-    .instruction { margin: 14px 0 18px; color: var(--muted); }
-    .rules-title, .micro-label { margin: 0 0 6px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
-    .rules { margin: 0 0 18px; padding: 13px 18px 13px 38px; background: #fafbfc; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 8px; }
+    .instruction { margin: 10px 0 12px; color: var(--muted); }
+    .rules-title { margin: 0 0 6px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .06em; }
+    .rules { margin: 0 0 12px; padding: 11px 18px 11px 38px; background: #fafbfc; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 8px; }
     .rules li + li { margin-top: 6px; }
-    .diagram-wrap { margin: 0 0 18px; padding: 18px; background: #fafbfc; border: 1px solid var(--line); border-radius: 10px; }
+    .diagram-wrap { margin: 0; padding: 16px; background: #fafbfc; border: 1px solid var(--line); border-radius: 10px; }
     .diagram { display: grid; grid-template-columns: minmax(0,1fr) 86px minmax(0,1fr); gap: 14px; align-items: center; }
     .diagram.single { grid-template-columns: minmax(0,1fr); justify-items: center; }
     .box-wrap { min-width: 0; }
     .diagram.single .box-wrap { width: min(100%,360px); }
-    .box-label { margin: 0 0 7px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-align: center; text-transform: uppercase; }
-    .box-label.target-label { color: var(--blue-dark); }
+    .box-label { margin: 0 0 7px; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-align: center; }
+    .box-label.target-label { color: var(--blue-dark); font-weight: 800; }
     .entity { min-width: 0; background: #fff; border: 2px solid #40566c; border-radius: 4px; overflow: hidden; }
-    .entity.target { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,90,138,.12); }
+    .entity.target { border: 3px solid var(--blue); box-shadow: 0 0 0 3px rgba(30,90,138,.12); }
     .entity-name { padding: 10px 12px; background: #edf2f6; border-bottom: 1px solid #aebbc7; font-weight: 800; letter-spacing: .04em; text-align: center; overflow-wrap: anywhere; }
     .entity.target .entity-name { background: #e7f1f9; }
     .attribute-list { margin: 0; padding: 8px 0; list-style: none; font-size: .9rem; }
     .attribute-row { display: grid; grid-template-columns: 60px minmax(0,1fr); gap: 8px; padding: 5px 10px; }
     .attribute-row + .attribute-row { border-top: 1px solid #edf0f3; }
+    .entity.target .attribute-row.evidence-strong { color: #0b5b43; background: var(--green-bg); box-shadow: inset 4px 0 var(--green); }
+    .entity.target .attribute-row.evidence-weak { color: #654300; background: var(--amber-bg); box-shadow: inset 4px 0 var(--amber); }
     .key-tag { color: var(--blue-dark); font-size: .76rem; font-weight: 800; white-space: nowrap; }
     .attribute-name { overflow-wrap: anywhere; }
     .pk .attribute-name { font-weight: 800; }
     .association { color: var(--muted); text-align: center; font-size: .78rem; font-weight: 700; }
     .association .mark { display: block; margin: 9px 0; color: #607285; font-size: 1.35rem; line-height: 1; }
-    .decision-note { margin: 0 0 15px; padding: 12px 14px; background: #f8fafc; border: 1px solid #dce3e9; border-radius: 8px; }
-    .decision-note strong { color: var(--blue-dark); }
-    .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-    .strength-choice { min-height: 104px; padding: 14px; color: var(--ink); background: #fff; border: 2px solid #b7c2cc; border-radius: 10px; text-align: left; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+    .choice-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+    .strength-choice { min-height: 54px; min-width: 0; padding: 9px 7px; color: var(--ink); background: #fff; border: 2px solid #b7c2cc; border-radius: 8px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
     .strength-choice:hover:not(:disabled) { border-color: var(--blue); background: var(--pale-blue); transform: translateY(-1px); }
     .strength-choice.selected { border-color: var(--blue); background: #edf5fd; box-shadow: inset 0 0 0 1px rgba(30,90,138,.15); }
     .strength-choice.wrong { border-color: var(--red); background: var(--red-bg); }
     .strength-choice.right { border-color: var(--green); background: var(--green-bg); }
     .strength-choice:disabled { cursor: default; opacity: 1; }
-    .strength-choice strong { display: block; margin-bottom: 5px; font-size: .95rem; }
-    .strength-choice span { color: var(--muted); font-size: .82rem; }
-    .key-hint { margin: 9px 0 0; color: var(--muted); font-size: .8rem; }
-    .feedback { margin-top: 15px; padding: 14px 16px; border-left: 4px solid var(--blue); background: #eef5fd; }
+    .strength-choice strong { display: block; font-size: .9rem; }
+    .feedback { margin-top: 12px; padding: 14px 16px; border-left: 4px solid var(--blue); background: #eef5fd; }
     .feedback[hidden], .button[hidden] { display: none; }
     .feedback.correct { color: #0b5b43; background: #ecfdf3; border-color: var(--green); }
     .feedback.incorrect { color: #8f1b13; background: #fff1f0; border-color: var(--red); }
@@ -82,7 +80,7 @@
     .feedback h3 { margin: 0 0 7px; font-size: 1rem; }
     .feedback p { margin: 0; }
     .feedback p + p { margin-top: 7px; }
-    .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 14px; }
     .button { min-height: 44px; padding: 10px 16px; border: 2px solid var(--blue); border-radius: 8px; font-weight: 700; cursor: pointer; }
     .button-primary { color: #fff; background: var(--blue); }
     .button-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
@@ -99,9 +97,19 @@
     .myth-card { margin-top: 16px; padding: 12px; background: var(--amber-bg); border: 1px solid #efd99f; border-radius: 8px; }
     .myth-card strong { display: block; color: #6e4c00; font-size: .82rem; }
     .myth-card span { display: block; margin-top: 4px; color: #6e4c00; font-size: .76rem; }
-    .interstitial { display: grid; min-height: 460px; place-items: center; padding: 40px 28px; text-align: center; }
-    .interstitial-inner { max-width: 650px; }
-    .round-stamp { display: inline-block; margin-bottom: 20px; padding: 8px 12px; color: var(--blue); background: var(--pale-blue); border: 1px solid #b8cfdf; border-radius: 8px; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .interstitial { position: relative; display: grid; min-height: 460px; place-items: center; padding: 40px 28px; overflow: hidden; text-align: center; }
+    .interstitial-inner { position: relative; z-index: 1; max-width: 650px; }
+    .celebration { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .confetti-piece { position: absolute; top: -18px; width: 7px; height: 13px; background: var(--blue); border-radius: 2px; opacity: 0; animation: confetti-fall 1.55s ease-out both; }
+    .confetti-piece:nth-child(3n) { background: var(--green); }
+    .confetti-piece:nth-child(3n + 2) { background: var(--amber); }
+    @keyframes confetti-fall {
+      0% { opacity: 0; transform: translate3d(0, -12px, 0) rotate(0); }
+      12% { opacity: .85; }
+      78% { opacity: .85; }
+      100% { opacity: 0; transform: translate3d(var(--drift), 310px, 0) rotate(var(--spin)); }
+    }
+    .round-stamp { display: inline-block; margin-bottom: 20px; padding: 8px 12px; color: var(--blue); background: var(--pale-blue); border: 1px solid #b8cfdf; border-radius: 8px; font-size: .78rem; font-weight: 800; letter-spacing: .06em; }
     .interstitial h2 { font-size: clamp(1.7rem,4vw,2.6rem); }
     .interstitial p { margin: 14px auto 22px; color: var(--muted); font-size: 1.06rem; }
     .score { display: inline-block; margin: 4px 0 18px; padding: 12px 18px; color: var(--blue-dark); background: var(--pale-blue); border-radius: 8px; font-size: 1.15rem; font-weight: 800; }
@@ -115,13 +123,11 @@
       .diagram { grid-template-columns: minmax(0,1fr); justify-items: center; gap: 10px; }
       .diagram .box-wrap { width: min(100%,360px); }
       .association .mark { transform: rotate(90deg); }
-      .choice-grid { grid-template-columns: 1fr; }
       .actions { flex-direction: column; }
       .button, .button-quiet { width: 100%; }
     }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
-    .resource-nav { display:flex; flex-wrap:wrap; gap:14px; margin:16px 0 0; } .resource-nav a { color:#fff; text-underline-offset:4px; }
-    .institutional-footer {
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } .confetti-piece { animation: none !important; display: none; } }
+  .institutional-footer {
       --footer-ink: #eeece6;
       --footer-muted: #a8a69f;
       --footer-signal: #a4bd83;
@@ -201,16 +207,14 @@
       .footer-tree-column + .footer-tree-column { min-height: auto; padding: 24px 0 28px; border-top: 1px solid var(--footer-rule); border-left: 0; }
       .footer-tree-column:first-child { border-top: 0; }
     }
-
   </style>
 </head>
 <body id="top">
   <header class="masthead">
     <div class="shell">
-      <p class="brand">Working Artifact · Interactive Activity</p>
+      <p class="brand">AN/MKT 324 · In-Class Activity</p>
       <h1>How Strong is the Entity?</h1>
       <p class="lesson-tag">Judge the entity by its identity. Read the business rule and the identifier before choosing strong or weak.</p>
-      <nav class="resource-nav" aria-label="Activity resources"><a href="../">Working Artifact</a><a href="https://github.com/workingartifact/workingartifact.github.io/blob/main/how-strong-is-the-entity/index.html">View source ↗</a><a href="../downloads/how-strong-is-the-entity.html" download>Download standalone HTML</a></nav>
       <div class="progress-wrap">
         <div class="progress-label"><span id="progress-text">Question 1 of 12 · 0 answered</span><span id="progress-percent">0%</span></div>
         <div class="progress-track" id="progress-track" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0"><div class="progress-bar" id="progress-bar"></div></div>
@@ -233,45 +237,46 @@
       <div class="myth-card"><strong>Separate the two questions.</strong><span>Entity strength asks about independent identity. Relationship strength asks whether the parent's PK joins the child's PK. Weak describes identification dependence, not importance.</span></div>
     </aside>
   </main>
+
   <footer class="institutional-footer">
-    <div class="footer-shell">
-      <div class="footer-top">
-        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
-        <a class="back-to-top" href="#top">Back to top ↑</a>
+      <div class="footer-shell">
+        <div class="footer-top">
+          <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+          <a class="back-to-top" href="#top">Back to top ↑</a>
+        </div>
+        <nav class="footer-tree" aria-label="Institutional tree">
+          <div class="footer-tree-column footer-tree-root">
+            <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+          </div>
+          <div class="footer-tree-column">
+            <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+            <ul>
+              <li><a href="https://exapterendapter.com/lab.html">Lab</a></li>
+              <li><a href="https://exapterendapter.com/studio.html">Studio</a></li>
+            </ul>
+          </div>
+          <div class="footer-tree-column">
+            <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+            <ul>
+              <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
+              <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
+            </ul>
+          </div>
+          <div class="footer-tree-column">
+            <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+          </div>
+        </nav>
+        <div class="footer-signature">
+          <p class="footer-motto">QUAESTIO ET VERITAS</p>
+          <p class="footer-translation">Inquiry and Truth</p>
+          <p class="footer-founder">Josh Ayala · © 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+          <div class="footer-resource-note">
+            <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+            <p>Free to use and share for educational purposes with attribution.</p>
+          </div>
+        </div>
       </div>
-      <nav class="footer-tree" aria-label="Institutional tree">
-        <div class="footer-tree-column footer-tree-root">
-          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
-        </div>
-        <div class="footer-tree-column">
-          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
-          <ul>
-            <li><a href="https://exapterendapter.com/lab.html">Lab</a></li>
-            <li><a href="https://exapterendapter.com/studio.html">Studio</a></li>
-          </ul>
-        </div>
-        <div class="footer-tree-column">
-          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
-          <ul>
-            <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
-            <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
-          </ul>
-        </div>
-        <div class="footer-tree-column">
-          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
-        </div>
-      </nav>
-      <div class="footer-signature">
-        <p class="footer-motto">QUAESTIO ET VERITAS</p>
-        <p class="footer-translation">Inquiry and Truth</p>
-        <p class="footer-founder">Josh Ayala · © 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
-        <div class="footer-resource-note">
-          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
-          <p>Free to use and share for educational purposes with attribution.</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+    </footer>
   <script>
     'use strict';
 
@@ -291,23 +296,23 @@
         contextAttrs: [['PK','session_id'], ['','session_date']],
         targetAttrs: [['PK, FK','session_id'], ['PK','take_num'], ['','duration']],
         rules: ['A take is recorded only as part of one recording session.', 'Take numbers restart at 01 in every session.'],
-        answer: 'weak', explanation: 'TRACK_TAKE is weak because take_num is only local to a session. It needs session_id plus take_num for a complete identity.'
+        answer: 'weak', explanation: 'TRACK_TAKE is weak because session_id comes from RECORDING_SESSION and is required with take_num to identify the take.'
       },
       {
         round: 'Read beyond the relationship', title: 'A project camera', target: 'CAMERA',
         context: 'VIDEO_PROJECT', contextRole: 'Related entity', link: 'assigned to',
         contextAttrs: [['PK','project_id'], ['','project_title']],
-        targetAttrs: [['PK','camera_id'], ['FK','current_project_id'], ['','model']],
-        rules: ['A camera may be assigned to a video project, then reassigned or held in storage.', 'camera_id stays the same. current_project_id records the present assignment when there is one.'],
-        answer: 'strong', explanation: 'CAMERA is strong because camera_id identifies it without a project. current_project_id is a foreign key for an assignment, not part of CAMERA’s identity.'
+        targetAttrs: [['PK','camera_id'], ['FK','project_id'], ['','model']],
+        rules: ['A camera may be assigned to one video project.', 'camera_id identifies the camera independently of the project.'],
+        answer: 'strong', explanation: 'CAMERA is strong because camera_id identifies it independently. project_id is only a foreign key that records the project assignment.'
       },
       {
-        round: 'Read beyond the relationship', title: 'Mobile construction equipment', target: 'CONSTRUCTION_EQUIPMENT',
+        round: 'Read beyond the relationship', title: 'Construction equipment', target: 'CONSTRUCTION_EQUIPMENT',
         context: 'CONSTRUCTION_PROJECT', contextRole: 'Related entity', link: 'used on',
         contextAttrs: [['PK','project_id'], ['','site_name']],
-        targetAttrs: [['PK','equipment_id'], ['FK','current_project_id'], ['','equipment_type']],
-        rules: ['Equipment moves between construction projects and can be unassigned.', 'The operations team tracks the same unit by equipment_id throughout those moves.'],
-        answer: 'strong', explanation: 'CONSTRUCTION_EQUIPMENT is strong because equipment_id remains a complete identifier when the project assignment changes or ends.'
+        targetAttrs: [['PK','equipment_id'], ['FK','project_id'], ['','equipment_type']],
+        rules: ['A piece of equipment may be assigned to a construction project.', 'equipment_id identifies the same equipment regardless of which project it is assigned to.'],
+        answer: 'strong', explanation: 'CONSTRUCTION_EQUIPMENT is strong because equipment_id is its complete identifier. project_id records the relationship to a project but is not part of its identity.'
       },
       {
         round: 'Read beyond the relationship', title: 'An edit version', target: 'EDIT_VERSION',
@@ -315,7 +320,7 @@
         contextAttrs: [['PK','project_id'], ['','project_title']],
         targetAttrs: [['PK, FK','project_id'], ['PK','version_num'], ['','export_date']],
         rules: ['Each edit version belongs to exactly one video project.', 'Every project may have a Version 04; the number is reused across projects.'],
-        answer: 'weak', explanation: 'EDIT_VERSION is weak because version_num is only local to a project. project_id is needed to identify Version 04.'
+        answer: 'weak', explanation: 'EDIT_VERSION is weak because project_id comes from VIDEO_PROJECT and is required with version_num to identify the version.'
       },
       {
         round: 'Read beyond the relationship', title: 'An object in a VR world', target: 'SCENE_OBJECT',
@@ -323,7 +328,7 @@
         contextAttrs: [['PK','world_id'], ['','world_name']],
         targetAttrs: [['PK, FK','world_id'], ['PK','object_num'], ['','object_type']],
         rules: ['A scene object is defined inside one VR world and is removed if that world is removed.', 'Object number 017 is reused in different worlds.'],
-        answer: 'weak', explanation: 'SCENE_OBJECT is weak because object_num is a local identifier. Only world_id plus object_num identifies the object.'
+        answer: 'weak', explanation: 'SCENE_OBJECT is weak because world_id comes from VR_WORLD and is required with object_num to identify the object.'
       },
       {
         round: 'Test the identifier', title: 'A workshop instructor', target: 'INSTRUCTOR',
@@ -339,14 +344,14 @@
         contextAttrs: [['PK','workshop_id'], ['','topic']],
         targetAttrs: [['PK, FK','workshop_id'], ['PK','meeting_num'], ['','meeting_date']],
         rules: ['A meeting exists only within its workshop schedule.', 'Each workshop numbers its own meetings from 01, so Meeting 03 repeats.'],
-        answer: 'weak', explanation: 'WORKSHOP_MEETING is weak because meeting_num is partial. workshop_id plus meeting_num identifies one meeting.'
+        answer: 'weak', explanation: 'WORKSHOP_MEETING is weak because workshop_id comes from WORKSHOP and is required with meeting_num to identify the meeting.'
       },
       {
-        round: 'Test the identifier', title: 'A cataloged release', target: 'RELEASE',
+        round: 'Test the identifier', title: 'A scheduled flight', target: 'FLIGHT',
         context: null, contextRole: null, link: null, contextAttrs: null,
-        targetAttrs: [['PK','catalog_prefix'], ['PK','catalog_number'], ['','release_title']],
-        rules: ['Each digital release has a catalog_prefix and catalog_number; together they are unique in the full release directory.', 'Both values belong to the release itself. No other entity supplies either part.'],
-        answer: 'strong', explanation: 'RELEASE is strong even though its identifier is composite. catalog_prefix and catalog_number both belong to RELEASE; no identifying owner is required.'
+        targetAttrs: [['PK','airline_code'], ['PK','flight_number'], ['','destination']],
+        rules: ['An airline code and flight number together identify a scheduled flight.', 'Both parts belong directly to FLIGHT. No parent entity supplies either part.'],
+        answer: 'strong', explanation: 'FLIGHT is strong even though its primary key is composite. airline_code and flight_number together form FLIGHT’s own complete identifier. No identifying owner is required.'
       },
       {
         round: 'Apply the full test', title: 'An event venue', target: 'VENUE',
@@ -362,7 +367,7 @@
         contextAttrs: [['PK','project_id'], ['','repository_name']],
         targetAttrs: [['PK, FK','project_id'], ['PK','build_num'], ['','result']],
         rules: ['A build attempt belongs to one software project and is not retained as a separate projectless record.', 'Build numbers restart for every project; Build 142 alone is ambiguous.'],
-        answer: 'weak', explanation: 'BUILD_ATTEMPT is weak because build_num is local to a project. project_id plus build_num is the complete identifier.'
+        answer: 'weak', explanation: 'BUILD_ATTEMPT is weak because project_id comes from SOFTWARE_PROJECT and is required with build_num to identify the attempt.'
       },
       {
         round: 'Apply the full test', title: 'A fabricated job component', target: 'JOB_COMPONENT',
@@ -370,7 +375,7 @@
         contextAttrs: [['PK','job_id'], ['','job_name']],
         targetAttrs: [['PK, FK','job_id'], ['PK','component_num'], ['','material']],
         rules: ['A component record is part of exactly one fabrication job and is removed with that job.', 'Every job can contain a Component 06, so component_num is reused.'],
-        answer: 'weak', explanation: 'JOB_COMPONENT is weak because component_num identifies a component only within its job. job_id must complete the identifier.'
+        answer: 'weak', explanation: 'JOB_COMPONENT is weak because job_id comes from FABRICATION_JOB and is required with component_num to identify the component.'
       }
     ];
 
@@ -386,18 +391,25 @@
     }
 
     function entityBox(name, attrs, target) {
-      return `<div class="entity ${target ? 'target' : ''}">
+      return `<div class="entity ${target ? 'target' : ''}"${target ? ` role="group" aria-label="${escapeHtml(name)} — entity to classify"` : ''}>
         <div class="entity-name">${escapeHtml(name)}</div>
-        <ul class="attribute-list">${attrs.map(([tag, attr]) => `<li class="attribute-row ${tag.includes('PK') ? 'pk' : ''}"><span class="key-tag">${escapeHtml(tag || ' ')}</span><span class="attribute-name">${escapeHtml(attr)}</span></li>`).join('')}</ul>
+        <ul class="attribute-list">${attrs.map(([tag, attr]) => `<li class="attribute-row ${tag.includes('PK') ? 'pk' : ''}" data-key-role="${escapeHtml(tag)}" data-attribute="${escapeHtml(attr)}"><span class="key-tag">${escapeHtml(tag || ' ')}</span><span class="attribute-name">${escapeHtml(attr)}</span></li>`).join('')}</ul>
+      </div>`;
+    }
+
+    function answerChoices(q) {
+      return `<div class="choice-grid" role="group" aria-label="Classify ${escapeHtml(q.target)}">
+        <button class="strength-choice" type="button" data-answer="strong" aria-pressed="false" aria-keyshortcuts="1"><strong>Strong entity</strong></button>
+        <button class="strength-choice" type="button" data-answer="weak" aria-pressed="false" aria-keyshortcuts="2"><strong>Weak entity</strong></button>
       </div>`;
     }
 
     function diagram(q) {
-      if (!q.context) return `<div class="diagram-wrap"><div class="diagram single"><div class="box-wrap"><p class="box-label target-label">Target entity</p>${entityBox(q.target, q.targetAttrs, true)}</div></div></div>`;
+      if (!q.context) return `<div class="diagram-wrap"><div class="diagram single"><div class="box-wrap"><p class="box-label target-label">Classify this entity</p>${entityBox(q.target, q.targetAttrs, true)}${answerChoices(q)}</div></div></div>`;
       return `<div class="diagram-wrap"><div class="diagram">
         <div class="box-wrap"><p class="box-label">${escapeHtml(q.contextRole)}</p>${entityBox(q.context, q.contextAttrs, false)}</div>
         <div class="association"><span class="mark" aria-hidden="true">↔</span>${escapeHtml(q.link)}</div>
-        <div class="box-wrap"><p class="box-label target-label">Target entity · classify this</p>${entityBox(q.target, q.targetAttrs, true)}</div>
+        <div class="box-wrap"><p class="box-label target-label">Classify this entity</p>${entityBox(q.target, q.targetAttrs, true)}${answerChoices(q)}</div>
       </div></div>`;
     }
 
@@ -418,18 +430,11 @@
         <div><p class="eyebrow">${escapeHtml(q.round)}</p><h2 id="question-title">${escapeHtml(q.title)}</h2></div>
         <div class="counter">${questionIndex + 1} of ${QUESTIONS.length}</div>
       </div><div class="question-body">
-        <p class="instruction">Read the business rules and the target entity’s key. Can that entity be identified on its own?</p>
+        <p class="instruction">Can the highlighted entity be identified on its own?</p>
         <p class="rules-title">Business rules</p><ul class="rules">${q.rules.map(rule => `<li>${escapeHtml(rule)}</li>`).join('')}</ul>
         ${diagram(q)}
-        <div class="decision-note"><strong>Decision test:</strong> Is the target’s identifier complete by itself, or does it require an identifying owner’s identifier?</div>
-        <p class="micro-label">Classify ${escapeHtml(q.target)}</p>
-        <div class="choice-grid" role="group" aria-label="Entity strength choices">
-          <button class="strength-choice" type="button" data-answer="strong" aria-pressed="false"><strong>STRONG ENTITY</strong><span>Its identity is complete without an identifying owner.</span></button>
-          <button class="strength-choice" type="button" data-answer="weak" aria-pressed="false"><strong>WEAK ENTITY</strong><span>Its local identifier needs an owner’s identifier.</span></button>
-        </div>
-        <p class="key-hint">Keyboard: Tab to a choice, Enter or Space to select. You can also press 1 for strong or 2 for weak.</p>
         <div class="feedback" id="feedback" role="status" tabindex="-1" hidden></div>
-        <div class="actions"><button class="button button-quiet" id="restart" type="button">Restart</button><button class="button button-secondary" id="check" type="button">Check Entity</button><button class="button button-primary" id="continue" type="button" hidden>${questionIndex === QUESTIONS.length - 1 ? 'See Results' : 'Continue'}</button></div>
+        <div class="actions"><button class="button button-quiet" id="restart" type="button">Restart</button><button class="button button-secondary" id="check" type="button">Check entity</button><button class="button button-primary" id="continue" type="button" hidden>${questionIndex === QUESTIONS.length - 1 ? 'See results' : 'Continue'}</button></div>
       </div>`;
       activity.querySelectorAll('.strength-choice').forEach(button => button.addEventListener('click', () => selectAnswer(button.dataset.answer)));
       document.getElementById('check').addEventListener('click', checkAnswer);
@@ -468,8 +473,24 @@
         button.classList.toggle('right', button.dataset.answer === q.answer);
         button.classList.toggle('wrong', button.dataset.answer === selected && !correct);
       });
+      const targetBox = activity.querySelector('.entity.target');
+      targetBox.setAttribute('aria-label', `${q.target} — classified as ${q.answer} entity; key evidence highlighted`);
+      const independentKeyCount = q.targetAttrs.filter(([role]) => role.includes('PK') && !role.includes('FK')).length;
+      targetBox.querySelectorAll('.attribute-row').forEach(row => {
+        const role = row.dataset.keyRole;
+        const attribute = row.dataset.attribute;
+        if (q.answer === 'strong' && role.includes('PK') && !role.includes('FK')) {
+          row.classList.add('evidence-strong');
+          row.setAttribute('aria-label', `${attribute} — ${independentKeyCount > 1 ? 'part of' : 'the'} independent primary key of ${q.target}`);
+        }
+        if (q.answer === 'weak' && role.includes('PK') && role.includes('FK')) {
+          row.classList.add('evidence-weak');
+          row.setAttribute('aria-label', `${attribute} — identifying owner key required as part of ${q.target} primary key`);
+        }
+      });
       feedback.className = `feedback ${correct ? 'correct' : 'incorrect'}`;
-      feedback.innerHTML = `<h3>${correct ? 'Correct.' : `The answer is ${q.answer.toUpperCase()} ENTITY.`}</h3><p>${escapeHtml(q.explanation)}</p>`;
+      const classification = `${q.answer[0].toUpperCase()}${q.answer.slice(1)} entity`;
+      feedback.innerHTML = `<h3>${correct ? 'Correct' : 'Answer'} — ${classification}.</h3><p>${escapeHtml(q.explanation)}</p>`;
       feedback.hidden = false;
       document.getElementById('check').hidden = true;
       document.getElementById('continue').hidden = false;
@@ -489,7 +510,7 @@
 
     function renderComplete() {
       updateProgress(true);
-      activity.innerHTML = `<div class="interstitial"><div class="interstitial-inner">
+      activity.innerHTML = `<div class="interstitial"><div class="celebration" id="celebration" aria-hidden="true"></div><div class="interstitial-inner">
         <span class="round-stamp">Activity complete</span><h2>Judge the entity by its identity.</h2>
         <p class="score">First-check score: ${score} of ${QUESTIONS.length}</p>
         <div class="rule-stack">
@@ -497,10 +518,26 @@
           <div><strong>Weak entity:</strong> its local identifier is incomplete without an identifying owner’s identifier.</div>
           <div><strong>Related question:</strong> relationship strength asks whether a parent’s primary key becomes part of a child’s primary key. Classify the entity by its own identity.</div>
           <div><strong>Remember:</strong> weak describes identification dependence, not importance.</div>
-        </div><button class="button button-primary" id="restart" type="button">Restart Activity</button>
+        </div><button class="button button-primary" id="restart" type="button">Restart activity</button>
       </div></div>`;
       document.getElementById('restart').addEventListener('click', restartActivity);
       document.getElementById('restart').focus();
+      startCelebration();
+    }
+
+    function startCelebration() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const layer = document.getElementById('celebration');
+      for (let i = 0; i < 24; i += 1) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.left = `${4 + (i * 23) % 92}%`;
+        piece.style.setProperty('--drift', `${(i % 7 - 3) * 17}px`);
+        piece.style.setProperty('--spin', `${i % 2 ? 420 : -420}deg`);
+        piece.style.animationDelay = `${(i * 47) % 320}ms`;
+        layer.appendChild(piece);
+      }
+      window.setTimeout(() => layer.remove(), 1900);
     }
 
     function restartActivity() {
