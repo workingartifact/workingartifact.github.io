@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Three short, interactive table repairs covering first, second, and third normal form for AN/MKT 324.">
+<title>How Normalizing — AN/MKT 324</title>
+<style>
+:root{--ink:#152534;--navy:#123b63;--blue:#1e5a8a;--pale:#eef5fa;--paper:#fff;--bg:#f4f6f8;--line:#cbd5df;--muted:#526372;--green:#176b65;--greenbg:#eaf7f5;--red:#a13939;--redbg:#fff1f1;--amber:#795200;--amberbg:#fff6db}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--ink);font:16px/1.55 Arial,Helvetica,sans-serif}button,a{touch-action:manipulation}button{font:inherit;cursor:pointer}button:disabled{cursor:default}button:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid #e8a832;outline-offset:4px}button{transition:background .15s,border-color .15s}button:hover:not(:disabled){filter:brightness(.96)}[hidden]{display:none!important}.shell{width:min(1200px,calc(100% - 32px));margin:auto}header{color:white;background:linear-gradient(115deg,#112b4d,#1e5a8a)}header .shell{padding:26px 0 24px}.brand{margin:0 0 5px;color:#c4dce9;font-size:.8rem;font-weight:800;letter-spacing:.14em}h1{margin:0;font-size:clamp(2.1rem,5vw,3.3rem);line-height:1.1;letter-spacing:-.035em}.tagline{margin:10px 0 0;color:#e5eff7;font-size:1.05rem}.header-top{display:flex;justify-content:space-between;align-items:center;gap:20px}.edition{padding:7px 12px;border:1px solid #739ab8;border-radius:6px;font-size:.85rem;white-space:nowrap}.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px 0}.stage{display:flex;align-items:center;gap:11px;padding:12px 16px;color:var(--muted);background:white;border:1px solid var(--line);border-radius:8px;text-align:left;min-height:60px}.stage[aria-current="step"]{border:2px solid var(--blue);color:var(--navy);background:var(--pale);padding:11px 15px}.stage.done{color:var(--green)}.stage-num{display:grid;place-items:center;width:31px;height:31px;flex-shrink:0;border-radius:50%;background:#e6edf3;font-weight:bold}.stage.done .stage-num{background:#d8efeb}.stage span:last-child{font-size:.9rem}.stage strong{display:block;font-size:1rem}.layout{display:grid;grid-template-columns:minmax(0,1fr) 242px;gap:20px;align-items:start}.card,.side{min-width:0;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 25px #15253409}.card{overflow:hidden}.card-head{padding:23px 26px 19px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}.eyebrow,.micro{color:var(--blue);font-size:.8rem;font-weight:bold;letter-spacing:.1em;text-transform:uppercase;margin:0 0 5px}h2{font-size:clamp(1.4rem,3vw,1.85rem);line-height:1.2;margin:0;letter-spacing:-.02em}h3{font-size:1rem;margin:0 0 8px}.count{font-size:.85rem;color:var(--muted);white-space:nowrap}.body{padding:22px 26px 26px}.instruction{margin:0 0 17px;font-size:1.02rem}.rules{padding:13px 17px;margin-bottom:20px;background:var(--pale);border-left:4px solid var(--blue);border-radius:4px}.rules p{margin:0}.rules p+p{margin-top:7px}.rules strong{color:var(--navy)}.subtle{color:var(--muted);font-size:.9rem}.table-wrap{overflow-x:auto;margin:10px 0 18px;border:1px solid var(--line);border-radius:6px}table{border-collapse:collapse;width:100%;text-align:left;font-size:.88rem}th{padding:10px 12px;background:#e7eff5;color:var(--navy);font-size:.8rem;white-space:nowrap}td{padding:10px 12px;vertical-align:top;border-top:1px solid #dce4eb;white-space:nowrap}tbody tr:nth-child(even){background:#f8fafc}.grouped{display:block;padding:3px 0;color:#794f00;font-weight:700}.record-btn{color:var(--blue);border:1px solid #7ca3be;background:white;border-radius:5px;padding:7px 10px;font-size:.85rem;font-weight:bold;min-height:42px;margin-top:6px}.split-stamp{font-size:.8rem;color:var(--green);display:block;font-weight:bold}.key-options{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0 16px}.key-choice{border:1px solid #a6b9c8;background:white;padding:10px 13px;border-radius:6px;font-size:.9rem;min-height:44px}.key-choice[aria-pressed="true"]{border:2px solid var(--blue);padding:9px 12px;background:var(--pale);color:var(--navy);font-weight:bold}.workbench{background-color:#fafcfd;background-image:linear-gradient(#123b6307 1px,transparent 1px),linear-gradient(90deg,#123b6307 1px,transparent 1px);background-size:24px 24px;padding:16px;border:1px solid var(--line);border-radius:8px;margin-bottom:16px}.tray-title{display:flex;justify-content:space-between;gap:12px;align-items:center}.tray-title span{color:var(--muted);font-size:.85rem}.tray{display:flex;flex-wrap:wrap;gap:8px;min-height:54px;margin:10px 0 16px}.chip{display:flex;align-items:center;gap:9px;max-width:100%;padding:9px 11px;min-height:44px;border:1px solid #a9bccb;border-radius:5px;background:#fff;color:var(--ink);font-size:.87rem;box-shadow:0 2px 4px #15253409;overflow-wrap:anywhere}.chip::before{content:'⠿';color:#71899a;font-size:1.1rem}.chip[aria-pressed="true"]{border:2px solid var(--blue);padding:8px 10px;background:#dcecf7;color:var(--navy);box-shadow:0 0 0 2px #1e5a8a15}.chip.bad{border:2px solid var(--red);padding:8px 10px;background:var(--redbg)}.entities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.entities.two{grid-template-columns:repeat(2,minmax(0,1fr))}.entity{background:white;border:2px solid var(--navy);border-radius:5px;min-width:0;overflow:hidden;display:flex;flex-direction:column}.entity.dragover{outline:3px solid #e8a832;outline-offset:3px;background:var(--pale)}.entity h3{padding:9px 10px;background:var(--navy);color:white;text-align:center;font-size:.87rem;letter-spacing:.05em;margin:0}.keys{padding:8px 10px;border-bottom:1px solid var(--line);font-size:.86rem;font-weight:bold;overflow-wrap:anywhere}.key-line{display:flex;gap:8px;align-items:center;padding:2px 0}.badge{font-size:.75rem;color:var(--blue);font-weight:bold;min-width:22px}.attributes{display:flex;flex-direction:column;gap:7px;padding:10px;min-height:65px;flex:1}.empty{color:var(--muted);font-size:.82rem;margin:2px 0}.place{width:100%;border:0;border-top:1px solid var(--line);min-height:44px;background:var(--pale);color:var(--blue);padding:9px 8px;font-size:.86rem;font-weight:bold}.place:disabled{color:#657685;background:#f2f5f7}.selection-note{min-height:24px;margin:0 0 10px;font-size:.87rem;color:var(--blue)}.feedback{margin:16px 0 0;padding:15px 17px;border-left:4px solid var(--blue);background:var(--pale);border-radius:4px}.feedback p{margin:0}.feedback p+p{margin-top:8px}.feedback.correct{border-color:var(--green);background:var(--greenbg);color:#10544f}.feedback.incorrect{border-color:var(--red);background:var(--redbg);color:#852a2a}.feedback.hint{border-color:var(--amber);background:var(--amberbg);color:#684800}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}.btn{padding:10px 16px;min-height:44px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--blue);font-weight:bold;font-size:.9rem}.primary{color:white;background:var(--blue);border-color:var(--blue);margin-left:auto}.btn:disabled{opacity:.55}.side{padding:18px;position:sticky;top:18px}.side h2{font-size:1.05rem;letter-spacing:0}.rule{padding:15px 0;border-bottom:1px solid #e1e7ec}.rule strong{display:block;color:var(--navy);font-size:.9rem}.rule span{font-size:.88rem;color:var(--muted)}.rule.active{padding-left:11px;border-left:3px solid var(--blue)}.side p{font-size:.87rem;margin:15px 0 0;color:var(--muted)}.done-label{margin:15px 0 0!important;color:var(--green)!important;font-weight:bold}.mini{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.dependency{background:#fff;border:1px solid #afc9c5;padding:8px 10px;border-radius:5px;font-size:.85rem;overflow-wrap:anywhere}.result{margin-top:18px}.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.result .table-wrap{margin-bottom:0}.result h3{color:var(--navy)}.legend{font-size:.83rem;color:var(--muted);margin:12px 0 0}footer{padding:25px 0 30px;color:var(--muted);font-size:.85rem}details{margin-top:14px}summary{cursor:pointer;color:var(--blue);font-weight:bold}details p{margin:9px 0;font-size:.9rem;max-width:900px}a{color:var(--blue)}.confetti{position:fixed;top:-20px;left:var(--x);width:7px;height:12px;background:var(--color);pointer-events:none;animation:fall 1.4s ease-in forwards;z-index:10}@keyframes fall{to{transform:translateY(100vh) rotate(390deg);opacity:0}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.confetti{display:none}}
+@media(max-width:950px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static}.side-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.side p{max-width:650px}}
+@media(max-width:600px){.shell{width:calc(100% - 24px)}header .shell{padding:22px 0}.header-top{display:block}.edition{display:inline-block;margin-top:12px}.stages{gap:6px;padding:14px 0}.stage{padding:10px 7px;gap:7px;align-items:flex-start}.stage[aria-current="step"]{padding:9px 6px}.stage span:last-child{font-size:.78rem}.stage strong{font-size:.9rem}.stage-num{width:24px;height:24px;font-size:.85rem}.card-head,.body{padding:18px}.count{display:none}.entities,.entities.two,.result-grid{grid-template-columns:1fr}.workbench{padding:12px}.entity .attributes{min-height:45px}.side-rules{grid-template-columns:1fr;gap:0}.actions .primary{margin-left:0;flex:1}.tagline{font-size:.98rem}.key-options{flex-direction:column}.key-choice{text-align:left}.tray-title{display:block}.table-wrap{margin-top:8px}}
+
+.dependency-readings{padding:17px 0 8px;border-top:1px solid var(--line)}.dependency-readings dl{margin:14px 0}.dependency-readings dl>div{border-left:3px solid #88a9bf;padding:7px 0 7px 13px;margin:12px 0}.dependency-readings dt{font-weight:bold;color:var(--navy);font-size:.9rem;overflow-wrap:anywhere}.dependency-readings dd{margin:5px 0 0;font-size:.92rem;color:var(--muted)}.followup{margin:20px 0;padding:19px;border:1px solid #b4cbdc;border-top:4px solid var(--blue);border-radius:7px;background:#f8fbfd}.followup h3{font-size:1.2rem;line-height:1.3}.followup p{margin:10px 0}.lookup-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.lookup-controls label,.rate-editor label{display:block;color:var(--navy);font-weight:bold;font-size:.9rem}select,input{font:inherit;width:100%;min-height:46px;margin-top:6px;padding:9px 10px;background:white;border:1px solid #8ba8bd;border-radius:5px;color:var(--ink)}select:focus-visible,input:focus-visible{outline:3px solid #e8a832;outline-offset:3px}select:disabled,input:disabled{opacity:1;color:var(--ink);background:#eef3f6}.small-actions{display:flex;flex-wrap:wrap;gap:10px}.small-actions .primary{margin-left:0}.linked-records{margin-top:18px}.matched-row td{background:#e0f3ed!important;color:#10544f;border-top:2px solid #176b65;border-bottom:2px solid #176b65;font-weight:bold}.matched-row td:first-child{border-left:4px solid #176b65}.field-tag{display:inline-block;font-size:.75rem;font-weight:bold;padding:1px 5px;border-radius:3px;margin-left:3px;vertical-align:middle}.pk-tag{background:#123b63;color:white}.fk-tag{background:#176b65;color:white}.fact-label{display:block;font-weight:normal;font-size:.75rem;color:#526372;margin-top:3px}.rate-editor{display:flex;gap:12px;align-items:end;margin:15px 0;flex-wrap:wrap}.rate-editor label{flex:1;min-width:160px}.rate-editor .primary{margin-left:0;min-height:46px}.lookup-result{padding-top:17px;margin-top:18px;border-top:1px solid var(--line)}.model-heading{margin-top:25px!important}.followup .table-wrap{background:white;margin-bottom:12px}
+@media(max-width:600px){.lookup-controls{grid-template-columns:1fr}.followup{padding:14px}.rate-editor{display:block}.rate-editor .primary{margin-top:12px;width:100%}.dependency-readings dt{font-size:.87rem}}
+.institutional-footer {
+      --footer-ink: #eeece6;
+      --footer-muted: #a8a69f;
+      --footer-signal: #a4bd83;
+      --footer-rule: rgba(238, 236, 230, 0.34);
+      padding: 0;
+      color: var(--footer-muted);
+      border-top: 1px solid var(--footer-rule);
+      background: #0c0d0d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .institutional-footer .footer-shell {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .institutional-footer a {
+      color: inherit;
+      text-decoration-color: var(--footer-signal);
+      text-underline-offset: 4px;
+    }
+
+    .institutional-footer a:hover,
+    .institutional-footer a:focus-visible { color: var(--footer-signal); }
+    .institutional-footer a:focus-visible { outline: 1px solid var(--footer-signal); outline-offset: 5px; }
+
+    .footer-top {
+      min-height: 138px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+
+    .institutional-footer .footer-path { margin: 0; color: var(--footer-muted); font-size: 1rem; }
+    .institutional-footer .back-to-top,
+    .institutional-footer .footer-motto { font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .institutional-footer .back-to-top { color: var(--footer-signal); }
+
+    .footer-tree {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr 1.55fr 0.58fr;
+      border-bottom: 1px solid var(--footer-rule);
+    }
+
+    .footer-tree-column { min-width: 0; min-height: 170px; padding: 30px 28px 34px 0; }
+    .footer-tree-column + .footer-tree-column { padding-left: 28px; border-left: 1px solid var(--footer-rule); }
+    .institutional-footer .footer-tree-title {
+      display: inline-block;
+      color: var(--footer-ink);
+      font-size: clamp(1rem, 1.7vw, 1.45rem);
+      line-height: 1.18;
+      text-decoration: none;
+    }
+    .institutional-footer .footer-tree-title.signal { color: var(--footer-signal); }
+
+    .footer-tree ul { position: relative; margin: 23px 0 0; padding: 0 0 0 19px; list-style: none; }
+    .footer-tree ul::before { position: absolute; top: 0; bottom: 0; left: 0; border-left: 1px solid var(--footer-rule); content: ""; }
+    .footer-tree li { position: relative; margin: 10px 0; padding-left: 2px; }
+    .footer-tree li::before { position: absolute; top: 0.75em; left: -19px; width: 12px; border-top: 1px solid var(--footer-rule); content: ""; }
+    .institutional-footer .footer-tree li a { color: var(--footer-muted); text-decoration: none; }
+
+    .footer-signature { padding: 34px 0 54px; }
+    .institutional-footer .footer-motto { margin: 0 0 3px; color: var(--footer-ink); }
+    .institutional-footer .footer-translation { margin: 0; color: var(--footer-muted); font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+    .institutional-footer .footer-founder { margin: 24px 0 0; color: var(--footer-muted); font-size: 0.78rem; }
+    .footer-resource-note { margin-top: 24px; padding-top: 22px; border-top: 1px solid rgba(238, 236, 230, 0.2); }
+    .institutional-footer .footer-resource-note p { margin: 4px 0; color: var(--footer-muted); font-size: 0.8rem; }
+
+
+    @media (max-width: 720px) {
+      .institutional-footer .footer-shell { width: min(100% - 28px, 1180px); }
+      .footer-top { min-height: 126px; align-items: flex-start; flex-direction: column; justify-content: center; gap: 20px; }
+      .footer-tree { grid-template-columns: 1fr; }
+      .footer-tree-column,
+      .footer-tree-column + .footer-tree-column { min-height: auto; padding: 24px 0 28px; border-top: 1px solid var(--footer-rule); border-left: 0; }
+      .footer-tree-column:first-child { border-top: 0; }
+    }
+</style>
+</head>
+<body id="top">
+<header><div class="shell"><div class="header-top"><div><p class="brand">BUSINESS DATA MANAGEMENT</p><h1>How Normalizing.</h1><p class="tagline">One messy table. Three small repairs.</p></div><span class="edition">AN/MKT 324 · Practice</span></div></div></header>
+<main class="shell">
+<nav class="stages" aria-label="Normalization activities"></nav>
+<div class="layout"><section class="card" id="activity" aria-label="Interactive activity"></section>
+<aside class="side"><h2>The normal forms</h2><div class="side-rules"><div class="rule" data-rule="0"><strong>1NF · Make it atomic</strong><span>Identify the key. Remove repeating groups. One value per cell.</span></div><div class="rule" data-rule="1"><strong>2NF · Use the whole key</strong><span>Already in 1NF, with no partial dependencies.</span></div><div class="rule" data-rule="2"><strong>3NF · Remove the detour</strong><span>Already in 2NF, with no transitive dependencies.</span></div></div><p>Read <strong>→</strong> as “determines.” A dependency comes from a business rule, not just a pattern in these sample rows.</p><p id="progress" class="done-label" aria-live="polite">0 of 3 repairs complete</p><p>Untimed practice. Retry as often as you need.</p></aside></div>
+<footer><strong>AN/MKT 324</strong> · Normalization practice.<details><summary>Course references &amp; modeling assumptions</summary><p>Aligned to <em>Topic 5 — Normalization</em>, slides 5–15, and the September 28, 2026 AN/MKT 324-001 lecture. These are small, original practice records using the lecture’s project–employee–job example. This activity does not reproduce textbook exercises.</p><p>For this model: an employee has one job class; each job class has one current standard hourly rate; an employee appears at most once per project. Hours are recorded for each project–employee pair. PROJ_NUM and EMP_NUM together form the only candidate key of the initial 1NF table. Historical billing rates and repeated assignments are outside this example.</p><p>The normal-form summaries follow the course’s introductory treatment. Composite candidate keys also matter when checking for partial dependencies; adding a surrogate primary key does not fix a dependency problem. A composite key may remain in a table in 3NF.</p><p>Runs offline in your browser. No account, submission, tracking, or external dependencies. Progress lasts until you reload this file. Classroom version · v0.3.0.</p></details></footer>
+</main>
+<footer class="institutional-footer">
+    <div class="footer-shell">
+      <div class="footer-top">
+        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+        <a class="back-to-top" href="#top">Back to top ↑</a>
+      </div>
+      <nav class="footer-tree" aria-label="Institutional tree">
+        <div class="footer-tree-column footer-tree-root">
+          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/lab.html">Lab</a></li>
+            <li><a href="https://exapterendapter.com/studio.html">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
+            <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+        </div>
+      </nav>
+      <div class="footer-signature">
+        <p class="footer-motto">QUAESTIO ET VERITAS</p>
+        <p class="footer-translation">Inquiry and Truth</p>
+        <p class="footer-founder">Josh Ayala · © 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+        <div class="footer-resource-note">
+          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+          <p>Free to use and share for educational purposes with attribution.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+<noscript><p class="shell">Enable JavaScript to use the interactive activities.</p></noscript>
+<script>
+'use strict';
+const rows=[
+{PROJ_NUM:'15',PROJ_NAME:'Evergreen',EMP_NUM:'101',EMP_NAME:'Alex Rivera',JOB_CLASS:'Designer',CHG_HOUR:'$90',HOURS:'12'},
+{PROJ_NUM:'15',PROJ_NAME:'Evergreen',EMP_NUM:'102',EMP_NAME:'Jamie Lee',JOB_CLASS:'Analyst',CHG_HOUR:'$75',HOURS:'8'},
+{PROJ_NUM:'22',PROJ_NAME:'Rolling Tide',EMP_NUM:'101',EMP_NAME:'Alex Rivera',JOB_CLASS:'Designer',CHG_HOUR:'$90',HOURS:'6'},
+{PROJ_NUM:'22',PROJ_NAME:'Rolling Tide',EMP_NUM:'103',EMP_NAME:'Sam Patel',JOB_CLASS:'Designer',CHG_HOUR:'$90',HOURS:'10'}];
+const allCols=['PROJ_NUM','PROJ_NAME','EMP_NUM','EMP_NAME','JOB_CLASS','CHG_HOUR','HOURS'];
+const movable=['PROJ_NAME','EMP_NAME','JOB_CLASS','CHG_HOUR','HOURS'];
+const expected2={PROJ_NAME:'PROJECT',EMP_NAME:'EMPLOYEE',JOB_CLASS:'EMPLOYEE',CHG_HOUR:'EMPLOYEE',HOURS:'ASSIGNMENT'};
+const titles=['Unpack the repeating groups','Give each fact a home','Move the rate out of EMPLOYEE'];
+const stageNames=['Make it atomic','Use the whole key','Remove the detour'];
+const state={stage:0,split:{15:false,22:false},key:null,assign:{},third:{EMP_NAME:'EMPLOYEE',CHG_HOUR:'EMPLOYEE'},selected:null,done:[false,false,false],message:null,bad:[],hintCount:0,lookup:{project:'',employee:'',checked:false,complete:false,message:null},rate:{table:null,value:'95',updated:false,message:null},jobRate:90};
+const $=s=>document.querySelector(s);
+function table(cols,data,keyCols=[],caption='',options={}){
+ return `<div class="table-wrap" role="region" aria-label="${caption||'Sample records'}" tabindex="0"><table>${caption?`<caption style="text-align:left;padding:8px 12px;font-weight:bold;color:var(--navy)">${caption}</caption>`:''}<thead><tr>${cols.map(c=>{const pk=keyCols.includes(c),fk=(options.fks||[]).includes(c);return `<th scope="col">${c}${pk||fk?` <span class="field-tag ${pk?'pk-tag':'fk-tag'}">${pk&&fk?'PK/FK':pk?'PK':'FK'}</span>`:keyCols.length?'<span class="fact-label">Fact</span>':''}</th>`}).join('')}</tr></thead><tbody>${data.map(r=>`<tr class="${options.highlight?.(r)?'matched-row':''}">${cols.map(c=>`<td>${r[c]}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function unique(cols){const seen=new Set();return rows.filter(r=>{const k=JSON.stringify(cols.map(c=>r[c]));if(seen.has(k))return false;seen.add(k);return true})}
+function chip(attr){return `<button class="chip ${state.bad.includes(attr)?'bad':''}" draggable="${!state.done[state.stage]}" data-attr="${attr}" aria-pressed="${state.selected===attr}" ${state.done[state.stage]?'disabled':''} aria-label="${attr}${state.stage===2?' in '+state.third[attr]:state.assign[attr]?' in '+state.assign[attr]:' unplaced'}">${attr}</button>`}
+function entity(name,keys,attrs,extra=''){
+return `<section class="entity" data-dest="${name}" aria-label="${name} table"><h3>${name}</h3><div class="keys">${keys.map(k=>`<div class="key-line"><span class="badge">${k[1]}</span><span>${k[0]}</span></div>`).join('')}</div><div class="attributes">${attrs.length?attrs.map(chip).join(''):`<p class="empty">${extra||'Place attributes here.'}</p>`}</div><button class="place" data-place="${name}" ${!state.selected||state.done[state.stage]?'disabled':''}>Place selected here</button></section>`;
+}
+function render(focus=false){
+$('.stages').innerHTML=stageNames.map((n,i)=>`<button class="stage ${state.done[i]?'done':''}" data-stage="${i}" ${state.stage===i?'aria-current="step"':''} aria-label="${i+1}NF: ${n}${state.done[i]?', completed':''}"><span class="stage-num">${state.done[i]?'✓':i+1}</span><span><strong>${i+1}NF</strong>${n}</span></button>`).join('');
+document.querySelectorAll('[data-rule]').forEach(e=>e.classList.toggle('active',+e.dataset.rule===state.stage));
+$('#progress').textContent=`${state.done.filter(Boolean).length} of 3 repairs complete`;
+const i=state.stage;
+$('#activity').innerHTML=`<div class="card-head"><div><p class="eyebrow">${i+1}NF / Repair ${i+1}</p><h2 id="activity-title" tabindex="-1">${titles[i]}</h2></div><span class="count">${i+1} of 3</span></div><div class="body">${[first,second,third][i]()}<div id="feedback" tabindex="-1" class="feedback ${state.message?.kind||''}" role="status" aria-live="polite" aria-atomic="true" ${state.message?'':'hidden'}>${state.message?`<h3>${state.message.title}</h3><p>${state.message.text}</p>`:''}</div>${state.done[i]?result(i):''}<div class="actions"><button class="btn" data-action="reset">Reset this repair</button><button class="btn" data-action="hint" ${state.done[i]?'hidden':''}>Need a hint?</button><button class="btn primary" data-action="check" ${state.done[i]?'hidden':''}>Check repair</button><button class="btn primary" data-action="next" ${!state.done[i]?'hidden':''}>${i===2?'Restart Activity':`Continue to ${i+2}NF`}</button></div></div>`;
+ bind();if(focus)$('#activity-title').focus();
+}
+function first(){
+const groups=['15','22'];
+const data=groups.flatMap(p=>{const group=rows.filter(r=>r.PROJ_NUM===p);if(state.split[p])return group.map((r,j)=>({...r,PROJ_NUM:`${p}${j===0?'<span class="split-stamp">Split into rows ✓</span>':''}`}));return [{...group[0],PROJ_NUM:`${p}<br><button class="record-btn" data-split="${p}">Split group</button>`,...Object.fromEntries(allCols.slice(2).map(c=>[c,group.map(r=>`<span class="grouped">${r[c]}</span>`).join('')]))}];});
+return `<p class="instruction">Each project has several employees packed into its cells. Split each group into one row per project–employee assignment, then choose a key that identifies every row.</p><div class="rules"><p><strong>Business rules:</strong> An employee can work on several projects. A project can have several employees. Record each employee only once per project.</p></div><p class="micro">${groups.every(p=>state.split[p])?'One value per cell':'Before: lists within cells'}</p>${table(allCols,data,[],'Project assignments')}<h3>Which key identifies each assignment?</h3><div class="key-options">${[['project','PROJ_NUM'],['employee','EMP_NUM'],['pair','PROJ_NUM + EMP_NUM']].map(([v,l])=>`<button class="key-choice" data-key="${v}" aria-pressed="${state.key===v}" ${state.done[0]?'disabled':''}>${l}</button>`).join('')}</div><p class="subtle">The paired employee, name, job, rate, and hours must stay together when a group becomes separate rows.</p>`;
+}
+function second(){
+return `<p class="instruction">The table is in 1NF. Now separate facts that depend on just one part of its composite key. Drag an attribute into a table, or select it and use “Place selected here.”</p><div class="rules"><p><strong>Business rules:</strong> A project number identifies one project name. An employee number identifies one employee, who has one job class. Each job class has one standard hourly rate. Hours vary by project–employee assignment.</p></div><details><summary>Inspect the 1NF records</summary>${table(allCols,rows,['PROJ_NUM','EMP_NUM'])}</details><div class="workbench"><div class="tray-title"><h3>Attributes to place</h3><span>PKs stay in place.</span></div><div class="tray">${movable.filter(a=>!state.assign[a]).map(chip).join('')||'<span class="subtle">All five attributes placed. Check your repair.</span>'}</div><p class="selection-note" aria-live="polite">${state.selected?`${state.selected} selected. Choose its destination.`:'Select an attribute, then choose its table.'}</p><div class="entities">${entity('PROJECT',[['PROJ_NUM','PK']],movable.filter(a=>state.assign[a]==='PROJECT'))}${entity('EMPLOYEE',[['EMP_NUM','PK']],movable.filter(a=>state.assign[a]==='EMPLOYEE'))}${entity('ASSIGNMENT',[['PROJ_NUM','PK/FK'],['EMP_NUM','PK/FK']],movable.filter(a=>state.assign[a]==='ASSIGNMENT'))}</div></div><p class="legend">ASSIGNMENT keeps both parent identifiers as its composite PK and as FKs. Select any placed attribute to move it again.</p>`;
+}
+function third(){
+return `<p class="instruction">EMPLOYEE is in 2NF, but it still mixes employee facts with a job fact. Move the attribute that belongs in JOB. Drag it, or select it and choose its destination.</p><div class="rules"><p><strong>Business rules:</strong> Each employee has one job class. Each job class has one current standard hourly rate. Several employees can share the same job class.</p><p class="subtle">This repair starts from the correct 2NF tables. PROJECT and ASSIGNMENT are already in 3NF and stay as they are.</p></div>${table(['EMP_NUM','EMP_NAME','JOB_CLASS','CHG_HOUR'],unique(['EMP_NUM']),['EMP_NUM'],'EMPLOYEE · 2NF')}<div class="workbench"><p class="selection-note" aria-live="polite">${state.selected?`${state.selected} selected. Choose its destination.`:'Select the job fact that should move out of EMPLOYEE.'}</p><div class="entities two">${entity('EMPLOYEE',[['EMP_NUM','PK'],['JOB_CLASS',state.done[2]?'FK':'']],['EMP_NAME','CHG_HOUR'].filter(a=>state.third[a]==='EMPLOYEE'))}${entity('JOB',[['JOB_CLASS','PK']],['EMP_NAME','CHG_HOUR'].filter(a=>state.third[a]==='JOB'),'Place the job fact here.')}</div></div><p class="legend">JOB_CLASS is copied into JOB as its PK. Keep JOB_CLASS in EMPLOYEE to connect employees to their job class.</p>`;
+}
+function dependencyReadings(items){
+return `<section class="dependency-readings" aria-label="Reading the dependencies"><h3>Read the dependencies</h3><p class="subtle"><strong>→ means “determines.”</strong> The attributes on the right are facts determined by the left side; they are not additional primary keys.</p><dl>${items.map(([notation,meaning])=>`<div><dt>${notation}</dt><dd>${meaning}</dd></div>`).join('')}</dl></section>`;
+}
+function keyLegend(){return `<p class="legend"><span class="field-tag pk-tag">PK</span> identifies a row. <span class="field-tag fk-tag">FK</span> references another table. <strong>Fact</strong> labels a dependent non-key attribute. PK/FK means the attribute serves both roles.</p>`;}
+function localFeedback(msg,id){return `<div id="${id}" class="feedback ${msg?.kind||''}" tabindex="-1" role="status" aria-live="polite" aria-atomic="true" ${msg?'':'hidden'}>${msg?`<h3>${msg.title}</h3><p>${msg.text}</p>`:''}</div>`;}
+function assignmentLookup(){
+const l=state.lookup;
+const hit=l.checked&&l.project&&l.employee;
+return `<section class="followup" id="assignment-lookup" aria-labelledby="lookup-heading"><p class="eyebrow">Put the repair to work</p><h3 id="lookup-heading">Find the assignment</h3><p>How many hours did <strong>Alex Rivera</strong> work on <strong>Rolling Tide</strong>? Select the employee and project, then find their assignment.</p><div class="lookup-controls"><label for="lookup-employee">Employee<select id="lookup-employee" ${l.complete?'disabled':''}><option value="">Choose an employee</option>${unique(['EMP_NUM']).map(r=>`<option value="${r.EMP_NUM}" ${l.employee===r.EMP_NUM?'selected':''}>${r.EMP_NAME} · ${r.EMP_NUM}</option>`).join('')}</select></label><label for="lookup-project">Project<select id="lookup-project" ${l.complete?'disabled':''}><option value="">Choose a project</option>${unique(['PROJ_NUM']).map(r=>`<option value="${r.PROJ_NUM}" ${l.project===r.PROJ_NUM?'selected':''}>${r.PROJ_NAME} · ${r.PROJ_NUM}</option>`).join('')}</select></label></div><div class="small-actions"><button class="btn primary" data-follow="lookup" ${l.complete?'disabled':''}>${l.complete?'Assignment found ✓':'Find assignment'}</button><button class="btn" data-follow="lookup-reset">Try again</button></div>${localFeedback(l.message,'lookup-feedback')}<div class="linked-records">${table(['PROJ_NUM','PROJ_NAME'],unique(['PROJ_NUM']),['PROJ_NUM'],'PROJECT',{highlight:r=>hit&&r.PROJ_NUM===l.project})}${table(['EMP_NUM','EMP_NAME','JOB_CLASS','CHG_HOUR'],unique(['EMP_NUM']),['EMP_NUM'],'EMPLOYEE',{highlight:r=>hit&&r.EMP_NUM===l.employee})}${table(['PROJ_NUM','EMP_NUM','HOURS'],rows,['PROJ_NUM','EMP_NUM'],'ASSIGNMENT',{fks:['PROJ_NUM','EMP_NUM'],highlight:r=>hit&&r.PROJ_NUM===l.project&&r.EMP_NUM===l.employee})}</div>${keyLegend()}<p class="subtle">PROJECT and EMPLOYEE supply the names. Their identifiers lead to the assignment, where HOURS depends on the pair.</p></section>`;
+}
+function rateExercise(){
+const r=state.rate;
+const joined=unique(['EMP_NUM']).filter(e=>e.JOB_CLASS==='Designer').map(e=>({...e,CURRENT_RATE:'$'+state.jobRate}));
+return `<section class="followup" id="rate-exercise" aria-labelledby="rate-heading"><p class="eyebrow">Put the repair to work</p><h3 id="rate-heading">Change the rate once</h3><p>The current standard rate for <strong>Designer</strong> changes from <strong>$90 to $95 per hour</strong>. Which table should store the change?</p><div class="key-options">${['PROJECT','EMPLOYEE','ASSIGNMENT','JOB'].map(t=>`<button class="key-choice" data-rate-table="${t}" aria-pressed="${r.table===t}" ${r.updated?'disabled':''}>${t}</button>`).join('')}</div>${r.table==='JOB'?`<div class="rate-editor"><label for="new-rate">Designer standard hourly rate ($)<input id="new-rate" type="number" inputmode="decimal" min="0.01" max="10000" step="0.01" value="${r.value}" ${r.updated?'disabled':''}></label><button class="btn primary" data-follow="rate-update" ${r.updated?'disabled':''}>${r.updated?'One JOB record updated ✓':'Update JOB record'}</button></div>`:''}${localFeedback(r.message,'rate-feedback')}<button class="btn" data-follow="rate-reset">Reset rate exercise</button>${r.updated?`<section class="lookup-result"><h3>Employee rate lookup</h3><p class="subtle">These rates are read through EMPLOYEE.JOB_CLASS → JOB.JOB_CLASS. They are a lookup result, not extra stored columns in EMPLOYEE.</p>${table(['EMP_NUM','EMP_NAME','JOB_CLASS','CURRENT_RATE'],joined,[],'Employees using the Designer rate')}<p><strong>1 stored record changed. 2 employee lookups now show $95.</strong></p></section>`:''}</section>`;
+}
+function result(i){
+if(i===0)return `<div class="result">${dependencyReadings([['(PROJ_NUM, EMP_NUM) → HOURS','The project number and employee number together determine the hours worked on that assignment. This pair forms one composite primary key.']])}<p class="subtle">The composite key identifies each row. Project names and employee facts still repeat; we repair those dependencies in 2NF.</p></div>`;
+if(i===1)return `<div class="result">${dependencyReadings([['PROJ_NUM → PROJ_NAME','A project number determines one project name. PROJ_NUM is the primary key in PROJECT; PROJ_NAME is a dependent fact.'],['EMP_NUM → EMP_NAME, JOB_CLASS, CHG_HOUR','An employee number determines the employee’s name and job class. It also determines the rate indirectly through that job class. EMP_NUM is the single primary key in EMPLOYEE; the three facts on the right are not keys.'],['(PROJ_NUM, EMP_NUM) → HOURS','Both identifiers are needed to determine the hours for one assignment. Together they form one composite primary key, and each is also a foreign key.']])}${assignmentLookup()}<p class="subtle">The hourly rate is still stored in EMPLOYEE at this 2NF stage. EMP_NUM determines it through JOB_CLASS. That remaining transitive dependency is the next repair.</p></div>`;
+const jobs=unique(['JOB_CLASS']).map(j=>({...j,CHG_HOUR:j.JOB_CLASS==='Designer'?'$'+state.jobRate:j.CHG_HOUR}));
+return `<div class="result" id="finished-model">${dependencyReadings([['EMP_NUM → JOB_CLASS','An employee number determines that employee’s job class. EMP_NUM is EMPLOYEE’s primary key; JOB_CLASS is a foreign key referencing JOB.'],['JOB_CLASS → CHG_HOUR','A job class determines its standard hourly rate. JOB_CLASS is JOB’s primary key; CHG_HOUR is the dependent fact. The rate is stored once per job class.']])}${rateExercise()}<h3 class="model-heading">Your repaired 3NF records</h3><div class="result-grid">${table(['PROJ_NUM','PROJ_NAME'],unique(['PROJ_NUM']),['PROJ_NUM'],'PROJECT')}${table(['JOB_CLASS','CHG_HOUR'],jobs,['JOB_CLASS'],'JOB',{highlight:r=>state.rate.table==='JOB'&&r.JOB_CLASS==='Designer'})}${table(['EMP_NUM','EMP_NAME','JOB_CLASS'],unique(['EMP_NUM']),['EMP_NUM'],'EMPLOYEE',{fks:['JOB_CLASS']})}${table(['PROJ_NUM','EMP_NUM','HOURS'],rows,['PROJ_NUM','EMP_NUM'],'ASSIGNMENT',{fks:['PROJ_NUM','EMP_NUM']})}</div>${keyLegend()}<p class="subtle">Employees retain the connection to their job through JOB_CLASS. ASSIGNMENT’s composite primary key remains valid in 3NF. Neither a longer key nor a shorter key, on its own, causes or fixes normalization problems.</p><p><strong>The goal is to put each fact where it belongs.</strong></p></div>`;
+}
+function focusFollowup(id){requestAnimationFrame(()=>{const e=$('#'+id);if(e){e.focus({preventScroll:true});e.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}});}
+function findAssignment(){
+const l=state.lookup;l.checked=true;
+if(!l.project||!l.employee){l.message={kind:'hint',title:'Use both identifiers.',text:'Choose an employee and a project before finding the assignment.'};}
+else {const r=rows.find(r=>r.PROJ_NUM===l.project&&r.EMP_NUM===l.employee);if(!r)l.message={kind:'incorrect',title:'No assignment matches that pair.',text:'Those parent records exist, but this employee has no recorded assignment on that project. Try Alex Rivera on Rolling Tide.'};else if(r.EMP_NUM!=='101'||r.PROJ_NUM!=='22')l.message={kind:'incorrect',title:'You found a different assignment.',text:`${r.EMP_NAME} worked ${r.HOURS} hours on ${r.PROJ_NAME}. The task asks for Alex Rivera on Rolling Tide. Try that pair.`};else {l.complete=true;l.message={kind:'correct',title:'6 hours. Two identifiers, one assignment.',text:'EMP_NUM 101 identifies Alex Rivera. PROJ_NUM 22 identifies Rolling Tide. Together they locate the ASSIGNMENT row with HOURS = 6. Alex’s other assignment has 12 hours, so EMP_NUM alone would not be enough.'};}}
+render();focusFollowup('lookup-feedback');
+}
+function chooseRateTable(t){
+state.rate.table=t;
+const reasons={PROJECT:'PROJECT stores project facts. A job rate is determined by JOB_CLASS, not PROJ_NUM.',EMPLOYEE:'EMPLOYEE keeps JOB_CLASS as a foreign key. Storing the rate on each employee would recreate the transitive dependency and repeat the Designer rate.',ASSIGNMENT:'ASSIGNMENT stores hours for a project–employee pair. This task changes a job class’s current standard rate, not a historical charge on an assignment.'};
+state.rate.message=t==='JOB'?{kind:'hint',title:'JOB is the home of the rate.',text:'JOB_CLASS determines CHG_HOUR. Change the Designer rate to $95, then update that one record.'}:{kind:'incorrect',title:'Follow the attribute that determines the rate.',text:reasons[t]};render();focusFollowup('rate-feedback');
+}
+function updateRate(){
+const n=Number(state.rate.value);
+if(state.rate.table!=='JOB')return;
+if(!Number.isFinite(n)||n!==95){state.rate.message={kind:'incorrect',title:'Use the requested new rate.',text:'Enter 95 for the Designer standard hourly rate. This exercise changes the current rate from $90 to $95.'};render();focusFollowup('rate-feedback');return;}
+state.jobRate=n;state.rate.updated=true;state.rate.message={kind:'correct',title:'One change, a consistent lookup.',text:'Only the Designer record in JOB changed. Alex and Sam now look up $95 through their JOB_CLASS foreign key. EMPLOYEE stores no duplicate rate to update.'};render();focusFollowup('rate-feedback');celebrate();
+}
+function setMessage(kind,title,text){state.message={kind,title,text};render();requestAnimationFrame(()=>{const feedback=$('#feedback');feedback.focus({preventScroll:true});feedback.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});});}
+function move(attr,dest){if(state.done[state.stage])return;if(state.stage===1)state.assign[attr]=dest;else if(state.stage===2)state.third[attr]=dest;state.selected=null;state.message=null;state.bad=[];render();const moved=document.querySelector(`[data-attr="${attr}"]`);if(moved)moved.focus();}
+function check(){
+const i=state.stage;state.bad=[];
+if(i===0){if(!state.split[15]||!state.split[22])return setMessage('incorrect','The repeating groups are still here.','Split both project groups into separate assignment rows. Each employee’s paired facts should occupy their own row.');if(state.key!=='pair')return setMessage('incorrect','Try a key that identifies the assignment.',state.key==='project'?'PROJ_NUM 15 appears on two rows. A project number alone cannot distinguish its employees.':state.key==='employee'?'EMP_NUM 101 appears on two projects. An employee number alone cannot distinguish those assignments.':'Choose a key before checking. Think about which two identifiers distinguish an employee working on a particular project.');}
+if(i===1){const missing=movable.filter(a=>!state.assign[a]);if(missing.length)return setMessage('incorrect','A few facts still need a home.',`Place ${missing.join(', ')} before checking.`);state.bad=movable.filter(a=>state.assign[a]!==expected2[a]);if(state.bad.length){const a=state.bad[0];const reasons={PROJ_NAME:'PROJ_NAME is determined by PROJ_NUM alone. It belongs in PROJECT.',EMP_NAME:'EMP_NAME is determined by EMP_NUM alone. It belongs in EMPLOYEE.',JOB_CLASS:'An employee has one JOB_CLASS. EMP_NUM alone determines it, so it belongs in EMPLOYEE.',CHG_HOUR:'At the 2NF stage, CHG_HOUR moves with the employee facts: EMP_NUM determines JOB_CLASS, which determines CHG_HOUR. We separate the job facts in the next repair.',HOURS:'HOURS describes one employee’s work on one project. It depends on the full (PROJ_NUM, EMP_NUM) key, so it stays in ASSIGNMENT.'};return setMessage('incorrect','Check the outlined attributes.',reasons[a]+' You can select and move any placed attribute.');}}
+if(i===2){if(state.third.EMP_NAME!=='EMPLOYEE'){state.bad.push('EMP_NAME');return setMessage('incorrect','Keep the employee’s name with the employee.','EMP_NUM directly determines EMP_NAME. A job class may be shared by several employees with different names. Move EMP_NAME back to EMPLOYEE.');}if(state.third.CHG_HOUR!=='JOB'){state.bad.push('CHG_HOUR');return setMessage('incorrect','The rate is still taking a detour.','EMP_NUM determines JOB_CLASS; JOB_CLASS determines CHG_HOUR. Move CHG_HOUR to JOB, where JOB_CLASS is the key.');}}
+state.done[i]=true;state.selected=null;
+const text=[['1NF repaired.','Each cell now contains one value, and (PROJ_NUM, EMP_NUM) identifies every assignment. Repeating a project number across different rows is fine; storing lists inside cells was the problem.'],['2NF repaired.','No non-key attribute now depends on only part of its table’s key. HOURS needs both identifiers and stays in ASSIGNMENT. EMPLOYEE still has a transitive dependency, so we have one more repair.'],['3NF repaired. How normalizing.','CHG_HOUR depends on JOB_CLASS and now lives in JOB. EMPLOYEE retains JOB_CLASS as a foreign key. Under these business rules, all four tables are in 3NF.']][i];
+setMessage('correct',...text);if(state.done.every(Boolean))celebrate();
+}
+function hint(){state.hintCount++;const hints=[['Split groups without losing their pairings, then ask: can either identifier alone distinguish every row?','The same employee works on two projects, and each project has two employees. The assignment needs both PROJ_NUM and EMP_NUM.'],['Ask of each fact: is it about a project, an employee, or an employee’s work on a particular project?','PROJ_NAME follows PROJ_NUM. EMP_NAME, JOB_CLASS, and CHG_HOUR follow EMP_NUM at this stage. Only HOURS needs both key attributes.'],['Which fact would you have to change in several employee rows if the Designer rate changed?','Trace EMP_NUM → JOB_CLASS → CHG_HOUR. Keep EMP_NAME with EMP_NUM; store CHG_HOUR once for each JOB_CLASS.']];setMessage('hint','Follow the determinant.',hints[state.stage][Math.min(state.hintCount-1,1)]);}
+function reset(){const i=state.stage;if(i===0){state.split={15:false,22:false};state.key=null}if(i===1){state.assign={};state.lookup={project:'',employee:'',checked:false,complete:false,message:null};}if(i===2){state.third={EMP_NAME:'EMPLOYEE',CHG_HOUR:'EMPLOYEE'};state.rate={table:null,value:'95',updated:false,message:null};state.jobRate=90;}state.done[i]=false;state.selected=null;state.message=null;state.bad=[];state.hintCount=0;render(true);}
+function restartActivity(){
+Object.assign(state,{stage:0,split:{15:false,22:false},key:null,assign:{},third:{EMP_NAME:'EMPLOYEE',CHG_HOUR:'EMPLOYEE'},selected:null,done:[false,false,false],message:null,bad:[],hintCount:0,lookup:{project:'',employee:'',checked:false,complete:false,message:null},rate:{table:null,value:'95',updated:false,message:null},jobRate:90});
+document.querySelectorAll('.confetti').forEach(e=>e.remove());render(true);window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+function switchStage(i){state.stage=i;state.selected=null;state.message=null;state.bad=[];state.hintCount=0;render(true);}
+function bind(){
+document.querySelectorAll('[data-rate-table]').forEach(b=>b.onclick=()=>chooseRateTable(b.dataset.rateTable));
+const employeeSelect=$('#lookup-employee'),projectSelect=$('#lookup-project');
+for(const [control,field] of [[employeeSelect,'employee'],[projectSelect,'project']])if(control)control.onchange=()=>{state.lookup[field]=control.value;state.lookup.checked=false;state.lookup.message=null;render();$('#lookup-'+field).focus();};
+const rateInput=$('#new-rate');if(rateInput){rateInput.oninput=()=>{state.rate.value=rateInput.value;};rateInput.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();updateRate();}};}
+document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=()=>{const a=b.dataset.follow;if(a==='lookup')findAssignment();if(a==='rate-update')updateRate();if(a==='lookup-reset'){state.lookup={project:'',employee:'',checked:false,complete:false,message:null};render();$('#lookup-employee').focus();}if(a==='rate-reset'){state.rate={table:null,value:'95',updated:false,message:null};state.jobRate=90;render();document.querySelector('[data-rate-table="JOB"]').focus();}});
+document.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>switchStage(+b.dataset.stage));
+document.querySelectorAll('[data-split]').forEach(b=>b.onclick=()=>{state.split[b.dataset.split]=true;state.message=null;render();const next=document.querySelector('[data-split]')||document.querySelector('[data-key]');next.focus()});
+document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{state.key=b.dataset.key;state.message=null;render();document.querySelector(`[data-key="${state.key}"]`).focus()});
+document.querySelectorAll('[data-attr]').forEach(b=>{b.onclick=()=>{const a=b.dataset.attr;state.selected=state.selected===a?null:a;state.message=null;state.bad=[];render();document.querySelector(`[data-attr="${a}"]`).focus()};b.ondragstart=e=>{e.dataTransfer.setData('text/plain',b.dataset.attr);e.dataTransfer.effectAllowed='move'};b.ondragend=()=>document.querySelectorAll('.dragover').forEach(e=>e.classList.remove('dragover'))});
+document.querySelectorAll('[data-place]').forEach(b=>b.onclick=()=>{if(state.selected)move(state.selected,b.dataset.place)});
+document.querySelectorAll('[data-dest]').forEach(el=>{el.ondragover=e=>{if(!state.done[state.stage]){e.preventDefault();e.dataTransfer.dropEffect='move';el.classList.add('dragover')}};el.ondragleave=e=>{if(!el.contains(e.relatedTarget))el.classList.remove('dragover')};el.ondrop=e=>{e.preventDefault();const a=e.dataTransfer.getData('text/plain');if((state.stage===1?movable:['EMP_NAME','CHG_HOUR']).includes(a))move(a,el.dataset.dest)}});
+document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>{const a=b.dataset.action;if(a==='check')check();if(a==='hint')hint();if(a==='reset')reset();if(a==='next'){if(state.stage<2)switchStage(state.stage+1);else restartActivity()}});
+}
+function celebrate(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;for(let j=0;j<28;j++){const p=document.createElement('span');p.className='confetti';p.setAttribute('aria-hidden','true');p.style.cssText=`--x:${Math.random()*100}vw;--color:${['#1e5a8a','#176b65','#f2b84b'][j%3]};animation-delay:${Math.random()*.35}s`;document.body.append(p);setTimeout(()=>p.remove(),1900)}}
+render();
+</script>
+</body>
+</html>
