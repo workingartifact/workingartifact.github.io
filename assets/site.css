@@ -45,6 +45,17 @@
       text-transform: uppercase;
     }
 
+    .archive-meta a {
+      color: inherit;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 4px;
+    }
+
+    .archive-meta a:hover,
+    .archive-meta a:focus-visible {
+      color: var(--text);
+    }
+
     header {
       min-height: 48vh;
       display: flex;
@@ -364,6 +375,18 @@
     .footer-founder {
       margin: 24px 0 0;
       font-size: .78rem;
+    }
+
+    .footer-resource-note {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(238, 236, 230, .2);
+    }
+
+    .footer-resource-note p {
+      margin: 4px 0;
+      color: var(--footer-muted);
+      font-size: .8rem;
     }
 
     @media (max-width: 620px) {
