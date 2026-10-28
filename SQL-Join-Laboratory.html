@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AN/MKT 324 interactive SQL JOIN practice.">
+  <meta name="color-scheme" content="dark light">
+  <title>SQL JOIN Laboratory — AN/MKT 324</title>
+  <style>
+/* Offline fonts. Shared spacing: 4, 8, 12, 16, 24, 32px. */
+:root{color-scheme:dark;--bg:#0d141b;--panel:#141f29;--raised:#1c2a36;--code:#101922;--line:#354654;--text:#edf3f6;--muted:#b1c0cb;--accent:#9ae3bf;--accent-soft:#213d34;--preserved:#a8dcf4;--preserved-soft:#203b4c;--focus:#c2b6ff;font:16px/1.5 "Segoe UI",Arial,sans-serif}
+:root[data-theme=light]{color-scheme:light;--bg:#edf1f3;--panel:#fff;--raised:#f1f5f6;--code:#f6f8fa;--line:#c6d2da;--text:#183042;--muted:#4c6271;--accent:#176344;--accent-soft:#e1f1e8;--preserved:#175d80;--preserved-soft:#e4f2fa;--focus:#6745bb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text)}
+h1,h2,h3,p{margin:0}
+h2{font-size:20px;line-height:1.3;letter-spacing:-.025em}
+h3{font-size:18px}
+a{color:inherit}
+button,textarea{font:inherit}
+button{cursor:pointer;color:inherit}
+button:disabled{cursor:default;opacity:.45}
+button,a,summary{touch-action:manipulation}
+button:focus-visible,a:focus-visible,textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button{min-height:36px;border-radius:5px}
+.quiet-button,.copy-button{padding:7px 12px;border:1px solid var(--line);background:transparent;font-size:14px}
+.quiet-button:hover:not(:disabled),.copy-button:hover{background:var(--raised);border-color:var(--muted)}
+.quiet-button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent)}
+.topbar,main{max-width:1504px;margin:auto;padding-left:32px;padding-right:32px}
+.topbar{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line)}
+.wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:12px;letter-spacing:.08em;font-weight:700}
+.brand-symbol{font-size:26px;color:var(--accent)}
+.brand-divider,.lab-label{color:var(--muted);font-weight:400}
+.top-actions{display:flex;gap:16px;align-items:center}
+.intro{padding:16px 0;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted)}
+.eyebrow span{padding:0 6px}
+h1{font-size:clamp(25px,2.45vw,36px);line-height:1.2;letter-spacing:-.04em;margin:8px 0}
+h1 span{color:var(--accent);white-space:nowrap}
+.subtitle{font-size:17px}
+.intro-copy{font-size:15px;color:var(--muted);margin-top:8px}
+.intro-actions{display:flex;flex-direction:column;align-items:flex-end;gap:16px;flex-shrink:0}
+.view-controls{display:flex;gap:8px}
+.lab-grid{display:grid;grid-template-columns:minmax(350px,.85fr) minmax(0,1.35fr);background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:clip}
+.controls-region,.lesson-content{min-width:0;padding:24px}
+.lesson-content{grid-column:2;grid-row:2 / span 2}
+.controls-region{border-right:1px solid var(--line)}
+.operation-panel{grid-column:1/-1;display:grid;grid-template-columns:170px 1fr;align-items:center;gap:16px;padding:16px 24px;border-bottom:1px solid var(--line)}
+.operation-panel .panel-heading{margin:0}
+.operation-panel,.source-panel,.sql-panel,.result-panel,.trace-panel{min-width:0}
+.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.join-choices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.join-choices button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--raised);padding:10px 12px;min-height:64px;font-size:15px;font-weight:650}
+.join-choices small{display:block;color:var(--muted);font-weight:400;font-size:13px;margin-top:2px}
+.join-symbol{font-size:24px;color:var(--muted)}
+.join-choices button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 3px 0 var(--accent)}
+.join-choices button[aria-pressed=true] .join-symbol{color:var(--accent)}
+.join-choices button:hover{border-color:var(--accent)}
+.relationship-lab{margin-top:0}
+.relationship-heading{margin-bottom:12px}
+.relationship-heading>p{font-size:14px;color:var(--muted);margin-top:4px}
+.source-canvas{display:grid;gap:16px}
+.source-scroll{overflow:auto}
+.source-table-wrap{min-width:0}
+.table-label{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.table-label .side-label{order:2}
+.table-label strong{font:600 15px Consolas,monospace}
+.table-label small{font-weight:400;color:var(--muted)}
+.side-label{font-size:12px;color:var(--muted)}
+.side-state{font-size:13px;display:flex;justify-content:space-between;gap:8px;color:var(--muted);margin-bottom:4px}
+.side-state strong{font-weight:400}
+table{border-collapse:separate;border-spacing:0;width:100%;font-family:Consolas,"Courier New",monospace}
+th{text-align:left;font-weight:400;color:var(--muted);background:var(--raised)}
+.source-table th{font-size:13px;padding:6px 8px;white-space:nowrap}
+.source-table td{font-size:15px;height:36px;padding:0 8px;border-bottom:1px solid var(--line)}
+.source-table th:last-child,.source-table td:last-child{text-align:right;font:12px "Segoe UI",Arial,sans-serif}
+.source-table abbr{font:10px "Segoe UI",Arial,sans-serif;text-decoration:underline dotted;cursor:help}
+.source-table tbody tr{cursor:pointer}
+.source-select{min-height:32px;min-width:32px;border:0;background:none;color:inherit;text-align:left;padding:0;font:inherit}
+.source-select:hover{text-decoration:underline}
+.source-table .matched{color:var(--accent)}
+.source-table .preserved{color:var(--preserved);background:var(--preserved-soft)}
+.source-table .excluded{color:var(--muted)}
+.source-table .focused td{box-shadow:inset 0 2px var(--focus),inset 0 -2px var(--focus);background:var(--raised)}
+.source-table .focused td:first-child{border-left:3px solid var(--focus)}
+.source-table .focused td:last-child{border-right:3px solid var(--focus)}
+.source-select[aria-pressed=true]{text-decoration:underline;text-underline-offset:4px}
+.legend{font-size:13px;color:var(--muted);line-height:1.8;margin:12px 0 8px}
+details{font-size:14px;color:var(--muted)}
+summary{cursor:pointer;min-height:28px;padding:3px 0;text-underline-offset:3px}
+summary:hover{text-decoration:underline}
+details p{margin:8px 0}
+.sql-panel{grid-column:1;grid-row:3;margin:0;padding:16px 24px 24px;border-top:1px solid var(--line);border-right:1px solid var(--line)}
+.mobile-table-hint{display:none}
+.sql-panel h2{font-size:18px}
+.sql-content{overflow:auto}
+.sql{font:14px/1.6 Consolas,"Courier New",monospace;margin:0;background:var(--code);padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.keyword{color:var(--accent)}
+.identifier{color:var(--preserved)}
+.sql-note{font-size:13px;color:var(--muted);margin-top:8px}
+.copy-status{font-size:14px;color:var(--accent)}
+.copy-status:empty{display:none}
+#manual-copy{font-size:14px;margin-top:8px}
+textarea{width:100%;background:var(--code);color:var(--text);border:1px solid var(--line);padding:8px}
+.result-badge{font-size:15px;font-weight:600;color:var(--accent)}
+.result-summary{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.operation-label{font:600 16px Consolas,monospace;color:var(--accent)}
+#result-breakdown{font-size:14px;color:var(--muted)}
+.result-explanation{font-size:16px;color:var(--muted);margin-bottom:16px;min-height:48px}
+.result-scroll{overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:5px;scrollbar-color:var(--muted) var(--raised)}
+.result-table{white-space:nowrap;font-size:16px}
+.result-table thead{position:sticky;top:0;z-index:1}
+.result-table th{font-size:13px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.result-table .source-groups th{height:48px}
+.source-group small{display:block;font:12px "Segoe UI",Arial,sans-serif;margin-top:2px}
+.result-table td{height:48px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.result-table tr:last-child td{border-bottom:0}
+.result-table .source-divider{border-left:1px solid var(--line)}
+.result-table .trace-heading{font:12px "Segoe UI",Arial,sans-serif}
+.result-table tbody tr{cursor:pointer}
+.result-table .matched{color:var(--accent)}
+.result-table .extended{color:var(--preserved)}
+.result-table .null-cell{background:var(--preserved-soft)}
+.result-table .selected td{box-shadow:inset 0 2px var(--focus),inset 0 -2px var(--focus);background:var(--raised)}
+.result-table .selected td:first-child{border-left:3px solid var(--focus)}
+.result-table .selected td:last-child{border-right:3px solid var(--focus)}
+.result-table tbody tr:hover td{background:var(--raised)}
+.trace-button{min-width:36px;min-height:32px;border:1px solid var(--line);background:var(--panel);color:inherit;font:13px Consolas,monospace;padding:4px}
+.trace-button[aria-pressed=true]{border-color:var(--focus);font-weight:700}
+.null{font-style:italic;color:var(--preserved)}
+.result-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);margin:8px 0}
+#null-count{color:var(--preserved)}
+.order-note{margin-top:4px}
+.trace-panel{border-top:1px solid var(--line);margin-top:20px;padding-top:16px}
+.trace-panel .panel-heading{margin-bottom:8px}
+.small-tag{font-size:13px;color:var(--muted)}
+.trace-kicker{font-size:12px;letter-spacing:.04em;color:var(--accent);margin-bottom:10px}
+.trace-panel.has-null .trace-kicker{color:var(--preserved)}
+.trace-panel.is-excluded .trace-kicker{color:var(--muted)}
+.trace-equation{display:flex;align-items:stretch;gap:12px;margin:0 0 12px}
+.trace-record{flex:1;min-width:0;border-left:2px solid var(--focus);padding:4px 12px;background:var(--code)}
+.trace-record small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.trace-record strong,.trace-record p{font:14px/1.65 Consolas,monospace;overflow-wrap:anywhere}
+.trace-record strong{font-weight:600}
+.trace-record.missing{border-color:var(--preserved);background:var(--preserved-soft)}
+.trace-record.unmatched{border-color:var(--muted);border-left-style:dashed}
+.attribute-alias{color:var(--muted)}
+.equation-sign{align-self:center;color:var(--muted)}
+.trace-explanation{font-size:15px;line-height:1.65;color:var(--muted)}
+.trace-explanation strong{color:var(--text);font-weight:500}
+.takeaway{font-size:14px;line-height:1.6;margin-top:12px;color:var(--muted)}
+.takeaway strong{color:var(--text);font-weight:600}
+.takeaway p{display:inline;margin-left:6px}
+.trace-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+#trace-position{font-size:14px;color:var(--muted)}
+.null-note{margin-top:12px}
+footer{display:flex;justify-content:space-between;gap:16px;padding:0 0 24px;font-size:12px;color:var(--muted)}
+footer span{display:block}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:absolute;top:-100px;left:16px;padding:10px;background:var(--accent);color:var(--bg);z-index:10}
+.skip-link:focus{top:8px}
+.noscript{padding:24px}
+@media(max-width:1150px){
+.topbar,main{padding-left:20px;padding-right:20px}
+.controls-region,.lesson-content{padding:16px}
+.lab-grid{grid-template-columns:350px minmax(0,1fr)}
+.intro{align-items:flex-start}
+.intro-actions{gap:12px}
+.result-table th,.result-table td{padding-left:8px;padding-right:8px}
+.result-table th{font-size:12px}
+}
+@media(max-width:900px){
+.intro{display:block}
+.intro-actions{margin-top:16px;flex-direction:row;justify-content:space-between;align-items:center}
+.lab-grid{display:flex;flex-direction:column}
+.controls-region{display:contents}
+.operation-panel,.relationship-lab,.sql-panel,.lesson-content{padding:20px;margin:0;width:100%}
+.operation-panel{order:0;display:block}
+.operation-panel .panel-heading{margin-bottom:12px}
+.relationship-lab{order:1;padding-top:0}
+.lesson-content{order:2;border-top:1px solid var(--line)}
+.sql-panel{order:3;border-right:0;border-top:1px solid var(--line)}
+.source-canvas{grid-template-columns:1fr 1fr;gap:20px}
+}
+@media(max-width:600px){
+.topbar,main{padding-left:16px;padding-right:16px}
+.topbar{gap:8px}
+.wordmark{font-size:10px;gap:6px;flex-wrap:wrap}
+.lab-label,.brand-divider{display:none}
+.intro{padding:20px 0}
+h1{font-size:28px}
+.eyebrow{font-size:11px}
+.intro-actions{flex-wrap:wrap;gap:12px}
+.operation-panel,.relationship-lab,.sql-panel,.lesson-content{padding:16px}
+.relationship-lab{padding-top:0}
+.source-canvas{grid-template-columns:1fr}
+.join-choices{grid-template-columns:1fr 1fr}
+.join-choices button{padding:8px;font-size:14px;gap:8px}
+.join-choices small{font-size:12px}
+.source-table th{font-size:12px;padding-left:5px;padding-right:5px}
+.source-table td{padding-left:5px;padding-right:5px}
+.panel-heading{flex-wrap:wrap}
+.result-table{min-width:530px}
+.mobile-table-hint{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+.result-explanation{min-height:0}
+.trace-equation{flex-direction:column;gap:8px}
+.equation-sign{display:none}
+.trace-record{padding:8px 12px}
+footer{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Compact example selection; existing workbench rules remain unchanged. */
+.example-selector{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:14px;color:var(--muted)}
+.example-selector select{max-width:100%;color:var(--text)}
+.example-selector select:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+/* Refinements share the existing SQL palette and workbench architecture. */
+.example-selector select{appearance:none;font:inherit;min-height:38px;padding:7px 38px 7px 12px;border:1px solid var(--accent);border-radius:5px;background:var(--accent-soft);cursor:pointer}
+.example-selector{position:relative;width:fit-content;padding-right:0}
+.example-selector::after{content:"⌄";position:absolute;right:13px;bottom:8px;color:var(--accent);pointer-events:none;font-size:18px;line-height:1}
+.example-selector select:hover{border-color:var(--text)}
+.example-selector option{background:var(--panel);color:var(--text)}
+.table-label{display:block;margin-bottom:5px}
+.table-label strong{display:block;margin-bottom:2px}
+.table-meta{font-size:12px;color:var(--muted)}
+code{font-family:Consolas,"Courier New",monospace}
+.sql-alias,.sql-value{color:var(--text)}
+.source-table{width:100%;max-width:100%}
+.condition-controls{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:13px;color:var(--muted)}
+.condition-controls[hidden]{display:none}
+.condition-controls>span{margin-right:4px}
+.condition-controls button{min-height:32px;padding:4px 10px}
+.condition-note{font-size:13px;line-height:1.55;color:var(--muted);margin-bottom:12px}
+.trace-equation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;width:100%;max-width:100%;container-type:inline-size}
+.trace-record{padding:8px 10px;flex:none}
+.trace-record p,.trace-record strong{font-size:13px;line-height:1.65}
+.trace-record>small{margin-bottom:8px}
+.trace-field{padding:2px 0}
+.trace-field abbr{font:10px "Segoe UI",Arial,sans-serif;color:var(--muted);text-decoration:underline dotted}
+.trace-field small{font:12px "Segoe UI",Arial,sans-serif;margin:1px 0 0}
+.trace-field.join-key{border-radius:3px;padding:4px 6px;margin:0 -2px;background:var(--raised);border-left:2px solid var(--line)}
+.match .trace-field.join-key{background:var(--accent-soft);border-color:var(--accent)}
+.trace-record .attribute-alias{font:12px/1.6 "Segoe UI",Arial,sans-serif;margin-top:8px}
+.trace-relationship{grid-column:1/-1;justify-self:center;display:flex;flex-direction:column;align-items:center;gap:3px;width:fit-content;max-width:100%;text-align:center;border:1px solid var(--line);border-radius:5px;padding:7px 12px;background:var(--code)}
+.trace-relationship strong,.trace-relationship small{display:block;font:12px/1.35 "Segoe UI",Arial,sans-serif;color:var(--muted)}
+.trace-relationship code{display:block;min-width:0;max-width:100%;font-size:15px;line-height:1.45;overflow-wrap:anywhere}
+.trace-relationship b{font-size:20px;line-height:1;padding:0 6px;color:var(--accent);vertical-align:middle}
+/* Follow the trace panel width, including landscape layouts with stacked page panels. */
+@container (min-width:600px){
+ .trace-relationship{flex-direction:row;flex-wrap:wrap;justify-content:center;column-gap:14px;row-gap:4px;padding:8px 14px}
+ .trace-relationship code{font-size:16px}
+}
+.trace-relationship.match{border-color:var(--accent)}
+.trace-relationship.match strong{color:var(--accent)}
+.trace-relationship.no-match b,.trace-relationship.cross b{color:var(--muted)}
+@media(max-width:600px){
+ .trace-equation{grid-template-columns:minmax(0,1fr)}
+ .trace-relationship{grid-row:2}
+ .example-selector{max-width:100%}
+ .example-selector select{font-size:13px}
+ .source-table{width:100%;min-width:0}
+}
+
+.trace-explanation code{font-size:.92em}
+
+/* Permanent instructional notes use the existing palette without boxed panels. */
+.instruction-note{margin-top:14px;font-size:14px;line-height:1.55;color:var(--muted)}
+.instruction-note h4{margin:0 0 8px;font-size:14px;font-weight:650;color:var(--text)}
+.instruction-note p{margin:6px 0}
+.instruction-note ul{margin:6px 0;padding-left:19px}
+.instruction-note li{padding:2px 0}
+.instruction-note strong{color:var(--text);font-weight:600}
+.instruction-note .concept{color:var(--accent)}
+.instruction-note code{font-size:.92em;overflow-wrap:anywhere}
+.instruction-note .note-null{color:var(--preserved);font-style:italic}
+.instruction-note .null-definition{margin-top:8px}
+
+/* Original source-table inspection, independent of JOIN selection and tracing. */
+.table-view-button{font:inherit;display:inline-flex;align-items:center;gap:9px;padding:5px 9px;margin-bottom:2px;min-height:34px;color:var(--accent);background:var(--code);border:1px solid var(--line);border-radius:5px;text-align:left}
+.table-view-button span{font-size:17px;line-height:1}
+.table-view-button:hover{border-color:var(--accent);background:var(--accent-soft)}
+body.source-view-open{overflow:hidden}
+#source-viewer{width:min(680px,calc(100% - 32px));max-width:calc(100% - 32px);max-height:calc(100dvh - 32px);padding:24px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);box-shadow:0 18px 70px #0007;overflow:auto}
+#source-viewer::backdrop{background:rgb(0 0 0 / .6)}
+.viewer-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}
+.viewer-heading h2{font-size:21px;overflow-wrap:anywhere}
+.viewer-heading .eyebrow{color:var(--accent);margin-bottom:4px}
+#source-viewer-close{flex-shrink:0;border-color:var(--accent);color:var(--accent)}
+#source-viewer-intro,#source-viewer-meta,.viewer-null{font-size:14px;line-height:1.55;color:var(--muted)}
+#source-viewer-meta{margin:8px 0 16px}
+.viewer-scroll{overflow:auto;max-height:55dvh;border:1px solid var(--line);border-radius:5px}
+.viewer-table{width:100%;font-size:15px;white-space:nowrap}
+.viewer-table th{position:sticky;top:0;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.viewer-table td{height:42px;padding:9px 14px;border-bottom:1px solid var(--line)}
+.viewer-table tr:last-child td{border-bottom:0}
+.viewer-table abbr{font:11px "Segoe UI",Arial,sans-serif;text-decoration:underline dotted;cursor:help;color:var(--accent)}
+.viewer-null{margin-top:12px}
+@media(max-width:600px){
+ #source-viewer{padding:16px}
+ .viewer-heading h2{font-size:18px}
+ .viewer-heading{gap:10px}
+ .viewer-table th,.viewer-table td{padding-left:10px;padding-right:10px}
+}
+
+</style>
+  <style>
+/* Publishing additions only; the original laboratory stylesheet stays unchanged. */
+.publication-notes{margin:24px 0 32px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.publication-credit{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;letter-spacing:.04em}
+.publication-notes details{margin-top:14px;max-width:1000px}
+.publication-notes summary{cursor:pointer;color:var(--accent);font-weight:600}
+.publication-notes details p{margin-top:12px;line-height:1.65}
+/* Neutralize the laboratory's generic footer flex rule; the shared component controls its layout. */
+footer.institutional-footer{display:block;font-size:.85rem;line-height:1.55}
+.institutional-footer .footer-motto,.institutional-footer .footer-founder{font-weight:400}
+@media(max-width:600px){.topbar{flex-wrap:wrap;padding-top:8px;padding-bottom:8px}.top-actions{margin-left:auto}.wordmark .lab-label,.wordmark .brand-divider{display:inline}}
+
+/* Independent brand links retain the existing header typography and spacing. */
+.wordmark a{text-decoration:none}
+.brand-home{display:flex;align-items:center;gap:inherit}
+
+</style>
+<style>.topbar .wordmark{font-weight:700;letter-spacing:.06em}.topbar .brand-home{pointer-events:none;text-decoration:none;color:inherit}.publication-notes .publication-credit{color:inherit}</style>
+  <script>
+(function (root, factory) {
+  'use strict';
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.JoinLab = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const employees = Object.freeze([
+    Object.freeze({ employee_id: 1, first_name: 'Mary' }),
+    Object.freeze({ employee_id: 2, first_name: 'James' }),
+    Object.freeze({ employee_id: 3, first_name: 'Linda' }),
+    Object.freeze({ employee_id: 4, first_name: 'Alex' })
+  ]);
+  const spaces = Object.freeze([
+    Object.freeze({ space_id: 101, employee_id: 1 }),
+    Object.freeze({ space_id: 102, employee_id: null }),
+    Object.freeze({ space_id: 103, employee_id: 3 }),
+    Object.freeze({ space_id: 104, employee_id: null })
+  ]);
+  const customers = Object.freeze(employees.map(e => Object.freeze({ customer_id: e.employee_id, first_name: e.first_name })));
+  const orders = Object.freeze([
+    Object.freeze({ order_id: 101, customer_id: 1 }),
+    Object.freeze({ order_id: 102, customer_id: 1 }),
+    Object.freeze({ order_id: 103, customer_id: 3 }),
+    Object.freeze({ order_id: 104, customer_id: 3 })
+  ]);
+  const examples = Object.freeze({
+    parking: Object.freeze({
+      id: 'parking', label: '1: Employees & Parking Spaces',
+      left: employees, right: spaces, leftTable: 'EMPLOYEE', rightTable: 'PARKING_SPACE',
+      leftKey: 'employee_id', rightKey: 'space_id', foreignKey: 'employee_id', outputKey: 'space_employee_id',
+      leftAlias: 'e', rightAlias: 'p', leftNoun: 'employee', leftPlural: 'employees',
+      rightNoun: 'space', rightPlural: 'spaces', nullable: true, unique: true
+    }),
+    customers: Object.freeze({
+      id: 'customers', label: '2: Customers & Orders',
+      left: customers, right: orders, leftTable: 'CUSTOMER', rightTable: 'ORDERS',
+      leftKey: 'customer_id', rightKey: 'order_id', foreignKey: 'customer_id', outputKey: 'order_customer_id',
+      leftAlias: 'c', rightAlias: 'o', leftNoun: 'customer', leftPlural: 'customers',
+      rightNoun: 'order', rightPlural: 'orders', nullable: false, unique: false
+    })
+  });
+  const types = Object.freeze(['INNER', 'LEFT', 'RIGHT', 'CROSS']);
+  // SQL equality does not match NULL to NULL. Keys in this lab are numeric.
+  const matches = (e, p, example = examples.parking) => e[example.leftKey] != null && p[example.foreignKey] != null && e[example.leftKey] === p[example.foreignKey];
+  const compareNullable = (a, b) => a == null ? (b == null ? 0 : 1) : (b == null ? -1 : a - b);
+  function join(type, left = employees, right = spaces, example = examples.parking) {
+    if (!types.includes(type)) throw new RangeError('Unknown JOIN type: ' + type);
+    const result = [];
+    function emit(ci, oi) {
+      const e = ci === null ? null : left[ci];
+      const p = oi === null ? null : right[oi];
+      result.push({
+        [example.leftKey]: e ? e[example.leftKey] : null,
+        first_name: e ? e.first_name : null,
+        [example.rightKey]: p ? p[example.rightKey] : null,
+        [example.outputKey]: p ? p[example.foreignKey] : null,
+        employeeIndex: ci, spaceIndex: oi,
+        kind: ci === null || oi === null ? 'extended' : (type === 'CROSS' ? 'product' : 'matched')
+      });
+    }
+    left.forEach((e, ci) => {
+      let found = false;
+      right.forEach((p, oi) => {
+        if (type === 'CROSS' || matches(e, p, example)) { emit(ci, oi); found = true; }
+      });
+      if (!found && type === 'LEFT') emit(ci, null);
+    });
+    if (type === 'RIGHT') right.forEach((p, oi) => {
+      if (!left.some(e => matches(e, p, example))) emit(null, oi);
+    });
+    // Same order for every operation: left primary key, then right primary key, NULLs last.
+    return result.sort((a, b) => compareNullable(a[example.leftKey], b[example.leftKey]) || compareNullable(a[example.rightKey], b[example.rightKey]));
+  }
+  function sql(type, example = examples.parking, condition = 'ON') {
+    if (!types.includes(type)) throw new RangeError('Unknown JOIN type: ' + type);
+    if (!['ON', 'USING'].includes(condition)) throw new RangeError('Unknown condition: ' + condition);
+    if (type !== 'CROSS' && condition === 'USING' && example.leftKey !== example.foreignKey) throw new RangeError('USING requires a shared column name');
+    const e = example.leftAlias, p = example.rightAlias;
+    const leftKey = e + '.' + example.leftKey, rightKey = p + '.' + example.rightKey;
+    return 'SELECT\n    ' + leftKey + ',\n    ' + e + '.first_name,\n    ' + rightKey +
+      ',\n    ' + p + '.' + example.foreignKey + ' AS ' + example.outputKey +
+      '\nFROM ' + example.leftTable.toLowerCase() + ' AS ' + e +
+      '\n' + type + ' JOIN ' + example.rightTable.toLowerCase() + ' AS ' + p +
+      (type === 'CROSS' ? '' : condition === 'USING' ? '\n    USING (' + example.leftKey + ')' : '\n    ON ' + leftKey + ' = ' + p + '.' + example.foreignKey) +
+      '\nORDER BY\n    ' + leftKey + ' IS NULL, ' + leftKey + ',\n    ' + rightKey + ' IS NULL, ' + rightKey + ';';
+  }
+
+  function forExample(id) {
+    const example = Object.hasOwn(examples, id) ? examples[id] : null;
+    if (!example) throw new RangeError('Unknown example: ' + id);
+    // Stable provenance slots let both examples use the same renderer.
+    return Object.freeze({
+      example, employees: example.left, spaces: example.right, types,
+      matches: (left, right) => matches(left, right, example),
+      join: (type, left = example.left, right = example.right) => join(type, left, right, example),
+      sql: (type, condition) => sql(type, example, condition)
+    });
+  }
+  return Object.freeze({ employees, spaces, customers, orders, examples, forExample, types, matches, join, sql });
+});
+
+</script>
+  <script>
+// Presentation data only. Relational calculations remain in join-engine.js.
+(function (root, factory) {
+  'use strict';
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.JoinPresentation = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  function sourceRows(type, rows, engine, side) {
+    const employeeSide = side === 'employee';
+    const records = employeeSide ? engine.employees : engine.spaces;
+    const others = employeeSide ? engine.spaces : engine.employees;
+    const key = employeeSide ? 'employeeIndex' : 'spaceIndex';
+    return records.map((record, index) => {
+      const count = rows.filter(row => row[key] === index).length;
+      const hasMatch = others.some(other => employeeSide ? engine.matches(record, other) : engine.matches(other, record));
+      return {
+        record, index, count, hasMatch,
+        status: type === 'CROSS' ? 'product' : count === 0 ? 'excluded' : hasMatch ? 'matched' : 'preserved'
+      };
+    });
+  }
+
+  function introducedFields(row, example = { leftKey: 'employee_id', rightKey: 'space_id', outputKey: 'space_employee_id' }) {
+    if (row.employeeIndex === null) return [example.leftKey, 'first_name'];
+    if (row.spaceIndex === null) return [example.rightKey, example.outputKey];
+    return [];
+  }
+
+  function representativeRows(type, rows, example = { leftKey: 'employee_id', outputKey: 'space_employee_id' }) {
+    const matched = rows.filter(row => row.kind === 'matched');
+    const extended = rows.filter(row => row.kind === 'extended');
+    let samples;
+    if (type === 'LEFT') samples = [matched[0], ...extended];
+    else if (type === 'RIGHT') samples = [matched[0], matched[matched.length - 1], ...extended];
+    else if (type === 'CROSS') samples = [rows[0], rows.find(row => row[example.leftKey] !== row[example.outputKey]), rows[rows.length - 1]];
+    else samples = rows;
+    return [...new Set(samples.filter(Boolean))].slice(0, 3);
+  }
+
+  function visibleConnections(type, rows, selectedRow = rows[0]) {
+    // CROSS shows one employee's fan of pairs, not the entire 16-line web.
+    return rows.filter(row => row.employeeIndex !== null && row.spaceIndex !== null &&
+      (type !== 'CROSS' || row.employeeIndex === selectedRow?.employeeIndex))
+      .map(({ employeeIndex, spaceIndex }) => ({ employeeIndex, spaceIndex }));
+  }
+
+  // Fictional display-only extensions. The JOIN engine never reads these tables.
+  function illustrativeTables(example) {
+    const parking = example.id === 'parking';
+    const leftDetails = parking ? [
+      { last_name: 'Carter', department: 'Marketing', hire_date: '2021-08-16' },
+      { last_name: 'Brooks', department: 'Finance', hire_date: '2020-02-10' },
+      { last_name: 'Chen', department: 'Operations', hire_date: '2022-06-13' },
+      { last_name: 'Rivera', department: 'IT', hire_date: '2023-01-09' }
+    ] : [
+      { last_name: 'Morgan', city: 'Lexington', joined_date: '2024-03-12' },
+      { last_name: 'Patel', city: 'Louisville', joined_date: '2024-07-08' },
+      { last_name: 'Reed', city: 'Frankfort', joined_date: '2023-11-20' },
+      { last_name: 'Davis', city: 'Bowling Green', joined_date: '2025-01-15' }
+    ];
+    const rightDetails = parking ? [
+      { location: 'North A1', space_type: 'Standard' },
+      { location: 'North A2', space_type: 'Standard' },
+      { location: 'South B1', space_type: 'Covered' },
+      { location: 'South B2', space_type: 'EV charging' }
+    ] : [
+      { order_date: '2026-09-04', status: 'Delivered', total_amount: 129.95 },
+      { order_date: '2026-09-18', status: 'Delivered', total_amount: 49.50 },
+      { order_date: '2026-10-02', status: 'Shipped', total_amount: 89.00 },
+      { order_date: '2026-10-20', status: 'Processing', total_amount: 249.00 }
+    ];
+    const extraLeft = parking ? [
+      { employee_id: 5, first_name: 'Nora', last_name: 'Ellis', department: 'HR', hire_date: '2024-04-22' },
+      { employee_id: 6, first_name: 'Ethan', last_name: 'Shah', department: 'IT', hire_date: '2025-07-14' },
+      { employee_id: 7, first_name: 'Sofia', last_name: 'Bennett', department: 'Marketing', hire_date: '2026-02-02' }
+    ] : [
+      { customer_id: 5, first_name: 'Ava', last_name: 'Foster', city: 'Richmond', joined_date: '2025-05-06' },
+      { customer_id: 6, first_name: 'Noah', last_name: 'Kim', city: 'Georgetown', joined_date: '2025-10-21' },
+      { customer_id: 7, first_name: 'Mia', last_name: 'Ortiz', city: 'Danville', joined_date: '2026-04-09' }
+    ];
+    const extraRight = parking ? [
+      { space_id: 105, employee_id: 5, location: 'East C1', space_type: 'Standard' },
+      { space_id: 106, employee_id: 6, location: 'East C2', space_type: 'Covered' },
+      { space_id: 107, employee_id: 7, location: 'West D1', space_type: 'Standard' }
+    ] : [
+      { order_id: 105, customer_id: 2, order_date: '2026-10-21', status: 'Shipped', total_amount: 64.75 },
+      { order_id: 106, customer_id: 5, order_date: '2026-10-23', status: 'Processing', total_amount: 119.00 },
+      { order_id: 107, customer_id: 7, order_date: '2026-10-26', status: 'Processing', total_amount: 32.50 }
+    ];
+    const expand = (originals, details, extra) => Object.freeze([
+      // Original attributes take precedence; no sample value may be overwritten.
+      ...originals.map((record, index) => Object.freeze({ ...record, ...details[index], ...record })),
+      ...extra.map(record => Object.freeze(record))
+    ]);
+    return Object.freeze({
+      left: expand(example.left, leftDetails, extraLeft),
+      right: expand(example.right, rightDetails, extraRight)
+    });
+  }
+
+  return Object.freeze({ sourceRows, introducedFields, representativeRows, visibleConnections, illustrativeTables });
+});
+
+</script>
+  <script>
+(function () {
+  'use strict';
+  let engine = window.JoinLab.forExample('parking');
+  let example = engine.example;
+  const presentation = window.JoinPresentation;
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => Array.from(document.querySelectorAll(selector));
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, e => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[e]));
+  const state = { type: 'INNER', rows: [], selected: 0, source: null, condition: 'ON' };
+  let descriptions = {
+    INNER: 'Keep only employees with an assigned parking space: Mary and Linda. NULL assignments do not match an employee.',
+    LEFT: 'Keep every EMPLOYEE. James and Alex have no assigned space, so the parking-space fields are introduced as NULL.',
+    RIGHT: 'Keep every PARKING_SPACE, including unassigned spaces 102 and 104. Their employee fields are introduced as NULL; the space assignment was already NULL in the source.',
+    CROSS: 'Pair every employee with every parking space, including unassigned spaces. No ON condition is tested. Stored NULL assignments remain; no NULLs are introduced.'
+  };
+  const lessons = {
+    parking: {
+      descriptions,
+      integrityTitle: 'Why does RIGHT JOIN produce NULLs here?',
+      integrity: 'A parking space may exist without being assigned to an employee. Its employee_id foreign key is nullable. RIGHT JOIN retains every parking space, including unassigned spaces 102 and 104. With no matching employee, the employee columns are introduced as NULL; space_employee_id retains its stored NULL. This is valid data, not a broken relationship.',
+      constraintTitle: 'Why are unassigned spaces valid?',
+      constraint: '<p><code>PARKING_SPACE.employee_id</code> is a <strong class="concept">nullable foreign key</strong>.</p><ul><li>Assigned spaces reference a valid employee.</li><li><code>NULL</code> means unassigned; multiple unassigned spaces are valid.</li><li><code>UNIQUE</code> limits each employee to one assigned space.</li></ul><p>Spaces <strong>102 and 104</strong> are valid unassigned records.</p>',
+      nullNote: '<ul><li><strong>Stored NULL:</strong> Spaces 102 and 104 have no assigned employee.</li><li><code>LEFT JOIN</code>: Missing space fields become <code>NULL</code>.</li><li><code>RIGHT JOIN</code>: Missing employee fields become <code>NULL</code>; the space assignment stays stored <code>NULL</code>.</li><li><code>CROSS JOIN</code>: Stored NULLs repeat; no missing-side NULLs are introduced.</li></ul>'
+    },
+    customers: {
+      descriptions: {
+    INNER: 'Keep only pairs with equal customer IDs. Each matching order produces a separate row.',
+    LEFT: 'Keep every CUSTOMER record and its matching orders. Without a match, the order fields become NULL.',
+    RIGHT: 'Keep every ORDERS record and its matching customer. Because every order references an existing customer, RIGHT JOIN and INNER JOIN return the same rows in this dataset. Different JOIN operations do not always produce different results.',
+    CROSS: 'Pair every customer with every order. No ON condition tests the IDs, and no NULLs are introduced.'
+  },
+      integrityTitle: "Why doesn't RIGHT JOIN produce NULLs here?",
+      integrity: 'In this model, every order must have a unique, non-NULL order_id and a non-NULL customer_id referencing an existing customer. Primary-key, NOT NULL, and foreign-key constraints enforce these rules. RIGHT JOIN retains every order, and all four orders have a customer match, so it introduces no NULLs. INNER JOIN returns the same four rows here. These JOINs are not logically equivalent: this dataset and its enforced relationship rules prevent unmatched orders. Other schemas may permit optional relationships.',
+      constraintTitle: 'How is customer–order integrity maintained?',
+      constraint: '<p><code>ORDERS.customer_id</code> is a <strong class="concept">NOT NULL foreign key</strong>.</p><ul><li>Every order references an existing customer.</li><li>One customer may have multiple orders.</li><li>Customers may have no orders: James and Alex have none.</li></ul><p>Both tables have <strong>unique, non-NULL primary keys</strong>.</p>',
+      nullNote: '<ul><li><strong>Source records:</strong> Neither table stores <code>NULL</code> here.</li><li><code>LEFT JOIN</code>: James and Alex have no orders; their order fields become <code>NULL</code>.</li><li><code>RIGHT JOIN</code>: No introduced NULLs: every order has a customer.</li><li><code>CROSS JOIN</code>: No NULLs are introduced.</li></ul>'
+    }
+  };
+  lessons.customers.descriptions.RIGHT = 'Keep every ORDERS record and its matching customer. All four orders have matches in this example.';
+  function selectExample(id) {
+    engine = window.JoinLab.forExample(id);
+    example = engine.example;
+    descriptions = lessons[id].descriptions;
+    state.source = null; state.selected = 0;
+    $('#example-select').value = id;
+    renderExampleLabels();
+    selectJoin(state.type);
+  }
+
+  function renderExampleLabels() {
+    $$('.table-label').forEach((label, i) => {
+      label.innerHTML = '<strong><button type="button" class="table-view-button" data-table-side="' + (i ? 'right' : 'left') + '" aria-haspopup="dialog" aria-controls="source-viewer" aria-label="View illustrative ' + (i ? example.rightTable : example.leftTable) + ' source table">' + (i ? example.rightTable : example.leftTable) + ' <span aria-hidden="true">▦</span></button></strong><div class="table-meta"><code>' + highlightSQL('AS ' + (i ? example.rightAlias : example.leftAlias)) + '</code><span aria-hidden="true"> · </span><span class="side-label">' + (i ? 'RIGHT' : 'LEFT') + ' TABLE</span></div>';
+    });
+    $('#employees thead th').childNodes[0].nodeValue = example.leftKey + ' ';
+    $('#spaces thead th').childNodes[0].nodeValue = example.rightKey + ' ';
+    $('#spaces thead th:nth-child(2)').childNodes[0].nodeValue = example.foreignKey + ' ';
+    $('#spaces th:nth-child(2) abbr').title = (example.nullable ? 'Nullable, UNIQUE' : 'NOT NULL') + ' foreign key referencing ' + example.leftTable + '.' + example.leftKey;
+    $('#employees caption').textContent = example.leftTable + ' source records; final column annotates participation';
+    $('#spaces caption').textContent = example.rightTable + ' source records; final column annotates participation';
+    $('#result-employee-group .side-label').textContent = example.leftTable + ' · LEFT';
+    $('#result-space-group .side-label').textContent = example.rightTable + ' · RIGHT';
+    $('#result-employee-id').textContent = example.leftKey;
+    $('#result-space-id').textContent = example.rightKey;
+    $('#result-space-employee-id').textContent = example.outputKey;
+    $('#result-space-employee-id').title = 'SQL alias for ' + example.rightAlias + '.' + example.foreignKey + ' from ' + example.rightTable;
+    $('[data-join="LEFT"] small').textContent = 'Every ' + example.leftNoun;
+    $('[data-join="RIGHT"] small').textContent = 'Every ' + example.rightNoun;
+    $('.relationship-heading > p').textContent = 'Select ' + example.leftKey + ' or ' + example.rightKey + ' to inspect.';
+    $('#data-note-title').textContent = lessons[example.id].constraintTitle;
+    const noteHTML = html => html.replace(/<code>(.*?)<\/code>/g, (_, sql) => '<code>' + highlightSQL(sql).replace(/<span class="keyword">NULL<\/span>/g, '<span class="note-null">NULL</span>') + '</code>');
+    $('.data-note .note-copy').innerHTML = noteHTML(lessons[example.id].constraint);
+    $('.null-note .note-copy').innerHTML = noteHTML(lessons[example.id].nullNote + '<p class="null-definition"><code>NULL</code> means missing or unknown, not zero, empty text, or the string &ldquo;NULL&rdquo;. Equality never matches <code>NULL</code>.</p>');
+    $('.order-note p').textContent = 'Every result is sorted by ' + example.leftKey + ', then ' + example.rightKey + ', with NULLs last. The SQL uses the same explicit ORDER BY. A JOIN alone does not guarantee row order.';
+  }
+
+  function highlightSQL(text) {
+    return text.split(/('(?:''|[^'])*'|\b(?:ORDER BY|IS NULL|NOT NULL|UNIQUE|SELECT|FROM|AS|INNER|LEFT|RIGHT|CROSS|JOIN|ON|USING|NULL)\b|\b(?:[epco]|EMPLOYEE|PARKING_SPACE|CUSTOMER|ORDERS)\.\w+\b|\b[a-z_]\w*\b|\b\d+\b)/g).map(token => {
+      const kind = /^(SELECT|FROM|AS|INNER|LEFT|RIGHT|CROSS|JOIN|ON|USING|ORDER BY|IS NULL|NOT NULL|UNIQUE|NULL)$/.test(token) ? 'keyword' : /^[epco]$/.test(token) ? 'sql-alias' : /^[A-Za-z_]\w*(?:\.\w+)?$/.test(token) ? 'identifier' : /^(?:\d+|')/.test(token) ? 'sql-value' : '';
+      return kind ? '<span class="' + kind + '">' + escapeHTML(token) + '</span>' : escapeHTML(token);
+    }).join('');
+  }
+
+  function renderSQL() {
+    const available = state.type !== 'CROSS' && example.leftKey === example.foreignKey;
+    $('#condition-controls').hidden = !available;
+    $$('[data-condition]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.condition === state.condition)));
+    $('#condition-note').innerHTML = state.type === 'CROSS'
+      ? '<code>' + highlightSQL('CROSS JOIN') + '</code> pairs every combination; no equality condition is used.'
+      : '<code>' + highlightSQL('ON') + '</code> compares specified columns. <code>' + highlightSQL('USING') + '</code> is a shorter alternative when both tables share the same column name. With <code>' + highlightSQL('SELECT *') + '</code>, <code>' + highlightSQL('USING') + '</code> presents the shared column once; this lab keeps explicit, qualified selections and output aliases.';
+    const sql = engine.sql(state.type, available ? state.condition : 'ON');
+    $('#sql-code').innerHTML = highlightSQL(sql);
+    $('#copy-status').textContent = '';
+    $('#manual-copy').hidden = true;
+    $('#sql-fallback').value = sql;
+  }
+
+  function renderSources() {
+    [['#employees', 'employee', 'employeeIndex'], ['#spaces', 'space', 'spaceIndex']].forEach(([id, side, key]) => {
+      const left = side === 'employee';
+      const sources = presentation.sourceRows(state.type, state.rows, engine, side);
+      const retained = sources.filter(row => row.count > 0).length;
+      const unmatched = sources.filter(row => row.status === 'preserved').length;
+      const policy = $('#' + side + '-policy');
+      const policyText = state.type === 'CROSS' ? 'All ' + retained + ' records paired' : retained === sources.length ? 'All ' + retained + ' records retained' : retained + ' of ' + sources.length + ' records participate';
+      policy.innerHTML = '<strong>' + policyText + '</strong><span>' + (unmatched ? unmatched + ' kept without a match' : state.type === 'CROSS' ? 'No ID test' : (sources.length - retained) + ' excluded') + '</span>';
+      policy.classList.toggle('has-preserved', unmatched > 0);
+      policy.classList.toggle('is-cross', state.type === 'CROSS');
+      $(id + ' tbody').innerHTML = sources.map(({ record, index, count, status: kind }) => {
+        const nullable = !left && record[example.foreignKey] === null;
+        const label = (nullable ? 'Unassigned space; stored employee_id is NULL. ' : '') + (kind === 'excluded' ? 'No ID match; excluded' : kind === 'preserved' ? 'No ID match; source record kept, missing opposite side becomes NULL' : kind === 'product' ? 'Paired with every record on the other side; no ID test' : 'Matching key relationship') + '; ' + count + ' result ' + (count === 1 ? 'row' : 'rows');
+        const selected = state.rows[state.selected];
+        const inspected = state.source?.side === side && state.source.index === index;
+        const focused = selected?.[key] === index || (!selected && inspected) ? ' focused' : '';
+        const crossClass = state.type === 'CROSS' ? (!left ? ' paired' : selected?.employeeIndex === index ? ' cross-origin' : '') : '';
+        const values = left ? [record[example.leftKey], record.first_name] : [record[example.rightKey], record[example.foreignKey]];
+        const badge = kind === 'excluded' ? '− Excluded' : kind === 'preserved' ? '+ Kept' : kind === 'product' ? '× Paired' : '• ' + count + (count === 1 ? ' match' : ' matches');
+        const name = left ? example.leftTable + ' ' + values[0] + ' · ' + record.first_name : example.rightTable + ' ' + values[0] + ' · ' + example.foreignKey + ' ' + (nullable ? 'NULL (unassigned)' : values[1]);
+        return '<tr class="' + kind + focused + crossClass + '" data-source-index="' + index + '"><td><button type="button" class="source-select" aria-label="Inspect ' + escapeHTML(name) + '" aria-pressed="' + inspected + '">' + values[0] + '</button></td><td>' + displayValue(values[1]) + '</td><td><span class="row-status" title="' + label + '"><span aria-hidden="true">' + badge + '</span><span class="sr-only">' + label + '</span></span></td></tr>';
+      }).join('');
+    });
+    $('.source-panel').classList.toggle('is-cross', state.type === 'CROSS');
+  }
+
+  function displayValue(value, introduced = false) {
+    const origin = introduced ? 'Introduced by this JOIN: no matching source record' : 'Stored NULL in ' + example.rightTable + '.' + example.foreignKey + ': unassigned space';
+    return value === null ? '<span class="null" data-null-origin="' + (introduced ? 'join' : 'source') + '" title="' + origin + '" aria-label="SQL NULL. ' + origin + '">NULL</span>' : escapeHTML(value);
+  }
+
+  function renderResult() {
+    const emphasis = state.type === 'LEFT' ? 'employee' : state.type === 'RIGHT' ? 'space' : 'both';
+    $('.result-table').dataset.emphasis = emphasis;
+    for (const source of ['employee', 'space']) {
+      const retained = emphasis === source;
+      $('#result-' + source + '-policy').textContent = retained ? 'All rows retained' : state.type === 'CROSS' ? 'Every pairing' : 'Matching records';
+    }
+    $('#result-count').textContent = state.rows.length + ' rows';
+    $('#operation-label').textContent = state.type + ' JOIN';
+    $('#result-explanation').textContent = descriptions[state.type];
+    $('#integrity-explanation').hidden = state.type !== 'RIGHT';
+    $('#integrity-title').textContent = lessons[example.id].integrityTitle;
+    $('#integrity-copy').textContent = lessons[example.id].integrity;
+    $('.relationship-lab').dataset.operation = state.type;
+    const matched = state.rows.filter(row => row.kind === 'matched').length;
+    const kept = state.rows.filter(row => row.kind === 'extended').length;
+    $('#result-breakdown').textContent = state.type === 'CROSS' ? engine.employees.length + ' × ' + engine.spaces.length + ' = ' + state.rows.length + ' pairs · no matching condition' : matched + ' matching pairs' + (kept ? ' + ' + kept + ' unmatched ' + (state.type === 'LEFT' ? example.leftPlural : example.rightPlural) + ' retained' : ' · unmatched records excluded');
+    $('#result-caption').textContent = state.type + ' JOIN result, ' + state.rows.length + ' rows. ' + example.leftTable + ' on the left supplies ' + example.leftKey + ' and first_name. ' + example.rightTable + ' on the right supplies ' + example.rightKey + ' and ' + example.outputKey + ', the alias for ' + example.rightAlias + '.' + example.foreignKey + '. TRACE is an interface control. Use a trace button to inspect a result row.';
+    $('#result-body').innerHTML = state.rows.map((row, index) => {
+      const missing = presentation.introducedFields(row, example);
+      const side = row.employeeIndex === null ? 'employee' : row.spaceIndex === null ? 'space' : '';
+      const cells = [example.leftKey, 'first_name', example.rightKey, example.outputKey].map((key, column) => {
+        const source = column < 2 ? 'employee' : 'space';
+        const header = ['result-employee-id', 'result-first-name', 'result-space-id', 'result-space-employee-id'][column];
+        const classes = [column === 2 ? 'source-divider' : '', missing.includes(key) ? 'null-cell' : ''].filter(Boolean).join(' ');
+        const attrs = ' data-source="' + source + '" headers="result-' + source + '-group ' + header + '" class="' + classes + '"' + (missing.includes(key) ? ' title="Introduced by the JOIN: no matching ' + (column < 2 ? example.leftNoun : example.rightNoun) + ' record"' : '');
+        return '<td' + attrs + '>' + displayValue(row[key], missing.includes(key)) + '</td>';
+      }).join('');
+      const status = row.kind === 'extended' ? 'Preserved without match' : row.kind === 'product' ? 'Cartesian pair' : 'Matching pair';
+      return '<tr data-row="' + index + '" data-missing-side="' + side + '" class="' + row.kind + (index === state.selected ? ' selected' : '') + '"><td headers="result-trace"><button type="button" class="trace-button" title="' + status + '" aria-label="Trace result row ' + (index + 1) + '" aria-pressed="' + (index === state.selected) + '">' + String(index + 1).padStart(2, '0') + (row.kind === 'extended' ? ' +' : '') + '</button></td>' + cells + '</tr>';
+    }).join('');
+    const extended = state.rows.filter(row => row.kind === 'extended').length;
+    const stored = state.rows.filter(row => row.spaceIndex !== null && row[example.outputKey] === null).length;
+    $('#null-count').textContent = (extended ? extended + ' NULL-extended ' + (extended === 1 ? 'row' : 'rows') : 'No introduced NULLs') + (stored ? ' · ' + stored + ' stored NULLs' : '');
+  }
+
+  function traceCards(e, p, excluded = false) {
+    const cross = state.type === 'CROSS', matched = e && p && engine.matches(e, p);
+    const field = (name, value, key = '', joinKey = false) => '<p class="trace-field' + (joinKey ? ' join-key' : '') + '"><code>' + highlightSQL(name) + (key ? ' <abbr title="' + (key === 'PK' ? 'Primary key' : 'Foreign key') + '">' + key + '</abbr>' : '') + ' = ' + (value === null ? displayValue(null) : highlightSQL(typeof value === 'string' ? "'" + value.replace(/'/g, "''") + "'" : String(value))) + '</code>' + (value === null ? '<small>Stored NULL · unassigned</small>' : '') + '</p>';
+    const missing = (side, fields) => '<strong>No matching row</strong><p>' + (excluded ? 'No matching ' + side + ' record' : 'Missing source · JOIN introduces NULLs') + '</p>' + (excluded ? '' : fields.map(name => '<p><code>' + highlightSQL(name + ' = NULL') + '</code></p>').join(''));
+    const card = (table, alias, record, content) => '<div class="trace-record' + (!record ? (excluded ? ' unmatched' : ' missing') : '') + '"><small>' + table + ' · <code class="sql-alias">' + alias + '</code></small>' + content + '</div>';
+    const left = e ? field(example.leftKey, e[example.leftKey], 'PK', true) + field('first_name', e.first_name) : missing(example.leftTable, [example.leftKey, 'first_name']);
+    const right = p ? field(example.rightKey, p[example.rightKey], 'PK') + field(example.foreignKey, p[example.foreignKey], 'FK', true) + '<p class="attribute-alias">' + (excluded ? 'SQL alias (no output row):' : 'Output alias:') + '<br><code>' + highlightSQL(example.outputKey + ' = ' + (p[example.foreignKey] === null ? 'NULL' : p[example.foreignKey])) + '</code></p>' : missing(example.rightTable, [example.rightKey, example.outputKey]);
+    const mode = cross ? 'cross' : matched ? 'match' : 'no-match';
+    const label = cross ? 'Every combination' : matched ? 'Equal JOIN keys' : 'No equality match';
+    const comparison = cross ? (matched ? 'IDs happen to be equal' : p?.[example.foreignKey] === null ? 'Stored NULL cannot equal an ID' : 'IDs differ') + ' · no test required' : excluded ? 'Excluded · no output row' : matched ? 'FK references PK' : 'Preserved side kept · missing side is NULL';
+    const relation = '<div class="trace-relationship ' + mode + '"><strong>' + label + '</strong><code>' + highlightSQL(example.leftAlias + '.' + example.leftKey) + ' <b>' + (cross ? '×' : matched ? '=' : '∅') + '</b> ' + highlightSQL(example.rightAlias + '.' + example.foreignKey) + '</code><small>' + comparison + '</small></div>';
+    return '<div class="trace-equation ' + mode + '">' + card(example.leftTable, example.leftAlias, e, left) + card(example.rightTable, example.rightAlias, p, right) + relation + '</div>';
+  }
+
+  function highlightExpressions(html) {
+    return html.replace(/\b(?:[epco]\.\w+|(?:EMPLOYEE|PARKING_SPACE|CUSTOMER|ORDERS)\.\w+|employee_id|customer_id|space_id|order_id|space_employee_id|order_customer_id|first_name)(?: = (?:\d+|NULL))?/g,
+      expression => '<code>' + highlightSQL(expression) + '</code>');
+  }
+
+  function renderTrace() {
+    const row = state.rows[state.selected];
+    $('.trace-panel').classList.toggle('is-excluded', !row);
+    $('#trace-kind').textContent = state.source ? 'SOURCE INSPECTION' : 'ROW TRACE';
+    if (!row) { renderExcludedSource(); return; }
+    const e = row.employeeIndex === null ? null : engine.employees[row.employeeIndex];
+    const p = row.spaceIndex === null ? null : engine.spaces[row.spaceIndex];
+    $('.trace-panel').classList.toggle('has-null', !e || !p);
+    $('.trace-panel').classList.toggle('is-cross', state.type === 'CROSS');
+    let explanation, kicker;
+    if (!e) {
+      kicker = 'UNASSIGNED SPACE · PRESERVED';
+      explanation = '<strong>' + example.rightKey + ' = ' + p[example.rightKey] + ' is unassigned.</strong> ' + example.rightTable + '.' + example.foreignKey + ' is stored NULL, which cannot match an ' + example.leftTable + '.' + example.leftKey + ' through equality. RIGHT JOIN keeps this valid space and introduces NULL for ' + example.leftKey + ' and first_name. ' + example.outputKey + ' retains its stored NULL.';
+    } else if (!p) {
+      kicker = example.leftTable + ' WITHOUT ' + example.rightNoun.toUpperCase() + ' · PRESERVED';
+      explanation = '<strong>first_name = ' + escapeHTML(e.first_name) + ', ' + example.leftKey + ' = ' + e[example.leftKey] + ' has no matching ' + example.rightTable + ' record.</strong> No ' + example.rightAlias + '.' + example.foreignKey + ' equals ' + e[example.leftKey] + '. LEFT JOIN preserves this ' + example.leftTable + ' record and introduces NULL for ' + example.rightKey + ' and ' + example.outputKey + '.' + (example.nullable ? ' It does not pair this employee with an unassigned space.' : '');
+    } else if (state.type === 'CROSS') {
+      kicker = 'CARTESIAN PAIR · NO MATCH REQUIRED';
+      explanation = '<strong>' + example.leftKey + ' = ' + e[example.leftKey] + ' (first_name = ' + escapeHTML(e.first_name) + ') is paired with ' + example.rightKey + ' = ' + p[example.rightKey] + '.</strong> CROSS JOIN pairs every ' + example.leftNoun + ' with every ' + example.rightNoun + ' without an ON condition. ' + (p[example.foreignKey] === null ? example.outputKey + ' remains the stored NULL assignment: this space is unassigned, and the pairing does not create an assignment.' : engine.matches(e, p) ? 'The IDs happen to be equal, but no equality test is required.' : example.leftAlias + '.' + example.leftKey + ' = ' + e[example.leftKey] + ' differs from ' + example.rightAlias + '.' + example.foreignKey + ' = ' + p[example.foreignKey] + '; this pair does not create a source relationship.') + ' No NULLs are introduced.';
+    } else {
+      kicker = 'MATCHING PAIR · PRESERVED';
+      const others = engine.spaces.filter(record => engine.matches(e, record) && record[example.rightKey] !== p[example.rightKey]);
+      explanation = '<strong>' + example.leftKey + ' = ' + e[example.leftKey] + ' (first_name = ' + escapeHTML(e.first_name) + ') matches ' + example.rightKey + ' = ' + p[example.rightKey] + '.</strong> ' + example.leftAlias + '.' + example.leftKey + ' and ' + example.rightAlias + '.' + example.foreignKey + ' both equal ' + e[example.leftKey] + ', so the equality condition is true. ' + example.rightTable + '.' + example.foreignKey + ' is shown as ' + example.outputKey + '. ' + (example.unique ? 'The non-NULL assignment is unique, so this employee has one assigned space.' : others.map(record => 'Another match at ' + example.rightKey + ' = ' + record[example.rightKey] + ' produces a separate result row.').join(' '));
+    }
+    $('#trace-content').innerHTML = '<p class="trace-kicker">' + kicker + '</p>' + traceCards(e, p) + '<p class="trace-explanation">' + highlightExpressions(explanation) + '</p>';
+    $('#trace-position').textContent = (state.selected + 1) + ' / ' + state.rows.length;
+    const candidates = traceCandidates(), position = candidates.indexOf(state.selected);
+    $('#previous-row').disabled = position <= 0;
+    $('#next-row').disabled = position === candidates.length - 1;
+    const context = state.source ? ' involving this selected source record' : '';
+    $('#previous-row').setAttribute('aria-label', 'Trace previous result row' + context);
+    $('#next-row').setAttribute('aria-label', 'Trace next result row' + context);
+    $('#takeaway').textContent = !e
+      ? 'INNER and LEFT exclude unassigned ' + example.rightKey + ' = ' + p[example.rightKey] + '. CROSS pairs it with all four ' + example.leftPlural + ' while keeping its stored NULL assignment.'
+      : !p
+      ? 'INNER and RIGHT exclude ' + example.leftKey + ' = ' + e[example.leftKey] + '. CROSS pairs this ' + example.leftNoun + ' with all four ' + example.rightPlural + ', without generating NULLs or creating a source relationship.'
+      : engine.matches(e, p)
+      ? 'This matching pair appears in INNER, LEFT, RIGHT, and CROSS. Only CROSS includes combinations without an equality match.'
+      : 'INNER, LEFT, and RIGHT do not include this combination. CROSS pairs the source records without requiring an equality match.';
+    $('#trace-kind').textContent = state.source ? 'Source inspection · result ' + (state.selected + 1) : 'Result row ' + (state.selected + 1);
+  }
+
+  function traceCandidates() {
+    const key = state.source?.side === 'employee' ? 'employeeIndex' : 'spaceIndex';
+    return state.rows.flatMap((row, index) => !state.source || row[key] === state.source.index ? [index] : []);
+  }
+
+  function renderExcludedSource() {
+    const left = state.source.side === 'employee';
+    const record = (left ? engine.employees : engine.spaces)[state.source.index];
+    const name = left ? example.leftKey + ' = ' + record[example.leftKey] + ' (first_name = ' + record.first_name + ')' : example.rightKey + ' = ' + record[example.rightKey] + ' (' + example.rightAlias + '.' + example.foreignKey + ' = ' + (record[example.foreignKey] === null ? 'NULL' : record[example.foreignKey]) + ')';
+    const reason = left ? 'No ' + example.rightTable + '.' + example.foreignKey + ' equals ' + record[example.leftKey] + '.' : 'This space is unassigned: its stored ' + example.foreignKey + ' is NULL, which cannot match through equality.';
+    const explanation = name + ' is excluded under ' + state.type + ' JOIN. ' + reason + ' This operation does not preserve this unmatched source. There is no output row and no NULL extension for this record.';
+    $('.trace-panel').classList.remove('has-null', 'is-cross');
+    $('#trace-content').innerHTML = '<p class="trace-kicker">EXCLUDED SOURCE · NOT AN OUTPUT ROW</p>' + traceCards(left ? record : null, left ? null : record, true) + '<p class="trace-explanation">' + highlightExpressions(escapeHTML(explanation)) + '</p>';
+    $('#trace-position').textContent = 'No output row';
+    $('#previous-row').disabled = $('#next-row').disabled = true;
+    $('#takeaway').textContent = left ? 'LEFT preserves this ' + example.leftNoun + ' with NULL ' + example.rightNoun + ' fields. CROSS pairs this record with all four ' + example.rightPlural + '.' : 'RIGHT preserves this unassigned space and introduces NULL employee fields; its assignment stays stored NULL. CROSS pairs it with all four employees.';
+  }
+
+  function selectSource(side, index) {
+    const page = {left:window.scrollX, top:window.scrollY}, x = $('.source-scroll').scrollLeft;
+    state.source = {side,index};
+    state.selected = traceCandidates()[0] ?? null;
+    renderSources(); renderResult(); renderTrace();
+    revealSelectedResult();
+    $('.source-scroll').scrollLeft = x;
+    $(side === 'employee' ? '#employees' : '#spaces').querySelector('[data-source-index="' + index + '"] .source-select').focus({preventScroll:true});
+    window.scrollTo({...page,behavior:'instant'});
+  }
+
+  function selectRow(index, retainSource = false) {
+    if (!retainSource) state.source = null;
+    state.selected = index;
+    $$('#result-body tr').forEach((tr, i) => {
+      tr.classList.toggle('selected', i === index);
+      tr.querySelector('button').setAttribute('aria-pressed', String(i === index));
+    });
+    renderSources(); renderTrace();
+    revealSelectedResult();
+  }
+
+  function revealSelectedResult() {
+    // Reveal only inside the result viewport, without jumping the whole page.
+    const viewport = $('.result-scroll');
+    const selectedRow = $('#result-body tr.selected');
+    if (!selectedRow) return;
+    const box = viewport.getBoundingClientRect();
+    const rowBox = selectedRow.getBoundingClientRect();
+    const headerHeight = $('.result-table thead').getBoundingClientRect().height;
+    if (rowBox.top < box.top + headerHeight) viewport.scrollTop += rowBox.top - box.top - headerHeight;
+    else if (rowBox.bottom > box.bottom) viewport.scrollTop += rowBox.bottom - box.bottom;
+  }
+
+  function selectJoin(type) {
+    const pagePosition = { left: window.scrollX, top: window.scrollY };
+    const trace = $('.trace-panel');
+    const traceBox = trace.getBoundingClientRect();
+    const readingTrace = traceBox.top <= window.innerHeight / 2 && traceBox.bottom > window.innerHeight / 2;
+    const demonstration = readingTrace ? trace : $('.relationship-lab');
+    const demonstrationTop = demonstration.getBoundingClientRect().top;
+    const anchorDemonstration = demonstrationTop < window.innerHeight && $('.result-panel').getBoundingClientRect().top <= 21;
+    const sourceScrollLeft = $('.source-scroll').scrollLeft;
+    state.type = type;
+    state.selected = 0;
+    state.rows = engine.join(type);
+    if (state.source) state.selected = traceCandidates()[0] ?? null;
+    $$('.join-choices [data-join]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.join === type)));
+    renderSQL();
+    renderSources(); renderResult(); renderTrace();
+    $('.result-scroll').scrollTop = 0;
+    $('.result-scroll').scrollLeft = 0;
+    if (state.source) revealSelectedResult();
+    $('.source-scroll').scrollLeft = sourceScrollLeft;
+    // Adaptive results can change the height above the source demonstration.
+    // Keep the source demonstration (or the trace currently being read) in place;
+    // near the page top, retain the ordinary document scroll position instead.
+    const heightChange = anchorDemonstration ? demonstration.getBoundingClientRect().top + window.scrollY - demonstrationTop - pagePosition.top : 0;
+    window.scrollTo({ left: pagePosition.left, top: pagePosition.top + heightChange, behavior: 'instant' });
+  }
+
+  const sourceViewer = $('#source-viewer');
+  let viewerOrigin = null, backdropPointer = false;
+  function openSourceViewer(button) {
+    const left = button.dataset.tableSide === 'left';
+    const expanded = presentation.illustrativeTables(example);
+    const records = left ? expanded.left : expanded.right;
+    const table = left ? example.leftTable : example.rightTable;
+    const primaryKey = left ? example.leftKey : example.rightKey;
+    // Only the pop-out uses this expanded fictional view; JOIN sample data stays unchanged.
+    const fields = [...new Set(records.flatMap(record => Object.keys(record)))];
+    viewerOrigin = button;
+    $('#source-viewer-title').textContent = table + ' — Source Table';
+    $('#source-viewer-meta').innerHTML = '<code>' + highlightSQL('AS ' + (left ? example.leftAlias : example.rightAlias)) + '</code> · ' + records.length + ' illustrative records · ' + fields.length + ' attributes';
+    $('#source-viewer-caption').textContent = table + ': illustrative database view including all JOIN sample records';
+    $('#source-viewer thead').innerHTML = '<tr>' + fields.map(field => {
+      const pk = field === primaryKey, fk = !left && field === example.foreignKey;
+      const key = pk ? 'PK' : fk ? 'FK' : '';
+      const description = pk ? 'Primary key: unique and non-NULL' : fk ? (example.nullable ? 'Nullable, UNIQUE' : 'NOT NULL') + ' foreign key referencing ' + example.leftTable + '.' + example.leftKey : '';
+      return '<th scope="col"><code>' + highlightSQL(field) + '</code>' + (key ? ' <abbr title="' + escapeHTML(description) + '">' + key + '</abbr>' : '') + '</th>';
+    }).join('') + '</tr>';
+    $('#source-viewer tbody').innerHTML = records.map(record => '<tr>' + fields.map(field => '<td>' + displayValue(record[field]) + '</td>').join('') + '</tr>').join('');
+    $('#source-viewer-null').hidden = left || !example.nullable;
+    $('.viewer-scroll').scrollLeft = $('.viewer-scroll').scrollTop = 0;
+    document.body.classList.add('source-view-open');
+    sourceViewer.showModal();
+    $('#source-viewer-close').focus({preventScroll:true});
+  }
+  function outsideViewer(event) {
+    const box = sourceViewer.getBoundingClientRect();
+    return event.target === sourceViewer && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom);
+  }
+  $('.source-canvas').addEventListener('click', event => {
+    const button = event.target.closest('[data-table-side]');
+    if (button) openSourceViewer(button);
+  });
+  $('#source-viewer-close').addEventListener('click', () => sourceViewer.close());
+  sourceViewer.addEventListener('cancel', event => { event.preventDefault(); sourceViewer.close(); });
+  sourceViewer.addEventListener('pointerdown', event => { backdropPointer = outsideViewer(event); });
+  sourceViewer.addEventListener('click', event => {
+    if (backdropPointer && outsideViewer(event)) sourceViewer.close();
+    backdropPointer = false;
+  });
+  sourceViewer.addEventListener('close', () => {
+    document.body.classList.remove('source-view-open');
+    viewerOrigin?.focus({preventScroll:true});
+    viewerOrigin = null;
+  });
+
+  $$('.join-choices [data-join]').forEach(button => button.addEventListener('click', () => selectJoin(button.dataset.join)));
+  $('#result-body').addEventListener('click', event => {
+    const tr = event.target.closest('[data-row]');
+    if (tr) selectRow(Number(tr.dataset.row));
+  });
+  for (const [selector, step] of [['#previous-row',-1],['#next-row',1]]) $(selector).addEventListener('click', () => {
+    const candidates = traceCandidates(), next = candidates.indexOf(state.selected) + step;
+    if (next >= 0 && next < candidates.length) selectRow(candidates[next], true);
+  });
+  for (const [selector,side] of [['#employees','employee'],['#spaces','space']]) $(selector).addEventListener('click', event => {
+    const row = event.target.closest('tbody tr[data-source-index]');
+    if (row) selectSource(side, Number(row.dataset.sourceIndex));
+  });
+  $('#theme').addEventListener('click', () => {
+    const light = document.documentElement.dataset.theme !== 'light';
+    document.documentElement.dataset.theme = light ? 'light' : 'dark';
+    $('#theme').textContent = light ? 'Dark mode' : 'Light mode';
+    $('#theme').setAttribute('aria-pressed', String(light));
+  });
+  $('#copy').addEventListener('click', async () => {
+    const sql = $('#sql-code').textContent;
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(sql);
+      $('#copy-status').textContent = 'SQL copied to clipboard.';
+      $('#manual-copy').hidden = true;
+    } catch (_) {
+      $('#sql-fallback').value = sql;
+      $('#manual-copy').hidden = false;
+      $('#copy-status').textContent = 'Use the selected text below to copy manually.';
+      $('#sql-fallback').focus(); $('#sql-fallback').select();
+    }
+  });
+  $('#reset').addEventListener('click', () => {
+    state.source = null;
+    $$('details').forEach(detail => { detail.open = false; });
+    document.documentElement.dataset.theme = 'dark';
+    $('#theme').textContent = 'Light mode'; $('#theme').setAttribute('aria-pressed', 'false');
+    state.type = 'INNER'; state.condition = 'ON'; selectExample('parking');
+  });
+  $$('[data-condition]').forEach(button => button.addEventListener('click', () => {
+    state.condition = button.dataset.condition;
+    renderSQL();
+  }));
+  $('#example-select').addEventListener('change', event => selectExample(event.target.value));
+  selectExample('parking');
+})();
+
+</script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#laboratory">Skip to laboratory</a>
+  <header class="topbar"><div class="wordmark"><span class="brand-home">AN/MKT 324 <span class="brand-divider" aria-hidden="true">·</span> BUSINESS DATA MANAGEMENT</span></div><div class="top-actions"><button id="theme" class="quiet-button" type="button" aria-pressed="false">Light mode</button></div></header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">CLASSROOM PRACTICE</p><h1 id="title">LEFT, RIGHT, INNER, CROSS <span>JOIN... WHAT?</span></h1><p class="subtitle">An Interactive SQL JOIN Laboratory</p><p class="intro-copy">Change the JOIN. Compare the records. Select a result row to discover why it appears.</p></div>
+      <div class="intro-actions"><div class="view-controls"><button id="reset" type="button" class="quiet-button">Reset lab ↺</button></div></div>
+    </section>
+<div class="example-selector"><label for="example-select">Example</label><select id="example-select" class="quiet-button" title="Changing examples keeps the JOIN and resets row tracing."><option value="parking">1: Employees &amp; Parking Spaces</option><option value="customers">2: Customers &amp; Orders</option></select></div>
+<div class="lab-grid" id="laboratory">
+      <section class="operation-panel" aria-labelledby="join-title">
+        <div class="panel-heading"><div><h2 id="join-title">Choose a JOIN</h2></div></div>
+        <div class="join-choices" role="group" aria-label="JOIN operation">
+          <button type="button" data-join="LEFT" aria-pressed="false"><span class="join-symbol" aria-hidden="true">←</span><span>LEFT JOIN<small>Every employee</small></span></button>
+          <button type="button" data-join="RIGHT" aria-pressed="false"><span class="join-symbol" aria-hidden="true">→</span><span>RIGHT JOIN<small>Every space</small></span></button>
+          <button type="button" data-join="INNER" aria-pressed="true"><span class="join-symbol" aria-hidden="true">⋂</span><span>INNER JOIN<small>Matching pairs</small></span></button>
+          <button type="button" data-join="CROSS" aria-pressed="false"><span class="join-symbol" aria-hidden="true">×</span><span>CROSS JOIN<small>Every combination</small></span></button>
+        </div>
+      </section>
+<div class="controls-region">
+
+    <section class="panel relationship-lab" aria-labelledby="relationship-title" aria-describedby="operation-label">
+      <div class="source-region">
+      <div class="relationship-heading"><h2 id="relationship-title">Examine the sources</h2><p>Select a employee_id or space_id to inspect.</p></div>
+      <section class="source-panel" aria-labelledby="source-title">
+        <h3 id="source-title" class="sr-only">Source records and their participation</h3>
+        <div class="source-scroll" tabindex="0" role="region" aria-label="Original source tables with participation in the selected JOIN">
+          <div class="source-canvas">
+            <div class="source-table-wrap"><div class="table-label"><span class="side-label">LEFT TABLE</span><strong>EMPLOYEE <small>AS e</small></strong></div><p class="side-state" id="employee-policy"></p><table class="source-table" id="employees"><caption class="sr-only">Original employee source records; final column annotates participation</caption><thead><tr><th scope="col">employee_id <abbr title="Primary key">PK</abbr></th><th scope="col">first_name</th><th scope="col">Participation</th></tr></thead><tbody></tbody></table></div>
+
+            <div class="source-table-wrap"><div class="table-label"><span class="side-label">RIGHT TABLE</span><strong>PARKING_SPACE <small>AS p</small></strong></div><p class="side-state" id="space-policy"></p><table class="source-table" id="spaces"><caption class="sr-only">Original space source records; final column annotates participation</caption><thead><tr><th scope="col">space_id <abbr title="Primary key">PK</abbr></th><th scope="col">employee_id <abbr title="Nullable, UNIQUE foreign key referencing EMPLOYEE.employee_id; NULL means unassigned">FK</abbr></th><th scope="col">Participation</th></tr></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+        <div class="relationship-key" role="group" aria-label="Relationship interpretation and participation key">
+        <p class="legend">• Matched &nbsp; + Kept without match &nbsp; − Excluded<br>Outline follows the current selection. × marks a CROSS pairing.</p>
+
+        <section class="data-note instruction-note" aria-labelledby="data-note-title"><h4 id="data-note-title">Why are unassigned spaces valid?</h4><div class="note-copy"></div></section>
+
+        </div>
+      </section>
+      </div>
+    </section>
+
+</div>
+<div class="lesson-content">
+      <section class="result-panel" aria-labelledby="result-title">
+        <div class="panel-heading"><div><h2 id="result-title">Read the result</h2></div><span class="result-badge" id="result-count" role="status" aria-live="polite"></span></div>
+        <div class="result-summary"><span id="operation-label" class="operation-label"></span><p id="result-breakdown"></p></div>
+        <p id="result-explanation" class="result-explanation" aria-live="polite"></p>
+        <div id="integrity-explanation" class="result-explanation" aria-live="polite" hidden><strong id="integrity-title"></strong><p id="integrity-copy"></p></div>
+        <div class="result-scroll" role="region" aria-label="JOIN result table; scroll vertically for all rows and horizontally on narrow screens" tabindex="0">
+          <table class="result-table">
+            <caption class="sr-only" id="result-caption"></caption>
+            <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="2"></colgroup>
+            <thead>
+              <tr class="source-groups">
+                <th id="result-trace" class="trace-heading" scope="col" rowspan="2">TRACE</th>
+                <th id="result-employee-group" class="source-group" scope="colgroup" colspan="2" data-source="employee"><span class="side-label">EMPLOYEE · LEFT</span><small id="result-employee-policy"></small></th>
+                <th id="result-space-group" class="source-group source-divider" scope="colgroup" colspan="2" data-source="space"><span class="side-label">PARKING_SPACE · RIGHT</span><small id="result-space-policy"></small></th>
+              </tr>
+              <tr class="result-columns"><th id="result-employee-id" scope="col" headers="result-employee-group" data-source="employee">employee_id</th><th id="result-first-name" scope="col" headers="result-employee-group" data-source="employee">first_name</th><th id="result-space-id" class="source-divider" scope="col" headers="result-space-group" data-source="space">space_id</th><th id="result-space-employee-id" scope="col" headers="result-space-group" data-source="space" title="SQL alias for p.employee_id from PARKING_SPACE">space_employee_id</th></tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+        </div>
+        <p class="mobile-table-hint">Scroll the table sideways to see all attributes.</p>
+        <div class="result-foot"><p><span class="trace-dot" aria-hidden="true">↗</span> Select a numbered row to explain it below.</p><span id="null-count"></span></div>
+        <details class="order-note"><summary>How are these rows ordered?</summary><p>Every result is sorted by employee_id, then space_id, with NULLs last in each field. The SQL uses the same explicit ORDER BY. A JOIN alone does not guarantee row order.</p></details>
+      </section>
+      <aside class="panel trace-panel selected-records" aria-labelledby="trace-title">
+        <div class="panel-heading"><h3 id="trace-title">Why this row appears</h3><span class="small-tag" id="trace-kind">ROW TRACE</span></div>
+
+        <div id="trace-content" aria-live="polite"></div>
+        <div class="takeaway"><strong>With another JOIN</strong><p id="takeaway"></p></div>
+        <div class="trace-controls"><button id="previous-row" class="quiet-button" type="button" aria-label="Trace previous result row">← Previous</button><span id="trace-position"></span><button id="next-row" class="quiet-button" type="button" aria-label="Trace next result row">Next →</button></div>
+        <section class="null-note instruction-note" aria-labelledby="null-note-title"><h4 id="null-note-title">What does SQL NULL mean here?</h4><div class="note-copy"></div></section>
+      </aside>
+</div>
+      <section class="sql-panel" aria-labelledby="sql-title">
+        <div class="panel-heading"><div><h2 id="sql-title">Examine the SQL</h2></div><button id="copy" type="button" class="copy-button">Copy SQL <span aria-hidden="true">⧉</span></button></div>
+        <div class="sql-content" tabindex="0" role="region" aria-label="SQL statement and copying options">
+        <div id="condition-controls" class="condition-controls" role="group" aria-label="JOIN condition syntax" aria-describedby="condition-note">
+          <span>Condition</span><button type="button" class="quiet-button" data-condition="ON" aria-pressed="true"><code class="keyword">ON</code></button><button type="button" class="quiet-button" data-condition="USING" aria-pressed="false"><code class="keyword">USING</code></button>
+        </div>
+        <p id="condition-note" class="condition-note"></p>
+        <pre class="sql"><code id="sql-code"></code></pre>
+        <p class="sql-note">Calculated locally from the source records. This statement illustrates MySQL syntax; no database server is running.</p>
+        <p id="copy-status" class="copy-status" role="status"></p>
+        <div id="manual-copy" hidden><label for="sql-fallback">Clipboard unavailable. Select and copy this SQL:</label><textarea id="sql-fallback" rows="7" readonly></textarea></div>
+        </div>
+
+      </section>
+</div>
+    <section class="publication-notes" aria-label="Publication notes">
+      <p class="publication-credit">AN/MKT 324 <span>Classroom edition</span></p>
+      <details><summary>Modeling assumptions &amp; notes</summary>
+        <p>These fictional instructional records illustrate introductory MySQL JOIN concepts. JOIN operations are calculated locally in your browser from the four records in each active source table. No database server is running.</p>
+        <p>In Employees &amp; Parking Spaces, each table has a unique, non-NULL primary key. PARKING_SPACE.employee_id is a nullable, UNIQUE foreign key: an assigned space references an existing employee, an employee has at most one assigned space, and multiple unassigned spaces may store NULL.</p>
+        <p>In Customers &amp; Orders, each table has a unique, non-NULL primary key. ORDERS.customer_id is a NOT NULL foreign key referencing an existing customer. A customer may have zero or multiple orders. These are explicit business rules, rather than conclusions drawn only from sample patterns.</p>
+        <p>Stored NULL means an unassigned parking space in these examples. Outer JOINs can also introduce NULL fields for a missing source row; the result and row trace distinguish those origins. CROSS JOIN produces all combinations without an equality condition and creates no assignments or orders.</p>
+        <p>Source-table pop-outs show seven fictional illustrative records per table, including additional attributes and records beyond the smaller active JOIN datasets. Those expanded views never enter the active JOIN calculation.</p>
+        <p>This standalone classroom HTML file contains its own CSS and JavaScript. No server, accounts, tracking, or external scripts are needed. Selections last until reload. Copy SQL writes to your clipboard when available.</p>
+      </details>
+    </section>
+  </main>
+  <footer class="institutional-footer" style="padding:20px 24px;text-align:center;border-top:1px solid currentColor;opacity:.8"><p>AN/MKT 324 · SQL JOIN Laboratory · Classroom Practice</p></footer>
+  <dialog id="source-viewer" aria-labelledby="source-viewer-title" aria-describedby="source-viewer-intro">
+    <div class="viewer-heading"><div><p class="eyebrow">SOURCE TABLE</p><h2 id="source-viewer-title"></h2></div><button id="source-viewer-close" type="button" class="quiet-button" autofocus>Close <span aria-hidden="true">×</span></button></div>
+    <p id="source-viewer-intro">Illustrative database view. The JOIN activity uses a smaller sample of these records.</p>
+    <p id="source-viewer-meta"></p>
+    <div class="viewer-scroll" tabindex="0" role="region" aria-label="Illustrative expanded source table"><table class="viewer-table"><caption class="sr-only" id="source-viewer-caption"></caption><thead></thead><tbody></tbody></table></div>
+    <p id="source-viewer-null" class="viewer-null" hidden><span class="null">NULL</span> is stored in this nullable attribute. It means unassigned here; it is not zero, empty text, or a missing record introduced by an outer JOIN.</p>
+  </dialog>
+  <noscript><p class="noscript">Enable JavaScript to calculate JOIN results and use the laboratory.</p></noscript>
+</body>
+</html>
