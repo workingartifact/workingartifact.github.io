@@ -1,0 +1,10 @@
+/* Publishing additions only; the original laboratory stylesheet stays unchanged. */
+.publication-notes{margin:24px 0 32px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.publication-credit{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;letter-spacing:.04em}
+.publication-notes details{margin-top:14px;max-width:1000px}
+.publication-notes summary{cursor:pointer;color:var(--accent);font-weight:600}
+.publication-notes details p{margin-top:12px;line-height:1.65}
+/* Neutralize the laboratory's generic footer flex rule; the shared component controls its layout. */
+footer.institutional-footer{display:block;font-size:.85rem;line-height:1.55}
+.institutional-footer .footer-motto,.institutional-footer .footer-founder{font-weight:400}
+@media(max-width:600px){.topbar{flex-wrap:wrap;padding-top:8px;padding-bottom:8px}.top-actions{margin-left:auto}.wordmark .lab-label,.wordmark .brand-divider{display:inline}}

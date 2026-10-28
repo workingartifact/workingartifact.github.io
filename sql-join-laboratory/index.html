@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A Working Artifact interactive SQL JOIN laboratory. Compare INNER, LEFT, RIGHT, and CROSS JOINs and trace records from sources to results.">
+  <link rel="canonical" href="https://workingartifact.github.io/sql-join-laboratory/">
+  <meta property="og:url" content="https://workingartifact.github.io/sql-join-laboratory/">
+  <meta name="color-scheme" content="dark light">
+  <title>LEFT, RIGHT, INNER, CROSS JOIN... WHAT? — An Interactive SQL JOIN Laboratory</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23151c25'/%3E%3Cpath d='M18 20L46 32L18 44' fill='none' stroke='%2398e6c0' stroke-width='3'/%3E%3Cg fill='%2398e6c0'%3E%3Ccircle cx='18' cy='20' r='5'/%3E%3Ccircle cx='46' cy='32' r='5'/%3E%3Ccircle cx='18' cy='44' r='5'/%3E%3C/g%3E%3C/svg%3E">
+  <meta name="author" content="Josh Ayala · EXAPTER ENDAPTER LLC">
+  <meta property="og:site_name" content="Working Artifact">
+  <meta property="og:title" content="LEFT, RIGHT, INNER, CROSS JOIN... WHAT?">
+  <meta property="og:description" content="Change the JOIN. Compare the records. Discover why each row appears.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://workingartifact.github.io/assets/working-artifact-preview.png">
+  <meta property="og:image:secure_url" content="https://workingartifact.github.io/assets/working-artifact-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Working Artifact — educational activities from EXAPTER ENDAPTER">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LEFT, RIGHT, INNER, CROSS JOIN... WHAT?">
+  <meta name="twitter:description" content="An interactive SQL JOIN laboratory from Working Artifact.">
+  <meta name="twitter:image" content="https://workingartifact.github.io/assets/working-artifact-preview.png">
+  <meta name="twitter:image:alt" content="Working Artifact — educational activities from EXAPTER ENDAPTER">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="institutional-footer.css">
+  <link rel="stylesheet" href="publication.css">
+  <script src="join-engine.js" defer></script>
+  <script src="join-presentation.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#laboratory">Skip to laboratory</a>
+  <header class="topbar">
+    <a class="wordmark" href="https://exapterendapter.com/" aria-label="EXAPTER ENDAPTER home"><span class="brand-symbol" aria-hidden="true">⠿</span> EXAPTER ENDAPTER <span class="brand-divider">·</span><span class="lab-label">WORKING ARTIFACT</span></a>
+    <div class="top-actions"><span class="offline"><i></i> OFFLINE READY</span><button id="theme" class="quiet-button" type="button" aria-pressed="false">Light mode</button></div>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <div><p class="eyebrow">PUBLIC ACTIVITY <span>·</span> v1.0.0</p><h1 id="title">LEFT, RIGHT, INNER, CROSS <span>JOIN... WHAT?</span></h1><p class="subtitle">An Interactive SQL JOIN Laboratory</p><p class="intro-copy">Change the JOIN. Compare the records. Select a result row to discover why it appears.</p></div>
+      <div class="intro-actions"><div class="view-controls"><button id="reset" type="button" class="quiet-button">Reset lab ↺</button></div></div>
+    </section>
+<div class="example-selector"><label for="example-select">Example</label><select id="example-select" class="quiet-button" title="Changing examples keeps the JOIN and resets row tracing."><option value="parking">1: Employees &amp; Parking Spaces</option><option value="customers">2: Customers &amp; Orders</option></select></div>
+<div class="lab-grid" id="laboratory">
+      <section class="operation-panel" aria-labelledby="join-title">
+        <div class="panel-heading"><div><h2 id="join-title">Choose a JOIN</h2></div></div>
+        <div class="join-choices" role="group" aria-label="JOIN operation">
+          <button type="button" data-join="LEFT" aria-pressed="false"><span class="join-symbol" aria-hidden="true">←</span><span>LEFT JOIN<small>Every employee</small></span></button>
+          <button type="button" data-join="RIGHT" aria-pressed="false"><span class="join-symbol" aria-hidden="true">→</span><span>RIGHT JOIN<small>Every space</small></span></button>
+          <button type="button" data-join="INNER" aria-pressed="true"><span class="join-symbol" aria-hidden="true">⋂</span><span>INNER JOIN<small>Matching pairs</small></span></button>
+          <button type="button" data-join="CROSS" aria-pressed="false"><span class="join-symbol" aria-hidden="true">×</span><span>CROSS JOIN<small>Every combination</small></span></button>
+        </div>
+      </section>
+<div class="controls-region">
+
+    <section class="panel relationship-lab" aria-labelledby="relationship-title" aria-describedby="operation-label">
+      <div class="source-region">
+      <div class="relationship-heading"><h2 id="relationship-title">Examine the sources</h2><p>Select a employee_id or space_id to inspect.</p></div>
+      <section class="source-panel" aria-labelledby="source-title">
+        <h3 id="source-title" class="sr-only">Source records and their participation</h3>
+        <div class="source-scroll" tabindex="0" role="region" aria-label="Original source tables with participation in the selected JOIN">
+          <div class="source-canvas">
+            <div class="source-table-wrap"><div class="table-label"><span class="side-label">LEFT TABLE</span><strong>EMPLOYEE <small>AS e</small></strong></div><p class="side-state" id="employee-policy"></p><table class="source-table" id="employees"><caption class="sr-only">Original employee source records; final column annotates participation</caption><thead><tr><th scope="col">employee_id <abbr title="Primary key">PK</abbr></th><th scope="col">first_name</th><th scope="col">Participation</th></tr></thead><tbody></tbody></table></div>
+
+            <div class="source-table-wrap"><div class="table-label"><span class="side-label">RIGHT TABLE</span><strong>PARKING_SPACE <small>AS p</small></strong></div><p class="side-state" id="space-policy"></p><table class="source-table" id="spaces"><caption class="sr-only">Original space source records; final column annotates participation</caption><thead><tr><th scope="col">space_id <abbr title="Primary key">PK</abbr></th><th scope="col">employee_id <abbr title="Nullable, UNIQUE foreign key referencing EMPLOYEE.employee_id; NULL means unassigned">FK</abbr></th><th scope="col">Participation</th></tr></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+        <div class="relationship-key" role="group" aria-label="Relationship interpretation and participation key">
+        <p class="legend">• Matched &nbsp; + Kept without match &nbsp; − Excluded<br>Outline follows the current selection. × marks a CROSS pairing.</p>
+
+        <section class="data-note instruction-note" aria-labelledby="data-note-title"><h4 id="data-note-title">Why are unassigned spaces valid?</h4><div class="note-copy"></div></section>
+
+        </div>
+      </section>
+      </div>
+    </section>
+
+</div>
+<div class="lesson-content">
+      <section class="result-panel" aria-labelledby="result-title">
+        <div class="panel-heading"><div><h2 id="result-title">Read the result</h2></div><span class="result-badge" id="result-count" role="status" aria-live="polite"></span></div>
+        <div class="result-summary"><span id="operation-label" class="operation-label"></span><p id="result-breakdown"></p></div>
+        <p id="result-explanation" class="result-explanation" aria-live="polite"></p>
+        <div id="integrity-explanation" class="result-explanation" aria-live="polite" hidden><strong id="integrity-title"></strong><p id="integrity-copy"></p></div>
+        <div class="result-scroll" role="region" aria-label="JOIN result table; scroll vertically for all rows and horizontally on narrow screens" tabindex="0">
+          <table class="result-table">
+            <caption class="sr-only" id="result-caption"></caption>
+            <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="2"></colgroup>
+            <thead>
+              <tr class="source-groups">
+                <th id="result-trace" class="trace-heading" scope="col" rowspan="2">TRACE</th>
+                <th id="result-employee-group" class="source-group" scope="colgroup" colspan="2" data-source="employee"><span class="side-label">EMPLOYEE · LEFT</span><small id="result-employee-policy"></small></th>
+                <th id="result-space-group" class="source-group source-divider" scope="colgroup" colspan="2" data-source="space"><span class="side-label">PARKING_SPACE · RIGHT</span><small id="result-space-policy"></small></th>
+              </tr>
+              <tr class="result-columns"><th id="result-employee-id" scope="col" headers="result-employee-group" data-source="employee">employee_id</th><th id="result-first-name" scope="col" headers="result-employee-group" data-source="employee">first_name</th><th id="result-space-id" class="source-divider" scope="col" headers="result-space-group" data-source="space">space_id</th><th id="result-space-employee-id" scope="col" headers="result-space-group" data-source="space" title="SQL alias for p.employee_id from PARKING_SPACE">space_employee_id</th></tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+        </div>
+        <p class="mobile-table-hint">Scroll the table sideways to see all attributes.</p>
+        <div class="result-foot"><p><span class="trace-dot" aria-hidden="true">↗</span> Select a numbered row to explain it below.</p><span id="null-count"></span></div>
+        <details class="order-note"><summary>How are these rows ordered?</summary><p>Every result is sorted by employee_id, then space_id, with NULLs last in each field. The SQL uses the same explicit ORDER BY. A JOIN alone does not guarantee row order.</p></details>
+      </section>
+      <aside class="panel trace-panel selected-records" aria-labelledby="trace-title">
+        <div class="panel-heading"><h3 id="trace-title">Why this row appears</h3><span class="small-tag" id="trace-kind">ROW TRACE</span></div>
+
+        <div id="trace-content" aria-live="polite"></div>
+        <div class="takeaway"><strong>With another JOIN</strong><p id="takeaway"></p></div>
+        <div class="trace-controls"><button id="previous-row" class="quiet-button" type="button" aria-label="Trace previous result row">← Previous</button><span id="trace-position"></span><button id="next-row" class="quiet-button" type="button" aria-label="Trace next result row">Next →</button></div>
+        <section class="null-note instruction-note" aria-labelledby="null-note-title"><h4 id="null-note-title">What does SQL NULL mean here?</h4><div class="note-copy"></div></section>
+      </aside>
+</div>
+      <section class="sql-panel" aria-labelledby="sql-title">
+        <div class="panel-heading"><div><h2 id="sql-title">Examine the SQL</h2></div><button id="copy" type="button" class="copy-button">Copy SQL <span aria-hidden="true">⧉</span></button></div>
+        <div class="sql-content" tabindex="0" role="region" aria-label="SQL statement and copying options">
+        <div id="condition-controls" class="condition-controls" role="group" aria-label="JOIN condition syntax" aria-describedby="condition-note">
+          <span>Condition</span><button type="button" class="quiet-button" data-condition="ON" aria-pressed="true"><code class="keyword">ON</code></button><button type="button" class="quiet-button" data-condition="USING" aria-pressed="false"><code class="keyword">USING</code></button>
+        </div>
+        <p id="condition-note" class="condition-note"></p>
+        <pre class="sql"><code id="sql-code"></code></pre>
+        <p class="sql-note">Calculated locally from the source records. This statement illustrates MySQL syntax; no database server is running.</p>
+        <p id="copy-status" class="copy-status" role="status"></p>
+        <div id="manual-copy" hidden><label for="sql-fallback">Clipboard unavailable. Select and copy this SQL:</label><textarea id="sql-fallback" rows="7" readonly></textarea></div>
+        </div>
+
+      </section>
+</div>
+    <section class="publication-notes" aria-label="Publication notes">
+      <p class="publication-credit">EXAPTER ENDAPTER · WORKING ARTIFACT <span>Public version · v1.0.0</span></p>
+      <details><summary>Modeling assumptions &amp; notes</summary>
+        <p>These fictional instructional records illustrate introductory MySQL JOIN concepts. JOIN operations are calculated locally in your browser from the four records in each active source table. No database server is running.</p>
+        <p>In Employees &amp; Parking Spaces, each table has a unique, non-NULL primary key. PARKING_SPACE.employee_id is a nullable, UNIQUE foreign key: an assigned space references an existing employee, an employee has at most one assigned space, and multiple unassigned spaces may store NULL.</p>
+        <p>In Customers &amp; Orders, each table has a unique, non-NULL primary key. ORDERS.customer_id is a NOT NULL foreign key referencing an existing customer. A customer may have zero or multiple orders. These are explicit business rules, rather than conclusions drawn only from sample patterns.</p>
+        <p>Stored NULL means an unassigned parking space in these examples. Outer JOINs can also introduce NULL fields for a missing source row; the result and row trace distinguish those origins. CROSS JOIN produces all combinations without an equality condition and creates no assignments or orders.</p>
+        <p>Source-table pop-outs show seven fictional illustrative records per table, including additional attributes and records beyond the smaller active JOIN datasets. Those expanded views never enter the active JOIN calculation.</p>
+        <p>The downloaded activity runs offline when kept with its companion CSS and JavaScript files. The activity includes no analytics, tracking scripts, account, submission, cookies, or persistent browser storage; selections last until reload. Copy SQL writes to your clipboard when requested. Institutional links open external sites, and the hosting provider may log page requests. The social-preview image is hosted by Working Artifact.</p>
+      </details>
+    </section>
+  </main>
+  <footer class="institutional-footer">
+    <div class="footer-shell">
+      <div class="footer-top">
+        <p class="footer-path"><a href="https://exapterendapter.com/atelier.html">Atelier</a> / <a href="https://exapterendapter.com/lab.html">Lab</a> / <a href="https://workingartifact.github.io/">Working Artifact</a></p>
+        <a class="back-to-top" href="#top">Back to top ↑</a>
+      </div>
+      <nav class="footer-tree" aria-label="Institutional tree">
+        <div class="footer-tree-column footer-tree-root">
+          <a class="footer-tree-title" href="https://exapterendapter.com/">EXAPTER ENDAPTER</a>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title signal" href="https://exapterendapter.com/atelier.html">Atelier</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/lab.html">Lab</a></li>
+            <li><a href="https://exapterendapter.com/studio.html">Studio</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/house.html">House of Applied Intelligence</a>
+          <ul>
+            <li><a href="https://exapterendapter.com/praxis.html">Praxis</a></li>
+            <li><a href="https://exapterendapter.com/craft.html">Craft</a></li>
+          </ul>
+        </div>
+        <div class="footer-tree-column">
+          <a class="footer-tree-title" href="https://exapterendapter.com/about.html">About</a>
+        </div>
+      </nav>
+      <div class="footer-signature">
+        <p class="footer-motto">QUAESTIO ET VERITAS</p>
+        <p class="footer-translation">Inquiry and Truth</p>
+        <p class="footer-founder">Josh Ayala · © 2026 · EXAPTER ENDAPTER LLC · <a href="mailto:exapterendapter@gmail.com">Contact</a></p>
+        <div class="footer-resource-note">
+          <p>Independent educational resource. Not affiliated with or endorsed by any university.</p>
+          <p>Free to use and share for educational purposes with attribution.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <dialog id="source-viewer" aria-labelledby="source-viewer-title" aria-describedby="source-viewer-intro">
+    <div class="viewer-heading"><div><p class="eyebrow">SOURCE TABLE</p><h2 id="source-viewer-title"></h2></div><button id="source-viewer-close" type="button" class="quiet-button" autofocus>Close <span aria-hidden="true">×</span></button></div>
+    <p id="source-viewer-intro">Illustrative database view. The JOIN activity uses a smaller sample of these records.</p>
+    <p id="source-viewer-meta"></p>
+    <div class="viewer-scroll" tabindex="0" role="region" aria-label="Illustrative expanded source table"><table class="viewer-table"><caption class="sr-only" id="source-viewer-caption"></caption><thead></thead><tbody></tbody></table></div>
+    <p id="source-viewer-null" class="viewer-null" hidden><span class="null">NULL</span> is stored in this nullable attribute. It means unassigned here; it is not zero, empty text, or a missing record introduced by an outer JOIN.</p>
+  </dialog>
+  <noscript><p class="noscript">Enable JavaScript to calculate JOIN results and use the laboratory.</p></noscript>
+</body>
+</html>
