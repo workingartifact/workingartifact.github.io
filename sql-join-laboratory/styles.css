@@ -22,8 +22,6 @@ button{min-height:36px;border-radius:5px}
 .brand-symbol{font-size:26px;color:var(--accent)}
 .brand-divider,.lab-label{color:var(--muted);font-weight:400}
 .top-actions{display:flex;gap:16px;align-items:center}
-.offline{font-size:11px;letter-spacing:.05em;color:var(--muted)}
-.offline i{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:6px}
 .intro{padding:16px 0;display:flex;justify-content:space-between;align-items:center;gap:24px}
 .eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted)}
 .eyebrow span{padding:0 6px}
@@ -178,7 +176,7 @@ footer span{display:block}
 .topbar,main{padding-left:16px;padding-right:16px}
 .topbar{gap:8px}
 .wordmark{font-size:10px;gap:6px;flex-wrap:wrap}
-.lab-label,.brand-divider,.offline{display:none}
+.lab-label,.brand-divider{display:none}
 .intro{padding:20px 0}
 h1{font-size:28px}
 .eyebrow{font-size:11px}
